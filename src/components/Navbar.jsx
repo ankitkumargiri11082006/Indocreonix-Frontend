@@ -1,4 +1,5 @@
-import { NavLink } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { NavLink, useLocation } from 'react-router-dom'
 
 const navItems = [
   { label: 'Home', path: '/' },
@@ -14,6 +15,13 @@ const navItems = [
 ]
 
 function Navbar() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const location = useLocation()
+
+  useEffect(() => {
+    setIsMenuOpen(false)
+  }, [location.pathname])
+
   return (
     <header className="site-header">
       <div className="container nav-wrap">
@@ -22,11 +30,24 @@ function Navbar() {
           <span className="brand-text">Indocreonix</span>
         </NavLink>
 
-        <nav className="site-nav" aria-label="Main navigation">
+        <button
+          type="button"
+          className="nav-toggle"
+          aria-label="Toggle navigation menu"
+          aria-expanded={isMenuOpen}
+          onClick={() => setIsMenuOpen((prev) => !prev)}
+        >
+          <span className="nav-toggle-line" />
+          <span className="nav-toggle-line" />
+          <span className="nav-toggle-line" />
+        </button>
+
+        <nav className={isMenuOpen ? 'site-nav site-nav-open' : 'site-nav'} aria-label="Main navigation">
           {navItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
+              onClick={() => setIsMenuOpen(false)}
               className={({ isActive }) =>
                 isActive ? 'nav-link nav-link-active' : 'nav-link'
               }
