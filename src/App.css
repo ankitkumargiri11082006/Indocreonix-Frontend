@@ -411,34 +411,38 @@
   gap: 0.8rem;
 }
 
-.founder-section {
+.leadership-section {
   margin-top: -0.6rem;
 }
 
-.founder-card {
+.leadership-grid {
   display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 1.2rem;
-  align-items: center;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.leader-card {
   background:
     radial-gradient(circle at 8% 10%, rgba(0, 124, 145, 0.08), transparent 38%),
     linear-gradient(180deg, #ffffff 0%, #fafdff 100%);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 1.2rem;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
 }
 
-.founder-photo-wrap {
+.leader-photo-wrap {
   width: 180px;
   height: 180px;
   border-radius: 50%;
   padding: 5px;
   background: linear-gradient(140deg, var(--primary), var(--accent));
   box-shadow: 0 12px 28px rgba(7, 40, 75, 0.16);
+  margin: 0 auto;
 }
 
-.founder-photo {
+.leader-photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -446,12 +450,13 @@
   border: 4px solid #ffffff;
 }
 
-.founder-content {
-  max-width: 70ch;
+.leader-photo-top {
+  object-position: top center;
 }
 
-.founder-role {
+.leader-role {
   margin: 0;
+  margin-top: 0.85rem;
   font-size: 0.82rem;
   letter-spacing: 0.11em;
   text-transform: uppercase;
@@ -459,13 +464,13 @@
   color: var(--primary);
 }
 
-.founder-card h3 {
+.leader-card h3 {
   margin: 0.42rem 0 0;
   color: var(--ink);
   font-size: clamp(1.2rem, 1.7vw, 1.5rem);
 }
 
-.founder-card p {
+.leader-card p {
   margin: 0.58rem 0 0;
   color: var(--muted);
   line-height: 1.62;
@@ -644,7 +649,8 @@
   .card-grid,
   .contact-grid,
   .footer-grid,
-  .career-track-grid {
+  .career-track-grid,
+  .leadership-grid {
     grid-template-columns: 1fr 1fr;
   }
 
@@ -693,17 +699,12 @@
   .card-grid,
   .contact-grid,
   .footer-grid,
-  .career-track-grid {
+  .career-track-grid,
+  .leadership-grid {
     grid-template-columns: 1fr;
   }
 
-  .founder-card {
-    grid-template-columns: 1fr;
-    justify-items: center;
-    text-align: center;
-  }
-
-  .founder-photo-wrap {
+  .leader-photo-wrap {
     width: 160px;
     height: 160px;
   }
@@ -760,7 +761,7 @@
 
   .info-card,
   .career-form-card,
-  .founder-card {
+  .leader-card {
     padding: 0.9rem;
   }
 
@@ -773,7 +774,7 @@
     padding: 0.66rem 0.9rem;
   }
 
-  .founder-photo-wrap {
+  .leader-photo-wrap {
     width: 140px;
     height: 140px;
   }

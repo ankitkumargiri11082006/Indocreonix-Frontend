@@ -32,28 +32,36 @@ function AboutPage() {
         ]}
       />
 
-      <SectionBlock title="Who We Are" items={sectionItems} />
+      <section className="content-section container leadership-section">
+        <h2>Leadership Team</h2>
+        <div className="leadership-grid">
+          <article className="leader-card">
+            <div className="leader-photo-wrap">
+              <img src="/founder.png" alt="Founder and CEO of Indocreonix" className="leader-photo" />
+            </div>
+            <p className="leader-role">Founder & CEO</p>
+            <h3>Indocreonix Leadership</h3>
+            <p>
+              Leads company strategy and delivery excellence with a strong focus on building reliable,
+              business-driven technology solutions.
+            </p>
+          </article>
 
-      <section className="content-section container founder-section">
-        <h2>Founder & CEO</h2>
-        <article className="founder-card">
-          <div className="founder-photo-wrap">
-            <img src="/founder.png" alt="Founder and CEO of Indocreonix" className="founder-photo" />
-          </div>
-          <div className="founder-content">
-            <p className="founder-role">Leadership</p>
-            <h3>Founder & CEO, Indocreonix</h3>
+          <article className="leader-card">
+            <div className="leader-photo-wrap">
+              <img src="/brandambasdor.png" alt="Brand Ambassador of Indocreonix" className="leader-photo leader-photo-top" />
+            </div>
+            <p className="leader-role">Brand Ambassador</p>
+            <h3>Indocreonix Brand Presence</h3>
             <p>
-              Indocreonix is led with a clear vision to build dependable digital systems that solve practical
-              business problems through engineering excellence, execution discipline, and long-term trust.
+              Represents the company publicly and strengthens brand credibility through clear communication,
+              outreach, and audience engagement.
             </p>
-            <p>
-              Under this leadership, the company focuses on modern software development, cloud transformation,
-              and AI-enabled solutions tailored for growing businesses and enterprise teams.
-            </p>
-          </div>
-        </article>
+          </article>
+        </div>
       </section>
+
+      <SectionBlock title="Who We Are" items={sectionItems} />
 
       <CtaBanner
         title="Build with a trusted tech partner"
