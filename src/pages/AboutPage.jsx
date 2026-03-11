@@ -49,7 +49,7 @@ function AboutPage() {
 
           <article className="leader-card">
             <div className="leader-photo-wrap">
-              <img src="/brandambasdor.png" alt="Brand Ambassador of Indocreonix" className="leader-photo leader-photo-top" />
+              <img src="/brand-ambassador.png" alt="Brand Ambassador of Indocreonix" className="leader-photo leader-photo-top" />
             </div>
             <p className="leader-role">Brand Ambassador</p>
             <h3>Indocreonix Brand Presence</h3>
