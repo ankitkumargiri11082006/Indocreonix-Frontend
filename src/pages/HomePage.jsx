@@ -5,16 +5,16 @@ import CtaBanner from '../components/CtaBanner'
 
 const highlights = [
   {
-    title: 'AI Product Engineering',
-    description: 'From concept to deployment, we build AI-powered products with robust MLOps and measurable ROI.',
+    title: 'Custom Software Delivery',
+    description: 'We build secure web and business applications tailored to your operations, users, and growth goals.',
   },
   {
-    title: 'Cloud Modernization',
-    description: 'Migrate legacy systems to resilient cloud-native architectures that scale with your growth.',
+    title: 'Cloud & DevOps Enablement',
+    description: 'Our team modernizes deployment pipelines, improves reliability, and helps teams ship faster with confidence.',
   },
   {
-    title: 'Data Platforms',
-    description: 'Design pipelines, governance layers, and analytics stacks that turn data into decisions.',
+    title: 'Data & AI Solutions',
+    description: 'From reporting dashboards to AI-assisted workflows, we design solutions that are practical and maintainable.',
   },
 ]
 
@@ -23,29 +23,29 @@ function HomePage() {
     <>
       <PageHero
         eyebrow="Future-Ready Technology"
-        title="Indocreonix Builds Digital Systems That Move Business Forward"
-        subtitle="We are a technology company focused on product engineering, enterprise transformation, and long-term innovation partnerships."
+        title="Indocreonix Delivers Reliable Technology for Real Business Needs"
+        subtitle="We are a Delhi-based technology company helping startups and enterprises build modern software, cloud platforms, and AI-enabled products."
         theme="theme-launch"
         metrics={[
-          { value: '50M+', label: 'Users Served on Client Platforms' },
-          { value: '11', label: 'Industry Verticals' },
-          { value: '8 Weeks', label: 'Average MVP Launch Time' },
+          { value: 'Delhi, India', label: 'Headquartered In' },
+          { value: 'B2B Technology', label: 'Primary Focus' },
+          { value: 'Jobs + Internships', label: 'Career Openings' },
         ]}
         actions={
           <>
             <Link to="/services" className="btn btn-primary">
               Explore Services
             </Link>
-            <Link to="/case-studies" className="btn btn-secondary">
-              View Case Studies
+            <Link to="/careers" className="btn btn-secondary">
+              Join Our Team
             </Link>
           </>
         }
       />
       <SectionBlock title="What We Deliver" items={highlights} />
       <CtaBanner
-        title="Ready to launch your next digital initiative?"
-        description="Partner with Indocreonix to design, develop, and scale secure technology solutions."
+        title="Need a dependable technology partner for your next build?"
+        description="Partner with Indocreonix to plan, build, and scale modern digital products with clear delivery ownership."
         primaryLabel="Start a Project"
         primaryTo="/contact"
       />

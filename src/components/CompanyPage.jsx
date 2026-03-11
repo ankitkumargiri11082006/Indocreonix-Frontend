@@ -19,9 +19,9 @@ function CompanyPage({ eyebrow, title, subtitle, sectionTitle, sectionItems, cta
         theme={theme ?? getThemeFromTitle(title)}
         metrics={
           metrics ?? [
-            { value: '120+', label: 'Projects Delivered' },
-            { value: '25+', label: 'Technology Experts' },
-            { value: '99.9%', label: 'Platform Reliability' },
+            { value: 'Delhi, India', label: 'Head Office' },
+            { value: 'Web · Cloud · AI', label: 'Core Expertise' },
+            { value: 'B2B Delivery', label: 'Engagement Model' },
           ]
         }
       />

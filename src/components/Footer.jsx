@@ -12,9 +12,7 @@ function Footer() {
             <img src="/logo.png" alt="Indocreonix logo" className="brand-logo" />
             <span className="brand-text">Indocreonix</span>
           </Link>
-          <p className="footer-copy">
-            Building secure, scalable, and human-centered digital products for modern enterprises.
-          </p>
+          <p className="footer-copy">{companyInfo.tagline}</p>
         </div>
 
         <div>

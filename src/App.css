@@ -411,6 +411,159 @@
   gap: 0.8rem;
 }
 
+.founder-section {
+  margin-top: -0.6rem;
+}
+
+.founder-card {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 1.2rem;
+  align-items: center;
+  background:
+    radial-gradient(circle at 8% 10%, rgba(0, 124, 145, 0.08), transparent 38%),
+    linear-gradient(180deg, #ffffff 0%, #fafdff 100%);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.2rem;
+  box-shadow: var(--shadow-lg);
+}
+
+.founder-photo-wrap {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  padding: 5px;
+  background: linear-gradient(140deg, var(--primary), var(--accent));
+  box-shadow: 0 12px 28px rgba(7, 40, 75, 0.16);
+}
+
+.founder-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid #ffffff;
+}
+
+.founder-content {
+  max-width: 70ch;
+}
+
+.founder-role {
+  margin: 0;
+  font-size: 0.82rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.founder-card h3 {
+  margin: 0.42rem 0 0;
+  color: var(--ink);
+  font-size: clamp(1.2rem, 1.7vw, 1.5rem);
+}
+
+.founder-card p {
+  margin: 0.58rem 0 0;
+  color: var(--muted);
+  line-height: 1.62;
+}
+
+.career-track-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.career-track-btn {
+  margin-top: 0.95rem;
+}
+
+.career-application-wrap {
+  margin: 1.2rem auto 2.4rem;
+}
+
+.career-form-single {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.career-form-card {
+  background: linear-gradient(180deg, #ffffff 0%, #fafdff 100%);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.career-form-card h3 {
+  margin: 0;
+  color: var(--ink);
+}
+
+.career-form-card h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(1.25rem, 2.2vw, 1.55rem);
+}
+
+.career-form-card > p {
+  color: var(--muted);
+  margin: 0.52rem 0 0.85rem;
+}
+
+.career-form {
+  display: grid;
+  gap: 0.72rem;
+}
+
+.career-form label {
+  display: grid;
+  gap: 0.34rem;
+  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.career-form input,
+.career-form textarea {
+  border: 1px solid #cddcec;
+  border-radius: 10px;
+  padding: 0.58rem 0.72rem;
+  font: inherit;
+  color: var(--ink);
+  background: #ffffff;
+}
+
+.career-form textarea {
+  resize: vertical;
+  min-height: 96px;
+}
+
+.career-form input:focus,
+.career-form textarea:focus {
+  outline: 2px solid rgba(0, 124, 145, 0.22);
+  border-color: var(--primary);
+}
+
+.form-success {
+  margin: 0 0 0.85rem;
+  padding: 0.56rem 0.7rem;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 124, 145, 0.32);
+  background: rgba(0, 124, 145, 0.09);
+  color: #0b5a67;
+  font-weight: 600;
+}
+
+.career-form-note {
+  margin-top: 0.85rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .site-footer {
   margin-top: 2rem;
   border-top: 1px solid var(--line);
@@ -490,7 +643,8 @@
 @media (max-width: 960px) {
   .card-grid,
   .contact-grid,
-  .footer-grid {
+  .footer-grid,
+  .career-track-grid {
     grid-template-columns: 1fr 1fr;
   }
 
@@ -538,8 +692,35 @@
 @media (max-width: 700px) {
   .card-grid,
   .contact-grid,
-  .footer-grid {
+  .footer-grid,
+  .career-track-grid {
     grid-template-columns: 1fr;
+  }
+
+  .founder-card {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .founder-photo-wrap {
+    width: 160px;
+    height: 160px;
+  }
+
+  .career-track-btn,
+  .career-track-grid .btn,
+  .career-form .btn {
+    width: 100%;
+  }
+
+  .career-form-single,
+  .career-form-card {
+    padding: 1rem;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
   }
 
   .cta-banner {
@@ -553,5 +734,47 @@
 
   .page-hero {
     padding-top: 4.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    width: min(1140px, 94vw);
+  }
+
+  .brand-text {
+    font-size: 1.05rem;
+  }
+
+  .page-hero h1 {
+    font-size: clamp(1.75rem, 8.2vw, 2.1rem);
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .metric-chip {
+    padding: 0.7rem 0.75rem;
+  }
+
+  .info-card,
+  .career-form-card,
+  .founder-card {
+    padding: 0.9rem;
+  }
+
+  .career-form input,
+  .career-form textarea {
+    padding: 0.54rem 0.62rem;
+  }
+
+  .btn {
+    padding: 0.66rem 0.9rem;
+  }
+
+  .founder-photo-wrap {
+    width: 140px;
+    height: 140px;
   }
 }

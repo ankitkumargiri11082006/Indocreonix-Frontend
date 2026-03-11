@@ -7,6 +7,8 @@ import SolutionsPage from './pages/SolutionsPage'
 import ProductsPage from './pages/ProductsPage'
 import CaseStudiesPage from './pages/CaseStudiesPage'
 import CareersPage from './pages/CareersPage'
+import InternshipApplyPage from './pages/InternshipApplyPage'
+import JobApplyPage from './pages/JobApplyPage'
 import InsightsPage from './pages/InsightsPage'
 import FaqPage from './pages/FaqPage'
 import ContactPage from './pages/ContactPage'
@@ -24,6 +26,8 @@ function App() {
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/case-studies" element={<CaseStudiesPage />} />
         <Route path="/careers" element={<CareersPage />} />
+        <Route path="/careers/internship" element={<InternshipApplyPage />} />
+        <Route path="/careers/job" element={<JobApplyPage />} />
         <Route path="/insights" element={<InsightsPage />} />
         <Route path="/faq" element={<FaqPage />} />
         <Route path="/contact" element={<ContactPage />} />

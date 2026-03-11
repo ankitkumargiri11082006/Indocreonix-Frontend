@@ -3,15 +3,15 @@ import CompanyPage from '../components/CompanyPage'
 const sectionItems = [
   {
     title: 'How do engagements start?',
-    description: 'We begin with a discovery call, followed by technical and business scoping to align outcomes.',
+    description: 'We start with a discovery discussion and then share a practical scope, timeline, and delivery plan.',
   },
   {
     title: 'Do you support existing platforms?',
-    description: 'Yes, we modernize and scale existing systems in addition to building new products.',
+    description: 'Yes. We support, stabilize, and modernize existing systems as well as build new solutions.',
   },
   {
-    title: 'What industries do you serve?',
-    description: 'We work with organizations across finance, healthcare, retail, logistics, and SaaS.',
+    title: 'Do you offer both internships and full-time jobs?',
+    description: 'Yes. Visit the Careers page to apply separately for Internship or Job opportunities using dedicated forms.',
   },
 ]
 
@@ -20,7 +20,7 @@ function FaqPage() {
     <CompanyPage
       eyebrow="FAQ"
       title="Answers to Common Questions"
-      subtitle="Quick clarity on process, delivery models, and technical capabilities."
+      subtitle="Quick clarity on our process, delivery model, and hiring opportunities."
       sectionTitle="Frequently Asked Questions"
       sectionItems={sectionItems}
       cta={{

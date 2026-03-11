@@ -3,15 +3,15 @@ import CompanyPage from '../components/CompanyPage'
 const sectionItems = [
   {
     title: 'Engineering Blog',
-    description: 'Practical insights on architecture, release management, and scaling engineering teams.',
+    description: 'Practical notes on architecture, code quality, release planning, and engineering execution.',
   },
   {
     title: 'AI Thought Leadership',
-    description: 'Guides and playbooks for adopting AI responsibly and effectively in enterprise contexts.',
+    description: 'Implementation-focused guidance for applying AI in real workflows without unnecessary complexity.',
   },
   {
     title: 'Technology Trends',
-    description: 'Expert perspectives on cloud, security, data strategy, and product innovation.',
+    description: 'Business-focused perspectives on cloud, data, security, and digital transformation strategies.',
   },
 ]
 
@@ -20,7 +20,7 @@ function InsightsPage() {
     <CompanyPage
       eyebrow="Insights"
       title="Ideas, Research, and Real-World Technology Lessons"
-      subtitle="Stay informed with practical content from the Indocreonix engineering and strategy team."
+      subtitle="Stay updated with practical technology insights from the Indocreonix engineering team."
       sectionTitle="Latest Topics"
       sectionItems={sectionItems}
       cta={{
