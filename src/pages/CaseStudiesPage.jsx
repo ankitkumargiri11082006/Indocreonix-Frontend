@@ -1,35 +1,65 @@
-import CompanyPage from '../components/CompanyPage'
+import PageHero from '../components/PageHero'
+import SectionBlock from '../components/SectionBlock'
+import CtaBanner from '../components/CtaBanner'
 
 const sectionItems = [
   {
-    title: 'Financial Services Platform Upgrade',
-    description: 'Redesigned user onboarding and backend workflows to improve customer experience and operations efficiency.',
+    title: 'Multi-Industry Project Delivery',
+    description: 'Indocreonix has delivered websites, internal tools, and business software for organizations across different sectors.',
   },
   {
-    title: 'Operations Visibility Dashboard',
-    description: 'Implemented centralized reporting across teams to improve decision-making and issue response time.',
+    title: 'Web + Software Implementation',
+    description: 'From public-facing websites to full operational systems, we build practical, maintainable digital products.',
   },
   {
-    title: 'Commerce Platform Modernization',
-    description: 'Migrated legacy architecture to a modern stack with better maintainability and performance.',
+    title: 'Reliable Long-Term Support',
+    description: 'Our delivery approach includes implementation quality, handover clarity, and post-launch support where required.',
   },
 ]
 
 function CaseStudiesPage() {
   return (
-    <CompanyPage
-      eyebrow="Case Studies"
-      title="Proven Results Across Critical Digital Initiatives"
-      subtitle="Explore selected delivery outcomes where we solved business-critical technology challenges."
-      sectionTitle="Featured Engagements"
-      sectionItems={sectionItems}
-      cta={{
-        title: 'Your project could be next',
-        description: 'We combine technical rigor and business alignment to deliver outcomes that matter.',
-        primaryLabel: 'Start Conversation',
-        primaryTo: '/contact',
-      }}
-    />
+    <>
+      <PageHero
+        eyebrow="Case Studies"
+        title="Proven Results Across Real-World Implementations"
+        subtitle="A snapshot of projects delivered by Indocreonix across website development and full software systems."
+        theme="theme-d"
+        metrics={[
+          { value: 'Web + Software', label: 'Delivery Scope' },
+          { value: 'Multi-Sector', label: 'Project Types' },
+          { value: 'Production Ready', label: 'Execution Quality' },
+        ]}
+      />
+
+      <section className="content-section container">
+        <h2>Featured Project</h2>
+        <article className="project-highlight-card">
+          <img
+            src="https://res.cloudinary.com/dmmll82la/image/upload/v1766683651/ddka-logo_ywnhyh.png"
+            alt="Dhanbad District Kabaddi Association logo"
+            className="project-highlight-logo"
+          />
+          <div>
+            <p className="project-highlight-tag">Sports Organization Technology Delivery</p>
+            <h3>Dhanbad District Kabaddi Association (DDKA)</h3>
+            <p>
+              Indocreonix built the official website for Dhanbad District Kabaddi Association and delivered a full
+              software system to store and manage kabaddi player data for the district.
+            </p>
+          </div>
+        </article>
+      </section>
+
+      <SectionBlock title="More Project Work by Indocreonix" items={sectionItems} />
+
+      <CtaBanner
+        title="Need a team that can deliver both website and software systems?"
+        description="Connect with Indocreonix for end-to-end implementation with practical business outcomes."
+        primaryLabel="Start Conversation"
+        primaryTo="/contact"
+      />
+    </>
   )
 }
 
