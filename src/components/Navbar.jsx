@@ -32,7 +32,7 @@ function Navbar() {
 
         <button
           type="button"
-          className="nav-toggle"
+          className={isMenuOpen ? 'nav-toggle nav-toggle-open' : 'nav-toggle'}
           aria-label="Toggle navigation menu"
           aria-expanded={isMenuOpen}
           onClick={() => setIsMenuOpen((prev) => !prev)}
@@ -55,6 +55,10 @@ function Navbar() {
               {item.label}
             </NavLink>
           ))}
+
+          <div className="nav-mobile-logo-card" aria-hidden={!isMenuOpen}>
+            <img src="/logo.png" alt="Indocreonix brand logo" className="nav-mobile-logo" />
+          </div>
         </nav>
       </div>
     </header>
