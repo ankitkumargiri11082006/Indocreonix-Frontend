@@ -56,6 +56,19 @@ h4,
     grid-template-columns: 1fr;
     text-align: center;
   }
+
+  .clean-hero-copy {
+    display: grid;
+    justify-items: center;
+  }
+
+  .clean-hero-subtitle {
+    max-width: 100%;
+  }
+
+  .clean-hero-visual {
+    height: 360px;
+  }
 }
 
 .clean-hero-eyebrow {
@@ -113,6 +126,8 @@ h4,
 @media (max-width: 900px) {
   .clean-hero-metrics {
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.2rem;
   }
 }
 
@@ -142,4 +157,50 @@ h4,
   justify-content: center;
   align-items: center;
   border-radius: 20px;
+}
+
+@media (max-width: 700px) {
+  .clean-hero-section {
+    padding: 4.5rem 0 2.8rem;
+  }
+
+  .clean-hero-title {
+    font-size: clamp(2rem, 8vw, 2.6rem);
+  }
+
+  .clean-hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .clean-hero-metrics {
+    margin-top: 2rem;
+    padding-top: 1.3rem;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .clean-hero-visual {
+    height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .clean-hero-section {
+    padding: 4rem 0 2.3rem;
+  }
+
+  .clean-hero-actions {
+    width: 100%;
+    gap: 0.7rem;
+  }
+
+  .clean-hero-actions .btn {
+    width: 100%;
+  }
+
+  .clean-hero-visual {
+    height: 260px;
+  }
 }

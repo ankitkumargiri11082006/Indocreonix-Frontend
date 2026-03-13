@@ -1,11 +1,17 @@
 import { Link } from 'react-router-dom'
 import { companyInfo } from '../data/companyInfo'
+import footerBackground from '../assets/footer-bg.svg'
 
 function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="site-footer">
+    <footer
+      className="site-footer"
+      style={{
+        '--footer-bg-image': `url(${footerBackground})`,
+      }}
+    >
       <div className="container footer-grid">
         <div>
           <Link className="brand footer-brand" to="/">

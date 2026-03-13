@@ -142,7 +142,7 @@ function GoogleModelScene() {
 
 function TechCore3DModel() {
   return (
-    <div style={{ width: '100%', height: '100%', minHeight: '400px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <div style={{ width: '100%', height: '100%', minHeight: 'min(400px, 52vh)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 7.5], fov: 45 }}>
         <color attach="background" args={['transparent']} />
         
