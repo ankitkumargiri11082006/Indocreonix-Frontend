@@ -1,19 +1,15 @@
 import { Link } from 'react-router-dom'
 import { companyInfo } from '../data/companyInfo'
-import footerBackground from '../assets/footer-bg.svg'
+import AnimatedDeepBackground from './AnimatedDeepBackground'
 
 function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer
-      className="site-footer"
-      style={{
-        '--footer-bg-image': `url(${footerBackground})`,
-      }}
-    >
+    <footer className="site-footer">
+      <AnimatedDeepBackground photoUrl="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=2000&q=80" />
       <div className="container footer-grid">
-        <div>
+        <div className="footer-brand-wrap">
           <Link className="brand footer-brand" to="/">
             <img src="/logo.png" alt="Indocreonix logo" className="brand-logo" />
             <span className="brand-text">Indocreonix</span>
