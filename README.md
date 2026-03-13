@@ -14,3 +14,14 @@ The React Compiler is not enabled on this template because of its impact on dev 
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+## Live Chatbot Setup
+
+1. Copy `.env.example` to `.env`.
+2. For ChatGPT, set `VITE_CHAT_PROVIDER=openai` and add `VITE_OPENAI_API_KEY`.
+3. Optionally change `VITE_CHAT_MODEL` (example: `gpt-4o-mini`).
+4. Optional fallback: set `VITE_GEMINI_API_KEY` with `VITE_CHAT_PROVIDER=gemini`.
+5. Optional fallback: set `VITE_OPENROUTER_API_KEY` with `VITE_CHAT_PROVIDER=openrouter`.
+6. Start the app with `npm run dev`.
+
+The website assistant uses a live AI chat request and website context to answer customer questions about services, pages, careers, and contact details.

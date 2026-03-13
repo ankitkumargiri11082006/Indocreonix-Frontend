@@ -24,7 +24,7 @@ function AboutPage() {
         eyebrow="About Indocreonix"
         title="A Professional Technology Team Focused on Delivery"
         subtitle="Indocreonix partners with founders and business leaders to build software that is scalable, secure, and future-ready."
-        theme="theme-e"
+        theme="theme-about"
         metrics={[
           { value: 'Delhi, India', label: 'Head Office' },
           { value: 'Web · Cloud · AI', label: 'Core Expertise' },

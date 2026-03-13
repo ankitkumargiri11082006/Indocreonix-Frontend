@@ -24,7 +24,7 @@ function CareersPage() {
         eyebrow="Careers"
         title="Build Your Career with Indocreonix"
         subtitle="We are hiring students for internships and professionals for full-time roles across our technology teams."
-        theme="theme-c"
+        theme="theme-careers"
         metrics={[
           { value: 'Internships', label: 'For Students' },
           { value: 'Full-Time Jobs', label: 'For Professionals' },

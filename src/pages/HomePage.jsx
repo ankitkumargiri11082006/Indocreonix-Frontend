@@ -24,8 +24,8 @@ function HomePage() {
       <PageHero
         eyebrow="Future-Ready Technology"
         title="Indocreonix Delivers Reliable Technology for Real Business Needs"
-        subtitle="We are a Delhi-based technology company helping startups and enterprises build modern software, cloud platforms, and AI-enabled products."
-        theme="theme-launch"
+        subtitle="We are a Delhi-based technology company helping startups and enterprises build modern web, Android, iOS, software, cloud, and AI-enabled products."
+        theme="theme-home"
         metrics={[
           { value: 'Delhi, India', label: 'Headquartered In' },
           { value: 'B2B Technology', label: 'Primary Focus' },
@@ -43,6 +43,18 @@ function HomePage() {
         }
       />
       <SectionBlock title="What We Deliver" items={highlights} />
+      
+      <section className="container">
+        <div className="cloud-illustration-wrapper">
+          <img 
+            src="/cloud_isometric.png" 
+            alt="Cloud Architecture Isometric Illustration" 
+            className="cloud-illustration"
+            loading="lazy"
+          />
+        </div>
+      </section>
+
       <CtaBanner
         title="Need a dependable technology partner for your next build?"
         description="Partner with Indocreonix to plan, build, and scale modern digital products with clear delivery ownership."

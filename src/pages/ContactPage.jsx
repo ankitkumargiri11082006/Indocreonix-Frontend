@@ -13,7 +13,7 @@ function ContactPage() {
         eyebrow="Contact"
         title="Connect with Indocreonix"
         subtitle="Reach our team directly for project discussions, partnerships, and business inquiries."
-        theme="theme-b"
+        theme="theme-contact"
         metrics={[
           { value: '<24h', label: 'Response Time' },
           { value: '2', label: 'Direct Contact Numbers' },
