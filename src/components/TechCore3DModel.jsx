@@ -113,7 +113,7 @@ function AnimatedTechRings() {
 function GoogleModelScene() {
   const groupRef = useRef(null)
   
-  const logoTexture = useTexture('/logo.png')
+  const logoTexture = useTexture('/logo_circle.png')
   logoTexture.colorSpace = THREE.SRGBColorSpace
   
   useFrame((state) => {
