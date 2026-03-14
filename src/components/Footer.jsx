@@ -11,7 +11,7 @@ function Footer() {
       <div className="container footer-grid">
         <div className="footer-brand-wrap">
           <Link className="brand footer-brand" to="/">
-            <img src="/logo_circle.png" alt="Indocreonix logo" className="brand-logo" />
+            <img src="/logo.png" alt="Indocreonix logo" className="brand-logo" />
             <span className="brand-text">Indocreonix</span>
           </Link>
           <p className="footer-copy">{companyInfo.tagline}</p>

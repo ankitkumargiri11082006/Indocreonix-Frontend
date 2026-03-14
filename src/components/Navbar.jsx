@@ -49,7 +49,7 @@ function Navbar() {
     <header className="site-header">
       <div className="container nav-wrap">
         <NavLink className="brand" to="/">
-          <img src="/logo_circle.png" alt="Indocreonix logo" className="brand-logo" />
+          <img src="/logo.png" alt="Indocreonix logo" className="brand-logo" />
           <span className="brand-text">Indocreonix</span>
         </NavLink>
 
@@ -80,7 +80,7 @@ function Navbar() {
           
           <div className="nav-mobile-header">
             <div className="nav-mobile-brand-block">
-              <img src="/logo_circle.png" alt="Indocreonix logo" className="nav-mobile-logo" />
+              <img src="/logo.png" alt="Indocreonix logo" className="nav-mobile-logo" />
               <div>
                 <p className="nav-mobile-title">Indocreonix</p>
                 <p className="nav-mobile-tag">Build. Scale. Lead.</p>
