@@ -47,6 +47,11 @@ function CaseStudiesPage() {
               Indocreonix built the official website for Dhanbad District Kabaddi Association and delivered a full
               software system to store and manage kabaddi player data for the district.
             </p>
+            <p>
+              <a href="https://dhanbadkabaddiassociation.tech/" target="_blank" rel="noreferrer" className="contact-link">
+                Visit DDKA Website
+              </a>
+            </p>
           </div>
         </article>
       </section>

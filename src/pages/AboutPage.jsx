@@ -40,7 +40,7 @@ function AboutPage() {
               <img src="/founder.png" alt="Founder and CEO of Indocreonix" className="leader-photo" />
             </div>
             <p className="leader-role">Founder & CEO</p>
-            <h3>Indocreonix Leadership</h3>
+            <h3>Mr. Avinash Puri</h3>
             <p>
               Leads company strategy and delivery excellence with a strong focus on building reliable,
               business-driven technology solutions.
@@ -52,7 +52,7 @@ function AboutPage() {
               <img src="/brand-ambassador.png" alt="Brand Ambassador of Indocreonix" className="leader-photo leader-photo-top" />
             </div>
             <p className="leader-role">Brand Ambassador</p>
-            <h3>Indocreonix Brand Presence</h3>
+            <h3>Mr. Rahul Pandey</h3>
             <p>
               Represents the company publicly and strengthens brand credibility through clear communication,
               outreach, and audience engagement.

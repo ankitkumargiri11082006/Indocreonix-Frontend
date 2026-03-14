@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom'
 import PageHero from '../components/PageHero'
 import SectionBlock from '../components/SectionBlock'
 import CtaBanner from '../components/CtaBanner'
+import { servicesOffered } from '../data/services'
+import { clientsServed } from '../data/clients'
 
 const highlights = [
   {
@@ -43,6 +45,26 @@ function HomePage() {
         }
       />
       <SectionBlock title="What We Deliver" items={highlights} />
+      <SectionBlock title="Services We Offer" items={servicesOffered} />
+
+      <section className="content-section container">
+        <h2>Our Clients</h2>
+        <div className="clients-grid">
+          {clientsServed.map((client) => (
+            <a
+              className="client-card"
+              key={client.name}
+              href={client.website}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`Visit ${client.name} website`}
+            >
+              <img src={client.logo} alt={`${client.name} logo`} className="client-card-logo" loading="lazy" />
+              <h3>{client.name}</h3>
+            </a>
+          ))}
+        </div>
+      </section>
       
       <section className="container">
         <div className="cloud-illustration-wrapper">
