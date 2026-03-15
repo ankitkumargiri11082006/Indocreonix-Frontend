@@ -21,6 +21,8 @@ function AdminDashboardPage() {
     { label: 'Active Users', value: stats?.activeUsers ?? '--' },
     { label: 'Total Leads', value: stats?.totalLeads ?? '--' },
     { label: 'New Leads', value: stats?.newLeads ?? '--' },
+    { label: 'Total Applications', value: stats?.totalApplications ?? '--' },
+    { label: 'New Applications', value: stats?.newApplications ?? '--' },
     { label: 'Media Assets', value: stats?.mediaCount ?? '--' },
   ]
 

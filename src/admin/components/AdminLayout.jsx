@@ -1,5 +1,7 @@
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
+import { apiRequest } from '../../lib/apiClient'
 import { getAllowedAdminRoutes, getAllowedMenuSections } from '../permissions'
 
 const routeTitleMap = {
@@ -24,6 +26,7 @@ function AdminLayout() {
   const { user, logout } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
+  const [indicators, setIndicators] = useState({ leads: 0, applications: 0 })
   const menuSections = getAllowedMenuSections(user)
   const allRoutes = getAllowedAdminRoutes(user)
   const pageTitle = routeTitleMap[location.pathname] || 'Admin Panel'
@@ -33,6 +36,49 @@ function AdminLayout() {
       section.items.some((item) => (item.to === '/admin' ? location.pathname === '/admin' : location.pathname.startsWith(item.to))),
     ) || menuSections[0]
   const jumpValue = allRoutes.some((route) => route.to === location.pathname) ? location.pathname : allRoutes[0]?.to || ''
+
+  const visibleIndicators = useMemo(
+    () => ({
+      leads: location.pathname.startsWith('/admin/leads') ? 0 : Number(indicators.leads || 0),
+      applications: location.pathname.startsWith('/admin/applications') ? 0 : Number(indicators.applications || 0),
+    }),
+    [indicators, location.pathname],
+  )
+
+  useEffect(() => {
+    if (!user || user.role === 'viewer') return undefined
+
+    let isCancelled = false
+
+    const loadIndicators = () => {
+      apiRequest('/dashboard/indicators')
+        .then((result) => {
+          if (isCancelled) return
+          setIndicators({
+            leads: Number(result?.sections?.leads || 0),
+            applications: Number(result?.sections?.applications || 0),
+          })
+        })
+        .catch(() => {
+          if (isCancelled) return
+          setIndicators({ leads: 0, applications: 0 })
+        })
+    }
+
+    loadIndicators()
+    const intervalId = window.setInterval(loadIndicators, 20000)
+
+    return () => {
+      isCancelled = true
+      window.clearInterval(intervalId)
+    }
+  }, [user, location.pathname])
+
+  function getBadgeCount(routePath) {
+    if (routePath === '/admin/leads') return visibleIndicators.leads
+    if (routePath === '/admin/applications') return visibleIndicators.applications
+    return 0
+  }
 
   return (
     <div className="admin-shell">
@@ -57,7 +103,10 @@ function AdminLayout() {
                     end={item.to === '/admin'}
                     className={({ isActive }) => (isActive ? 'admin-menu-link active' : 'admin-menu-link')}
                   >
-                    {item.label}
+                    <span className="admin-menu-link-content">
+                      <span>{item.label}</span>
+                      {getBadgeCount(item.to) > 0 ? <span className="admin-menu-badge">{getBadgeCount(item.to)}</span> : null}
+                    </span>
                   </NavLink>
                 ))}
               </div>
