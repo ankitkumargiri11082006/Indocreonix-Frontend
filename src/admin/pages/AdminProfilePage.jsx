@@ -5,6 +5,7 @@ import { apiRequest } from '../../lib/apiClient'
 function AdminProfilePage() {
   const { user, setCurrentUser } = useAuth()
   const [avatarFile, setAvatarFile] = useState(null)
+  const [isEditingAvatar, setIsEditingAvatar] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
@@ -39,6 +40,7 @@ function AdminProfilePage() {
       setCurrentUser(result.user)
       setSuccess('Profile picture updated successfully')
       setAvatarFile(null)
+      setIsEditingAvatar(false)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -58,24 +60,56 @@ function AdminProfilePage() {
           )}
         </div>
 
-        <form className="admin-profile-avatar-form" onSubmit={handleAvatarUpload}>
-          <label className="admin-upload-field">
-            Upload / Replace Profile Picture
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(event) => setAvatarFile(event.target.files?.[0] || null)}
-            />
-            <small>Allowed: image files up to 2MB. Replacing image updates Cloudinary as well.</small>
-          </label>
+        <div className="admin-profile-avatar-form">
           <div className="admin-form-actions">
-            <button type="submit" className="btn btn-primary" disabled={uploading}>
-              {uploading ? 'Updating...' : 'Update Profile Picture'}
-            </button>
+            {!isEditingAvatar ? (
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => {
+                  setError('')
+                  setSuccess('')
+                  setIsEditingAvatar(true)
+                }}
+              >
+                Edit Profile Picture
+              </button>
+            ) : null}
           </div>
+
+          {isEditingAvatar ? (
+            <form onSubmit={handleAvatarUpload}>
+              <label className="admin-upload-field">
+                Upload / Replace Profile Picture
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(event) => setAvatarFile(event.target.files?.[0] || null)}
+                />
+                <small>Allowed: image files up to 2MB. Replacing image updates Cloudinary as well.</small>
+              </label>
+              <div className="admin-form-actions" style={{ marginTop: '0.6rem' }}>
+                <button type="submit" className="btn btn-primary" disabled={uploading}>
+                  {uploading ? 'Updating...' : 'Update Profile Picture'}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    setAvatarFile(null)
+                    setError('')
+                    setIsEditingAvatar(false)
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          ) : null}
+
           {error ? <p className="admin-error">{error}</p> : null}
           {success ? <p className="admin-success">{success}</p> : null}
-        </form>
+        </div>
       </div>
 
       <div className="admin-profile-grid">
