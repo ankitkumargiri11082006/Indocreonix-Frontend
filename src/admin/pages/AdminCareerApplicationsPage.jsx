@@ -45,6 +45,20 @@ function AdminCareerApplicationsPage() {
     }
   }
 
+  async function removeApplication(id) {
+    const confirmed = window.confirm('Delete this application permanently? CV will also be deleted from Cloudinary.')
+    if (!confirmed) return
+
+    try {
+      await apiRequest(`/careers/applications/${id}`, {
+        method: 'DELETE',
+      })
+      loadItems()
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
   async function exportCsv() {
     try {
       setError('')
@@ -108,6 +122,7 @@ function AdminCareerApplicationsPage() {
               <th>CV</th>
               <th>Status</th>
               <th>Admin Notes</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -140,6 +155,11 @@ function AdminCareerApplicationsPage() {
                       Save Note
                     </button>
                   </div>
+                </td>
+                <td>
+                  <button type="button" className="btn btn-secondary" onClick={() => removeApplication(item._id)}>
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}
