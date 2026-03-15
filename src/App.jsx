@@ -49,21 +49,126 @@ function App() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<AdminDashboardPage />} />
-        <Route path="analytics" element={<AdminAnalyticsPage />} />
-        <Route path="projects" element={<AdminProjectsPage />} />
-        <Route path="clients" element={<AdminClientsPage />} />
-        <Route path="services" element={<AdminServicesPage />} />
-        <Route path="openings" element={<AdminOpportunitiesPage />} />
-        <Route path="applications" element={<AdminCareerApplicationsPage />} />
-        <Route path="audit-logs" element={<AdminAuditLogsPage />} />
-        <Route path="users" element={<AdminUsersPage />} />
-        <Route path="leads" element={<AdminLeadsPage />} />
-        <Route path="content" element={<AdminContentPage />} />
-        <Route path="media" element={<AdminMediaPage />} />
-        <Route path="integrations" element={<AdminIntegrationsPage />} />
-        <Route path="settings" element={<AdminSettingsPage />} />
-        <Route path="profile" element={<AdminProfilePage />} />
+        <Route
+          index
+          element={
+            <ProtectedRoute permission="dashboard">
+              <AdminDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="analytics"
+          element={
+            <ProtectedRoute permission="analytics">
+              <AdminAnalyticsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="projects"
+          element={
+            <ProtectedRoute permission="projects">
+              <AdminProjectsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="clients"
+          element={
+            <ProtectedRoute permission="clients">
+              <AdminClientsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="services"
+          element={
+            <ProtectedRoute permission="services">
+              <AdminServicesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="openings"
+          element={
+            <ProtectedRoute permission="openings">
+              <AdminOpportunitiesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="applications"
+          element={
+            <ProtectedRoute permission="applications">
+              <AdminCareerApplicationsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="audit-logs"
+          element={
+            <ProtectedRoute permission="auditLogs">
+              <AdminAuditLogsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="users"
+          element={
+            <ProtectedRoute permission="users">
+              <AdminUsersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="leads"
+          element={
+            <ProtectedRoute permission="leads">
+              <AdminLeadsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="content"
+          element={
+            <ProtectedRoute permission="content">
+              <AdminContentPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="media"
+          element={
+            <ProtectedRoute permission="media">
+              <AdminMediaPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="integrations"
+          element={
+            <ProtectedRoute permission="integrations">
+              <AdminIntegrationsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="settings"
+          element={
+            <ProtectedRoute permission="settings">
+              <AdminSettingsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="profile"
+          element={
+            <ProtectedRoute permission="profile">
+              <AdminProfilePage />
+            </ProtectedRoute>
+          }
+        />
       </Route>
 
       <Route element={<PageLayout />}>
