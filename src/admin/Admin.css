@@ -976,6 +976,32 @@
   font-size: 0.86rem;
 }
 
+.admin-user-permissions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 0.55rem;
+  padding: 0.2rem;
+}
+
+.admin-permission-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.55rem;
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 18%, #e8eaed);
+  border-radius: 10px;
+  padding: 0.48rem 0.55rem;
+  background: linear-gradient(140deg, color-mix(in srgb, var(--brand-primary) 8%, #ffffff), #ffffff);
+  color: #22384f;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.admin-permission-toggle input {
+  width: 16px;
+  height: 16px;
+}
+
 @media (max-width: 1080px) {
   .auth-grid {
     grid-template-columns: 1fr;
