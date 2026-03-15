@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { apiRequest } from '../../lib/apiClient'
 
@@ -67,6 +68,12 @@ function AdminProfilePage() {
 
         <div className="admin-profile-avatar-form">
           <div className="admin-form-actions admin-profile-edit-actions">
+            <Link to="/admin/change-password" className="btn btn-primary admin-profile-password-btn">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2Zm-7-2a2 2 0 1 1 4 0v2h-4V7Zm2 9a2 2 0 0 1-1-3.73V11h2v1.27A2 2 0 0 1 12 16Z" />
+              </svg>
+              Change Password
+            </Link>
             {!isEditingAvatar ? (
               <button
                 type="button"

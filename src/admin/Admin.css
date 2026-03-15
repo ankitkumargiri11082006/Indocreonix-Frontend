@@ -161,6 +161,47 @@
   background: #ffffff;
 }
 
+.auth-password-field {
+  position: relative;
+}
+
+.auth-password-field input {
+  padding-right: 2.7rem;
+}
+
+.auth-password-toggle {
+  position: absolute;
+  right: 0.55rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.9rem;
+  height: 1.9rem;
+  border: 0;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  color: #5f6368;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.auth-password-toggle:hover {
+  background: color-mix(in srgb, var(--brand-primary) 12%, transparent);
+  color: var(--brand-primary);
+}
+
+.auth-password-toggle:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--brand-primary) 48%, white);
+  outline-offset: 2px;
+}
+
+.auth-password-toggle svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: currentColor;
+}
+
 .auth-form input:focus,
 .admin-form-grid input:focus,
 .admin-form-grid textarea:focus,
@@ -776,6 +817,10 @@
   flex-wrap: wrap;
 }
 
+.admin-form-grid .admin-form-actions {
+  grid-column: 1 / -1;
+}
+
 .admin-toolbar {
   display: grid;
   grid-template-columns: minmax(160px, 230px) auto;
@@ -965,6 +1010,48 @@
   border-radius: 999px;
   font-size: 0.82rem;
   font-weight: 700;
+}
+
+.admin-profile-password-btn {
+  min-height: 32px;
+  padding: 0.35rem 0.82rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+}
+
+.admin-profile-password-btn svg {
+  width: 0.92rem;
+  height: 0.92rem;
+  fill: currentColor;
+}
+
+.admin-password-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.44rem;
+}
+
+.admin-password-title svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  fill: currentColor;
+  color: var(--brand-primary);
+}
+
+.admin-password-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.admin-password-submit-btn svg {
+  width: 0.92rem;
+  height: 0.92rem;
+  fill: currentColor;
 }
 
 .admin-profile-grid p {

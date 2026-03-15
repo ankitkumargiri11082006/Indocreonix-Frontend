@@ -32,6 +32,7 @@ export const ADMIN_MENU_SECTIONS = [
       { label: 'Integrations', to: '/admin/integrations', permission: 'integrations' },
       { label: 'Settings', to: '/admin/settings', permission: 'settings' },
       { label: 'Profile', to: '/admin/profile', permission: 'profile' },
+      { label: 'Change Password', to: '/admin/change-password', permission: 'profile' },
     ],
   },
 ]

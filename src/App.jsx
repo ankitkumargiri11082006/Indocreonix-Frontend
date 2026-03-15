@@ -27,6 +27,7 @@ import AdminMediaPage from './admin/pages/AdminMediaPage'
 import AdminIntegrationsPage from './admin/pages/AdminIntegrationsPage'
 import AdminSettingsPage from './admin/pages/AdminSettingsPage'
 import AdminProfilePage from './admin/pages/AdminProfilePage'
+import AdminChangePasswordPage from './admin/pages/AdminChangePasswordPage'
 import AdminProjectsPage from './admin/pages/AdminProjectsPage'
 import AdminClientsPage from './admin/pages/AdminClientsPage'
 import AdminServicesPage from './admin/pages/AdminServicesPage'
@@ -180,6 +181,14 @@ function App() {
           element={
             <ProtectedRoute permission="profile">
               <AdminProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="change-password"
+          element={
+            <ProtectedRoute permission="profile">
+              <AdminChangePasswordPage />
             </ProtectedRoute>
           }
         />

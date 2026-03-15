@@ -20,6 +20,7 @@ const routeTitleMap = {
   '/admin/integrations': 'Integrations',
   '/admin/settings': 'Settings',
   '/admin/profile': 'Profile',
+  '/admin/change-password': 'Change Password',
 }
 
 function AdminLayout() {
