@@ -1,12 +1,19 @@
 import { Fragment, useEffect, useState } from 'react'
 import { apiRequest } from '../../lib/apiClient'
+import { useAuth } from '../../context/AuthContext'
 
 function AdminAuditLogsPage() {
+  const { user } = useAuth()
   const [items, setItems] = useState([])
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0, limit: 20 })
   const [filters, setFilters] = useState({ action: '', actorEmail: '', from: '', to: '' })
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const [expandedId, setExpandedId] = useState('')
+  const [deletingId, setDeletingId] = useState('')
+  const [bulkDeleting, setBulkDeleting] = useState(false)
+
+  const isSuperadmin = user?.role === 'superadmin'
 
   async function loadLogs(page = 1) {
     try {
@@ -33,7 +40,122 @@ function AdminAuditLogsPage() {
 
   function applyFilters(event) {
     event.preventDefault()
+    setSuccess('')
     loadLogs(1)
+  }
+
+  async function handleDelete(itemId) {
+    if (!isSuperadmin || !itemId) return
+
+    const confirmed = window.confirm('Delete this audit log permanently?')
+    if (!confirmed) return
+
+    setDeletingId(itemId)
+    setError('')
+    setSuccess('')
+
+    try {
+      await apiRequest(`/audit-logs/${itemId}`, {
+        method: 'DELETE',
+      })
+
+      setItems((previous) => previous.filter((item) => item._id !== itemId))
+      if (expandedId === itemId) {
+        setExpandedId('')
+      }
+      setSuccess('Deleted 1 audit log')
+      setPagination((previous) => ({
+        ...previous,
+        total: Math.max(0, (previous.total || 0) - 1),
+      }))
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setDeletingId('')
+    }
+  }
+
+  async function handleDeleteFiltered() {
+    if (!isSuperadmin) return
+
+    const hasFilter = Boolean(
+      filters.action.trim() ||
+      filters.actorEmail.trim() ||
+      filters.from ||
+      filters.to,
+    )
+
+    if (!hasFilter) {
+      setError('Apply at least one filter before bulk delete')
+      setSuccess('')
+      return
+    }
+
+    const confirmed = window.confirm('Delete all audit logs matching current filters? This cannot be undone.')
+    if (!confirmed) return
+
+    setBulkDeleting(true)
+    setError('')
+    setSuccess('')
+
+    try {
+      const params = new URLSearchParams()
+      if (filters.action.trim()) params.set('action', filters.action.trim())
+      if (filters.actorEmail.trim()) params.set('actorEmail', filters.actorEmail.trim())
+      if (filters.from) params.set('from', filters.from)
+      if (filters.to) params.set('to', filters.to)
+
+      const result = await apiRequest(`/audit-logs/cleanup?${params.toString()}`, {
+        method: 'DELETE',
+      })
+
+      const deletedCount = Number(result?.deletedCount || 0)
+      setSuccess(`Filtered cleanup complete: deleted ${deletedCount} audit log${deletedCount === 1 ? '' : 's'}`)
+
+      setExpandedId('')
+      await loadLogs(1)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setBulkDeleting(false)
+    }
+  }
+
+  async function handleDeleteOlderThan(days) {
+    if (!isSuperadmin) return
+
+    const safeDays = Number(days)
+    if (![30, 90, 180].includes(safeDays)) return
+
+    const confirmed = window.confirm(`Delete all audit logs older than ${safeDays} days? This cannot be undone.`)
+    if (!confirmed) return
+
+    setBulkDeleting(true)
+    setError('')
+    setSuccess('')
+
+    try {
+      const cutoffDate = new Date()
+      cutoffDate.setHours(0, 0, 0, 0)
+      cutoffDate.setDate(cutoffDate.getDate() - safeDays)
+
+      const params = new URLSearchParams()
+      params.set('to', cutoffDate.toISOString().slice(0, 10))
+
+      const result = await apiRequest(`/audit-logs/cleanup?${params.toString()}`, {
+        method: 'DELETE',
+      })
+
+      const deletedCount = Number(result?.deletedCount || 0)
+      setSuccess(`Retention cleanup (${safeDays}d) complete: deleted ${deletedCount} audit log${deletedCount === 1 ? '' : 's'}`)
+
+      setExpandedId('')
+      await loadLogs(1)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setBulkDeleting(false)
+    }
   }
 
   return (
@@ -79,9 +201,48 @@ function AdminAuditLogsPage() {
         </label>
 
         <button type="submit" className="btn btn-primary">Apply Filters</button>
+        {isSuperadmin ? (
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={handleDeleteFiltered}
+            disabled={bulkDeleting}
+          >
+            {bulkDeleting ? 'Deleting Filtered...' : 'Delete Filtered'}
+          </button>
+        ) : null}
+        {isSuperadmin ? (
+          <>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => handleDeleteOlderThan(30)}
+              disabled={bulkDeleting}
+            >
+              {bulkDeleting ? 'Deleting...' : 'Delete > 30d'}
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => handleDeleteOlderThan(90)}
+              disabled={bulkDeleting}
+            >
+              {bulkDeleting ? 'Deleting...' : 'Delete > 90d'}
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => handleDeleteOlderThan(180)}
+              disabled={bulkDeleting}
+            >
+              {bulkDeleting ? 'Deleting...' : 'Delete > 180d'}
+            </button>
+          </>
+        ) : null}
       </form>
 
       {error ? <p className="admin-error">{error}</p> : null}
+        {success ? <p className="admin-success">{success}</p> : null}
 
       <div className="admin-table-wrap">
         <table className="admin-table">
@@ -94,6 +255,7 @@ function AdminAuditLogsPage() {
               <th>Actor</th>
               <th>Role</th>
               <th>Details</th>
+              {isSuperadmin ? <th>Delete</th> : null}
             </tr>
           </thead>
           <tbody>
@@ -118,10 +280,22 @@ function AdminAuditLogsPage() {
                         {isExpanded ? 'Hide' : 'View'}
                       </button>
                     </td>
+                    {isSuperadmin ? (
+                      <td>
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          onClick={() => handleDelete(item._id)}
+                          disabled={deletingId === item._id}
+                        >
+                          {deletingId === item._id ? 'Deleting...' : 'Delete'}
+                        </button>
+                      </td>
+                    ) : null}
                   </tr>
                   {isExpanded ? (
                     <tr>
-                      <td colSpan={7}>
+                      <td colSpan={isSuperadmin ? 8 : 7}>
                         <div className="audit-log-detail-box">
                           <div className="audit-log-detail-grid">
                             <div>
