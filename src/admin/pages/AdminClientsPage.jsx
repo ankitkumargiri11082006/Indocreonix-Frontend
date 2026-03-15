@@ -1,0 +1,163 @@
+import { useEffect, useState } from 'react'
+import { apiRequest } from '../../lib/apiClient'
+import { uploadMediaAsset } from '../../lib/uploadMediaAsset'
+
+const initialForm = {
+  name: '',
+  logo: '',
+  website: '',
+  description: '',
+  order: 0,
+  isActive: true,
+}
+
+function AdminClientsPage() {
+  const [items, setItems] = useState([])
+  const [form, setForm] = useState(initialForm)
+  const [logoFile, setLogoFile] = useState(null)
+  const [isUploading, setIsUploading] = useState(false)
+  const [editingId, setEditingId] = useState('')
+  const [error, setError] = useState('')
+
+  async function loadItems() {
+    try {
+      const result = await apiRequest('/clients')
+      setItems(result.items || [])
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
+  useEffect(() => {
+    loadItems()
+  }, [])
+
+  async function saveItem(event) {
+    event.preventDefault()
+    setError('')
+
+    try {
+      const payload = { ...form }
+
+      if (logoFile) {
+        setIsUploading(true)
+        const uploadedUrl = await uploadMediaAsset(logoFile, form.name)
+        payload.logo = uploadedUrl
+      }
+
+      if (editingId) {
+        await apiRequest(`/clients/${editingId}`, {
+          method: 'PUT',
+          body: JSON.stringify(payload),
+        })
+      } else {
+        await apiRequest('/clients', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        })
+      }
+
+      setForm(initialForm)
+      setLogoFile(null)
+      setEditingId('')
+      loadItems()
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  async function removeItem(id) {
+    try {
+      await apiRequest(`/clients/${id}`, { method: 'DELETE' })
+      loadItems()
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
+  return (
+    <div className="admin-workbench">
+      <article className="admin-card admin-workbench-form">
+        <h3>{editingId ? 'Edit Client' : 'Add Client'}</h3>
+        <p className="admin-form-intro">Create polished client entries with logo, website, and short profile details.</p>
+        <form className="admin-form-grid" onSubmit={saveItem}>
+          <label>
+            Client Name
+            <input value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} required />
+          </label>
+          <label>
+            Website
+            <input value={form.website} onChange={(e) => setForm((prev) => ({ ...prev, website: e.target.value }))} />
+          </label>
+          <label className="admin-upload-field admin-full-row">
+            Upload Client Logo
+            <input type="file" accept="image/*" onChange={(e) => setLogoFile(e.target.files?.[0] || null)} />
+            <small>Best results: clean logo with transparent background.</small>
+          </label>
+          {form.logo || logoFile ? (
+            <div className="admin-upload-preview admin-full-row">
+              <p>Preview</p>
+              <img src={logoFile ? URL.createObjectURL(logoFile) : form.logo} alt="Client logo preview" />
+            </div>
+          ) : null}
+          <label className="admin-full-row">
+            Description
+            <textarea rows="3" value={form.description} onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))} />
+          </label>
+          <label>
+            Display Order
+            <input type="number" value={form.order} onChange={(e) => setForm((prev) => ({ ...prev, order: Number(e.target.value) }))} />
+          </label>
+          <label>
+            Active
+            <select className="admin-select" value={String(form.isActive)} onChange={(e) => setForm((prev) => ({ ...prev, isActive: e.target.value === 'true' }))}>
+              <option value="true">true</option>
+              <option value="false">false</option>
+            </select>
+          </label>
+          <div className="admin-form-actions admin-full-row">
+            <button type="submit" className="btn btn-primary" disabled={isUploading}>{isUploading ? 'Uploading...' : editingId ? 'Update Client' : 'Create Client'}</button>
+          </div>
+        </form>
+        {error ? <p className="admin-error">{error}</p> : null}
+      </article>
+
+      <article className="admin-card admin-workbench-list">
+        <h3>Clients</h3>
+        <div className="admin-table-wrap">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Website</th>
+                <th>Order</th>
+                <th>Active</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item) => (
+                <tr key={item._id}>
+                  <td>{item.name}</td>
+                  <td>{item.website || '-'}</td>
+                  <td>{item.order}</td>
+                  <td>{item.isActive ? 'Yes' : 'No'}</td>
+                  <td>
+                    <div className="admin-action-group">
+                      <button type="button" className="btn btn-secondary" onClick={() => { setEditingId(item._id); setLogoFile(null); setForm({ name: item.name, logo: item.logo || '', website: item.website || '', description: item.description || '', order: item.order || 0, isActive: item.isActive }) }}>Edit</button>
+                      <button type="button" className="btn btn-secondary" onClick={() => removeItem(item._id)}>Delete</button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </div>
+  )
+}
+
+export default AdminClientsPage

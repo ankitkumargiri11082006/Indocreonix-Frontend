@@ -1,7 +1,16 @@
+import { useEffect, useState } from 'react'
 import CompanyPage from '../components/CompanyPage'
-import { servicesOffered } from '../data/services'
+import { apiRequest } from '../lib/apiClient'
 
 function ServicesPage() {
+  const [servicesOffered, setServicesOffered] = useState([])
+
+  useEffect(() => {
+    apiRequest('/services/public')
+      .then((result) => setServicesOffered(result.items || []))
+      .catch(() => setServicesOffered([]))
+  }, [])
+
   return (
     <CompanyPage
       eyebrow="Our Services"

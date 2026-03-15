@@ -1,4 +1,13 @@
 /* Global Typography Update */
+:root {
+  --brand-primary: #4285f4;
+  --brand-secondary: #ea4335;
+  --brand-accent: #fbbc05;
+  --brand-success: #34a853;
+  --brand-heading-font: 'Outfit', 'Inter', sans-serif;
+  --brand-body-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -11,7 +20,7 @@ body,
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--brand-body-font);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -24,7 +33,7 @@ h2,
 h3,
 h4,
 .brand-text {
-  font-family: 'Outfit', 'Inter', sans-serif;
+  font-family: var(--brand-heading-font);
 }
 
 /* --- Clean Hero Styling --- */

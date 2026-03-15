@@ -1,9 +1,10 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import PageHero from '../components/PageHero'
 import SectionBlock from '../components/SectionBlock'
 import CtaBanner from '../components/CtaBanner'
-import { servicesOffered } from '../data/services'
-import { clientsServed } from '../data/clients'
+import AdaptiveLogoImage from '../components/AdaptiveLogoImage'
+import { apiRequest } from '../lib/apiClient'
 
 const highlights = [
   {
@@ -21,6 +22,19 @@ const highlights = [
 ]
 
 function HomePage() {
+  const [servicesOffered, setServicesOffered] = useState([])
+  const [clientsServed, setClientsServed] = useState([])
+
+  useEffect(() => {
+    apiRequest('/services/public')
+      .then((result) => setServicesOffered(result.items || []))
+      .catch(() => setServicesOffered([]))
+
+    apiRequest('/clients/public')
+      .then((result) => setClientsServed(result.items || []))
+      .catch(() => setClientsServed([]))
+  }, [])
+
   return (
     <>
       <PageHero
@@ -49,21 +63,32 @@ function HomePage() {
 
       <section className="content-section container">
         <h2>Our Clients</h2>
-        <div className="clients-grid">
-          {clientsServed.map((client) => (
-            <a
-              className="client-card"
-              key={client.name}
-              href={client.website}
-              target="_blank"
-              rel="noreferrer"
-              aria-label={`Visit ${client.name} website`}
-            >
-              <img src={client.logo} alt={`${client.name} logo`} className="client-card-logo" loading="lazy" />
-              <h3>{client.name}</h3>
-            </a>
-          ))}
-        </div>
+        {clientsServed.length > 0 ? (
+          <div className="clients-grid">
+            {clientsServed.map((client) => (
+              <a
+                className="client-card"
+                key={client._id || client.name}
+                href={client.website || '#'}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`Visit ${client.name} website`}
+              >
+                <AdaptiveLogoImage
+                  src={client.logo}
+                  alt={`${client.name} logo`}
+                  frameClassName="client-card-logo-wrap"
+                  imageClassName="client-card-logo"
+                />
+                <h3>{client.name}</h3>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <article className="info-card">
+            <p>No clients have been published yet. Add clients from Admin panel.</p>
+          </article>
+        )}
       </section>
       
       <section className="container">

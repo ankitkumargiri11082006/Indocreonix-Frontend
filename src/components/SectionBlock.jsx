@@ -1,3 +1,5 @@
+import AdaptiveLogoImage from './AdaptiveLogoImage'
+
 function SectionBlock({ title, items }) {
   return (
     <section className="content-section container">
@@ -6,9 +8,12 @@ function SectionBlock({ title, items }) {
         {items.map((item, index) => (
           <article className="info-card" key={item.title}>
             {item.image && (
-               <div className="info-card-image-wrap">
-                 <img src={item.image} alt={item.title} className="info-card-image" loading="lazy" />
-               </div>
+              <AdaptiveLogoImage
+                src={item.image}
+                alt={item.title}
+                frameClassName="info-card-image-wrap"
+                imageClassName="info-card-image"
+              />
             )}
             <p className="card-index">0{index + 1}</p>
             <h3>{item.title}</h3>

@@ -25,3 +25,27 @@ If you are developing a production application, we recommend using TypeScript wi
 6. Start the app with `npm run dev`.
 
 The website assistant uses a live AI chat request and website context to answer customer questions about services, pages, careers, and contact details.
+
+## Admin + Backend Connection
+
+1. Copy `.env.example` to `.env`.
+2. Set `VITE_API_BASE_URL=http://localhost:5000/api` (or your backend URL).
+3. Run frontend: `npm run dev`.
+4. Run backend separately from `../Backend` with `npm run dev`.
+
+### Auth Routes
+
+- `/login`
+- `/signup`
+
+### Admin Routes
+
+- `/admin`
+- `/admin/analytics`
+- `/admin/users`
+- `/admin/leads`
+- `/admin/content`
+- `/admin/media`
+- `/admin/integrations`
+- `/admin/settings`
+- `/admin/profile`

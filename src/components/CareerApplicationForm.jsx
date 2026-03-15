@@ -1,8 +1,11 @@
 import { useState } from 'react'
+import { useEffect } from 'react'
 import { companyInfo } from '../data/companyInfo'
+import { apiRequest, apiBaseUrl } from '../lib/apiClient'
 
 function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
   const initialData = {
+    opportunityId: '',
     fullName: '',
     email: '',
     phone: '',
@@ -15,17 +18,71 @@ function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
   }
 
   const [formData, setFormData] = useState(initialData)
+  const [cvFile, setCvFile] = useState(null)
   const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [opportunities, setOpportunities] = useState([])
+
+  useEffect(() => {
+    apiRequest(`/careers/opportunities/public?type=${roleType}`)
+      .then((result) => setOpportunities(result.items || []))
+      .catch(() => setOpportunities([]))
+  }, [roleType])
 
   const onChange = (event) => {
     const { name, value } = event.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const onSubmit = (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault()
-    setSubmitted(true)
-    setFormData(initialData)
+    setSubmitted(false)
+    setError('')
+
+    if (!cvFile) {
+      setError('Please upload your CV in PDF format (max 2MB).')
+      return
+    }
+
+    if (cvFile.size > 2 * 1024 * 1024) {
+      setError('CV file size must be 2MB or less.')
+      return
+    }
+
+    if (!cvFile.name.toLowerCase().endsWith('.pdf')) {
+      setError('Only PDF files are allowed for CV upload.')
+      return
+    }
+
+    setLoading(true)
+
+    const multipart = new FormData()
+    Object.entries(formData).forEach(([key, value]) => {
+      multipart.append(key, value)
+    })
+    multipart.append('roleType', roleType)
+    multipart.append('cv', cvFile)
+
+    try {
+      await fetch(`${apiBaseUrl()}/careers/applications`, {
+        method: 'POST',
+        body: multipart,
+      }).then(async (response) => {
+        const data = await response.json()
+        if (!response.ok) {
+          throw new Error(data.message || 'Failed to submit application')
+        }
+      })
+
+      setSubmitted(true)
+      setFormData(initialData)
+      setCvFile(null)
+    } catch (submissionError) {
+      setError(submissionError.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -36,6 +93,20 @@ function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
         {submitted ? <p className="form-success">{successMessage}</p> : null}
 
         <form onSubmit={onSubmit} className="career-form">
+          {opportunities.length > 0 ? (
+            <label>
+              Select {roleType === 'internship' ? 'Internship' : 'Job'} Opening
+              <select name="opportunityId" value={formData.opportunityId} onChange={onChange}>
+                <option value="">General Application</option>
+                {opportunities.map((item) => (
+                  <option key={item._id} value={item._id}>
+                    {item.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
+
           <label>
             Full Name
             <input name="fullName" value={formData.fullName} onChange={onChange} required />
@@ -65,15 +136,29 @@ function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
             <input name="experience" value={formData.experience} onChange={onChange} required />
           </label>
           <label>
-            Resume / Portfolio Link
-            <input name="portfolio" value={formData.portfolio} onChange={onChange} placeholder="https://" required />
+            Portfolio / LinkedIn Link (Optional)
+            <input name="portfolio" value={formData.portfolio} onChange={onChange} placeholder="https://" />
+          </label>
+          <label>
+            Upload CV (PDF only, max 2MB)
+            <input
+              type="file"
+              accept="application/pdf,.pdf"
+              onChange={(event) => setCvFile(event.target.files?.[0] || null)}
+              required
+            />
           </label>
           <label>
             Why are you a good fit?
             <textarea name="message" value={formData.message} onChange={onChange} rows="4" required />
           </label>
+          {error ? <p className="auth-error">{error}</p> : null}
           <button type="submit" className="btn btn-primary">
-            {roleType === 'internship' ? 'Submit Internship Application' : 'Submit Job Application'}
+            {loading
+              ? 'Submitting...'
+              : roleType === 'internship'
+                ? 'Submit Internship Application'
+                : 'Submit Job Application'}
           </button>
         </form>
 

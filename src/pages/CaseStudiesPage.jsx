@@ -1,23 +1,30 @@
+import { useEffect, useMemo, useState } from 'react'
 import PageHero from '../components/PageHero'
 import SectionBlock from '../components/SectionBlock'
 import CtaBanner from '../components/CtaBanner'
-
-const sectionItems = [
-  {
-    title: 'Multi-Industry Project Delivery',
-    description: 'Indocreonix has delivered websites, internal tools, and business software for organizations across different sectors.',
-  },
-  {
-    title: 'Web + Software Implementation',
-    description: 'From public-facing websites to full operational systems, we build practical, maintainable digital products.',
-  },
-  {
-    title: 'Reliable Long-Term Support',
-    description: 'Our delivery approach includes implementation quality, handover clarity, and post-launch support where required.',
-  },
-]
+import { apiRequest } from '../lib/apiClient'
 
 function CaseStudiesPage() {
+  const [projects, setProjects] = useState([])
+
+  useEffect(() => {
+    apiRequest('/projects/public')
+      .then((result) => setProjects(result.items || []))
+      .catch(() => setProjects([]))
+  }, [])
+
+  const featuredProject = useMemo(() => {
+    return projects.find((project) => project.featured) || projects[0]
+  }, [projects])
+
+  const sectionItems = useMemo(() => {
+    return projects.map((project) => ({
+      title: project.title,
+      description: project.summary,
+      image: project.logo,
+    }))
+  }, [projects])
+
   return (
     <>
       <PageHero
@@ -34,26 +41,31 @@ function CaseStudiesPage() {
 
       <section className="content-section container">
         <h2>Featured Project</h2>
-        <article className="project-highlight-card">
-          <img
-            src="https://res.cloudinary.com/dmmll82la/image/upload/v1766683651/ddka-logo_ywnhyh.png"
-            alt="Dhanbad District Kabaddi Association logo"
-            className="project-highlight-logo"
-          />
-          <div>
-            <p className="project-highlight-tag">Sports Organization Technology Delivery</p>
-            <h3>Dhanbad District Kabaddi Association (DDKA)</h3>
-            <p>
-              Indocreonix built the official website for Dhanbad District Kabaddi Association and delivered a full
-              software system to store and manage kabaddi player data for the district.
-            </p>
-            <p>
-              <a href="https://dhanbadkabaddiassociation.tech/" target="_blank" rel="noreferrer" className="contact-link">
-                Visit DDKA Website
-              </a>
-            </p>
-          </div>
-        </article>
+        {featuredProject ? (
+          <article className="project-highlight-card">
+            <img
+              src={featuredProject.logo}
+              alt={`${featuredProject.title} logo`}
+              className="project-highlight-logo"
+            />
+            <div>
+              <p className="project-highlight-tag">{featuredProject.category || 'Project Delivery'}</p>
+              <h3>{featuredProject.title}</h3>
+              <p>{featuredProject.details || featuredProject.summary}</p>
+              {featuredProject.website ? (
+                <p>
+                  <a href={featuredProject.website} target="_blank" rel="noreferrer" className="contact-link">
+                    Visit Project Website
+                  </a>
+                </p>
+              ) : null}
+            </div>
+          </article>
+        ) : (
+          <article className="info-card">
+            <p>No projects have been published yet. Add projects from Admin panel.</p>
+          </article>
+        )}
       </section>
 
       <SectionBlock title="More Project Work by Indocreonix" items={sectionItems} />
