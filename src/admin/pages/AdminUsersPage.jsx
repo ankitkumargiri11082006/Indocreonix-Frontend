@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { apiRequest } from '../../lib/apiClient'
 import { useAuth } from '../../context/AuthContext'
 
@@ -26,9 +26,9 @@ function AdminUsersPage() {
   const { user: currentUser } = useAuth()
   const [users, setUsers] = useState([])
   const [roleDrafts, setRoleDrafts] = useState({})
-  const [expandedPermissionsUserId, setExpandedPermissionsUserId] = useState('')
   const [error, setError] = useState('')
   const [loadingPermissionKey, setLoadingPermissionKey] = useState('')
+  const [loadingAllPermissionsUserId, setLoadingAllPermissionsUserId] = useState('')
   const [savingRoleUserId, setSavingRoleUserId] = useState('')
 
   const isSuperadmin = currentUser?.role === 'superadmin'
@@ -104,6 +104,41 @@ function AdminUsersPage() {
     }
   }
 
+  async function toggleAllPermissions(targetUser) {
+    if (!isSuperadmin || targetUser.role !== 'admin') return
+
+    const allEnabled = permissionOptions.every((permission) => Boolean(targetUser.permissions?.[permission.key]))
+    const nextPermissions = permissionOptions.reduce((accumulator, permission) => {
+      accumulator[permission.key] = !allEnabled
+      return accumulator
+    }, {})
+
+    setLoadingAllPermissionsUserId(targetUser._id)
+    setError('')
+
+    try {
+      await apiRequest(`/users/${targetUser._id}/permissions`, {
+        method: 'PATCH',
+        body: JSON.stringify({ permissions: nextPermissions }),
+      })
+
+      setUsers((previous) =>
+        previous.map((user) =>
+          user._id === targetUser._id
+            ? {
+                ...user,
+                permissions: nextPermissions,
+              }
+            : user,
+        ),
+      )
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoadingAllPermissionsUserId('')
+    }
+  }
+
   async function saveRole(targetUser) {
     if (!isSuperadmin) return
 
@@ -119,7 +154,6 @@ function AdminUsersPage() {
         body: JSON.stringify({ role: nextRole }),
       })
       await loadUsers()
-      setExpandedPermissionsUserId((previous) => (previous === targetUser._id ? '' : previous))
     } catch (err) {
       setError(err.message)
     } finally {
@@ -138,117 +172,129 @@ function AdminUsersPage() {
         </p>
       ) : null}
       {error ? <p className="admin-error">{error}</p> : null}
-      <div className="admin-table-wrap">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th>Role Management</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <Fragment key={user._id}>
-                <tr>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>{user.role}</td>
-                  <td>{user.isActive ? 'Active' : 'Disabled'}</td>
-                  <td>
-                    {isSuperadmin ? (
-                      <div className="admin-action-group">
-                        <select
-                          className="admin-select"
-                          value={roleDrafts[user._id] || user.role}
-                          onChange={(event) =>
-                            setRoleDrafts((previous) => ({
-                              ...previous,
-                              [user._id]: event.target.value,
-                            }))
-                          }
-                          disabled={user.role === 'superadmin' || user._id === currentUser?._id || savingRoleUserId === user._id}
-                        >
-                          <option value="superadmin">superadmin</option>
-                          {roleOptions.map((roleOption) => (
-                            <option key={roleOption} value={roleOption}>
-                              {roleOption}
-                            </option>
-                          ))}
-                        </select>
-                        <button
-                          type="button"
-                          className="btn btn-secondary"
-                          onClick={() => saveRole(user)}
-                          disabled={
-                            user.role === 'superadmin' ||
-                            user._id === currentUser?._id ||
-                            savingRoleUserId === user._id ||
-                            (roleDrafts[user._id] || user.role) === user.role
-                          }
-                        >
-                          {savingRoleUserId === user._id ? 'Saving...' : 'Save Role'}
-                        </button>
-                      </div>
-                    ) : (
-                      <span>-</span>
-                    )}
-                  </td>
-                  <td>
-                    <div className="admin-action-group">
-                      {isSuperadmin ? (
-                        <button type="button" className="btn btn-secondary" onClick={() => toggleStatus(user)}>
-                          {user.isActive ? 'Disable' : 'Enable'}
-                        </button>
-                      ) : null}
+      <div className="admin-user-cards">
+        {users.map((user) => {
+          const canEditUser = isSuperadmin && user._id !== currentUser?._id
+          const canManagePermissions = isSuperadmin && user.role === 'admin'
+          const allEnabled = permissionOptions.every((permission) => Boolean(user.permissions?.[permission.key]))
 
-                      {isSuperadmin && user.role === 'admin' ? (
-                        <button
-                          type="button"
-                          className="btn btn-secondary"
-                          onClick={() =>
-                            setExpandedPermissionsUserId((previous) => (previous === user._id ? '' : user._id))
-                          }
-                        >
-                          {expandedPermissionsUserId === user._id ? 'Hide Access' : 'Manage Access'}
-                        </button>
-                      ) : null}
+          return (
+            <section className="admin-user-card" key={user._id}>
+              <header className="admin-user-head">
+                <div className="admin-user-avatar">{user.name?.trim()?.charAt(0)?.toUpperCase() || 'U'}</div>
+                <div className="admin-user-meta">
+                  <h4>{user.name}</h4>
+                  <p>{user.email}</p>
+                </div>
+                <span className={`admin-user-role-badge ${user.role}`}>{user.role}</span>
+              </header>
+
+              <div className="admin-user-row">
+                <p className="admin-user-label">Role</p>
+                <div className="admin-action-group">
+                  <select
+                    className="admin-select"
+                    value={roleDrafts[user._id] || user.role}
+                    onChange={(event) =>
+                      setRoleDrafts((previous) => ({
+                        ...previous,
+                        [user._id]: event.target.value,
+                      }))
+                    }
+                    disabled={!canEditUser || savingRoleUserId === user._id}
+                  >
+                    <option value="superadmin">superadmin</option>
+                    {roleOptions.map((roleOption) => (
+                      <option key={roleOption} value={roleOption}>
+                        {roleOption}
+                      </option>
+                    ))}
+                  </select>
+                  {isSuperadmin ? (
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => saveRole(user)}
+                      disabled={
+                        !canEditUser ||
+                        savingRoleUserId === user._id ||
+                        (roleDrafts[user._id] || user.role) === user.role
+                      }
+                    >
+                      {savingRoleUserId === user._id ? 'Saving...' : 'Save Role'}
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+
+              <div className="admin-user-row admin-user-row-status">
+                <p className="admin-user-label">Status</p>
+                <div className="admin-action-group">
+                  <span className={`admin-user-status ${user.isActive ? 'active' : 'disabled'}`}>
+                    {user.isActive ? 'Active' : 'Disabled'}
+                  </span>
+                  {isSuperadmin ? (
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => toggleStatus(user)}
+                      disabled={!canEditUser}
+                    >
+                      {user.isActive ? 'Disable' : 'Enable'}
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+
+              {canManagePermissions ? (
+                <div className="admin-user-access-box">
+                  <div className="admin-user-access-top">
+                    <div>
+                      <p className="admin-user-access-title">All Access</p>
+                      <p className="admin-user-access-copy">Enable or remove all module permissions in one action.</p>
                     </div>
-                  </td>
-                </tr>
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => toggleAllPermissions(user)}
+                      disabled={loadingAllPermissionsUserId === user._id}
+                    >
+                      {loadingAllPermissionsUserId === user._id ? 'Saving...' : allEnabled ? 'All Off' : 'All On'}
+                    </button>
+                  </div>
 
-                {isSuperadmin && user.role === 'admin' && expandedPermissionsUserId === user._id ? (
-                  <tr>
-                    <td colSpan={6}>
-                      <div className="admin-user-permissions-grid">
-                        {permissionOptions.map((permission) => {
-                          const controlId = `${user._id}-${permission.key}`
-                          const loadingKey = `${user._id}:${permission.key}`
+                  <div className="admin-user-permissions-grid">
+                    {permissionOptions.map((permission) => {
+                      const controlId = `${user._id}-${permission.key}`
+                      const loadingKey = `${user._id}:${permission.key}`
 
-                          return (
-                            <label htmlFor={controlId} key={permission.key} className="admin-permission-toggle">
-                              <span>{permission.label}</span>
-                              <input
-                                id={controlId}
-                                type="checkbox"
-                                checked={Boolean(user.permissions?.[permission.key])}
-                                disabled={loadingPermissionKey === loadingKey}
-                                onChange={() => togglePermission(user, permission.key)}
-                              />
-                            </label>
-                          )
-                        })}
-                      </div>
-                    </td>
-                  </tr>
-                ) : null}
-              </Fragment>
-            ))}
-          </tbody>
-        </table>
+                      return (
+                        <label htmlFor={controlId} key={permission.key} className="admin-permission-toggle">
+                          <span>{permission.label}</span>
+                          <input
+                            id={controlId}
+                            type="checkbox"
+                            checked={Boolean(user.permissions?.[permission.key])}
+                            disabled={
+                              loadingPermissionKey === loadingKey ||
+                              loadingAllPermissionsUserId === user._id
+                            }
+                            onChange={() => togglePermission(user, permission.key)}
+                          />
+                        </label>
+                      )
+                    })}
+                  </div>
+                </div>
+              ) : (
+                <div className="admin-user-access-box muted">
+                  <p className="admin-user-access-title">Permissions</p>
+                  <p className="admin-user-access-copy">Module-level access controls appear when role is set to admin.</p>
+                </div>
+              )}
+            </section>
+          )
+        })}
       </div>
     </article>
   )
