@@ -1269,3 +1269,213 @@
     display: none;
   }
 }
+
+@media (max-width: 768px) {
+  .admin-sidebar {
+    padding: 0.65rem;
+    gap: 0.55rem;
+  }
+
+  .admin-brand img {
+    width: 44px;
+    height: 44px;
+  }
+
+  .admin-brand-title {
+    font-size: 0.98rem;
+  }
+
+  .admin-brand-sub {
+    font-size: 0.74rem;
+  }
+
+  .admin-menu {
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
+  }
+
+  .admin-menu-section {
+    gap: 0.35rem;
+  }
+
+  .admin-menu-link {
+    padding: 0.55rem 0.62rem;
+    font-size: 0.86rem;
+  }
+
+  .admin-menu-badge {
+    min-width: 1.2rem;
+    height: 1.2rem;
+    font-size: 0.68rem;
+  }
+
+  .admin-main {
+    min-width: 0;
+  }
+
+  .admin-topbar {
+    padding: 0.6rem 0.7rem;
+  }
+
+  .admin-topbar h1 {
+    font-size: 1.06rem;
+  }
+
+  .admin-topbar-right {
+    gap: 0.42rem;
+  }
+
+  .admin-topbar-quick-links {
+    display: none;
+  }
+
+  .admin-topbar-jump-wrap,
+  .admin-topbar-jump {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .admin-topbar-jump {
+    min-height: 36px;
+  }
+
+  .admin-topbar-user {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .admin-content {
+    padding: 0.62rem;
+    gap: 0.62rem;
+  }
+
+  .admin-card {
+    padding: 0.72rem;
+  }
+
+  .admin-card.metric h3 {
+    font-size: 1.45rem;
+  }
+
+  .admin-table-wrap {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  .admin-table {
+    font-size: 0.86rem;
+    min-width: 640px;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 0.46rem 0.4rem;
+  }
+
+  .admin-action-group {
+    gap: 0.4rem;
+  }
+
+  .admin-pagination {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-action-group.end {
+    justify-content: flex-start;
+  }
+
+  .admin-form-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .admin-form-actions .btn {
+    width: 100%;
+  }
+
+  .admin-user-row .admin-action-group .admin-select {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .admin-user-permissions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-workbench-list .admin-table-wrap {
+    max-height: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .admin-loading-screen {
+    padding: 0.8rem;
+  }
+
+  .admin-sidebar {
+    padding: 0.58rem;
+  }
+
+  .admin-topbar {
+    padding: 0.55rem;
+  }
+
+  .admin-topbar-label {
+    font-size: 0.74rem;
+  }
+
+  .admin-topbar h1 {
+    font-size: 0.98rem;
+  }
+
+  .admin-topbar-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .admin-topbar-user-name {
+    font-size: 0.86rem;
+  }
+
+  .admin-topbar-user-role {
+    font-size: 0.72rem;
+  }
+
+  .admin-content {
+    padding: 0.56rem;
+  }
+
+  .admin-menu-section-title {
+    font-size: 0.69rem;
+    letter-spacing: 0.07em;
+  }
+
+  .admin-card {
+    border-radius: 12px;
+    padding: 0.66rem;
+  }
+
+  .admin-card h3 {
+    font-size: 1rem;
+  }
+
+  .admin-card > p,
+  .admin-form-intro,
+  .admin-muted,
+  .admin-pagination p {
+    font-size: 0.82rem;
+  }
+
+  .admin-upload-field,
+  .admin-user-access-box,
+  .audit-log-detail-box {
+    padding: 0.62rem;
+  }
+
+  .btn {
+    min-height: 36px;
+    padding: 0.4rem 0.65rem;
+    font-size: 0.82rem;
+  }
+}
