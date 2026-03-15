@@ -23,6 +23,12 @@ export function AuthProvider({ children }) {
       .finally(() => setLoading(false))
   }, [])
 
+  async function refreshUser() {
+    const result = await apiRequest('/auth/me')
+    setUser(result.user)
+    return result.user
+  }
+
   const value = useMemo(
     () => ({
       user,
@@ -50,6 +56,10 @@ export function AuthProvider({ children }) {
         localStorage.removeItem('indocx_token')
         setUser(null)
       },
+      setCurrentUser(nextUser) {
+        setUser(nextUser)
+      },
+      refreshUser,
     }),
     [user, loading]
   )
