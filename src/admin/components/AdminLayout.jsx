@@ -27,6 +27,7 @@ function AdminLayout() {
   const location = useLocation()
   const navigate = useNavigate()
   const [indicators, setIndicators] = useState({ leads: 0, applications: 0 })
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const menuSections = getAllowedMenuSections(user)
   const allRoutes = getAllowedAdminRoutes(user)
   const pageTitle = routeTitleMap[location.pathname] || 'Admin Panel'
@@ -74,15 +75,38 @@ function AdminLayout() {
     }
   }, [user, location.pathname])
 
+  useEffect(() => {
+    setIsMobileMenuOpen(false)
+  }, [location.pathname])
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) return undefined
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [isMobileMenuOpen])
+
   function getBadgeCount(routePath) {
     if (routePath === '/admin/leads') return visibleIndicators.leads
     if (routePath === '/admin/applications') return visibleIndicators.applications
     return 0
   }
 
+  function handleMobileMenuToggle() {
+    setIsMobileMenuOpen((previous) => !previous)
+  }
+
+  function handleMobileMenuClose() {
+    setIsMobileMenuOpen(false)
+  }
+
   return (
     <div className="admin-shell">
-      <aside className="admin-sidebar">
+      <aside className={`admin-sidebar${isMobileMenuOpen ? ' mobile-open' : ''}`}>
         <div className="admin-brand">
           <img src="/logo.png" alt="Indocreonix" />
           <div>
@@ -102,6 +126,7 @@ function AdminLayout() {
                     to={item.to}
                     end={item.to === '/admin'}
                     className={({ isActive }) => (isActive ? 'admin-menu-link active' : 'admin-menu-link')}
+                    onClick={handleMobileMenuClose}
                   >
                     <span className="admin-menu-link-content">
                       <span>{item.label}</span>
@@ -116,16 +141,39 @@ function AdminLayout() {
           )}
         </nav>
 
-        <button type="button" className="admin-logout-btn" onClick={logout}>
+        <button
+          type="button"
+          className="admin-logout-btn"
+          onClick={() => {
+            handleMobileMenuClose()
+            logout()
+          }}
+        >
           Logout
         </button>
       </aside>
 
+      {isMobileMenuOpen ? <button type="button" className="admin-mobile-overlay" onClick={handleMobileMenuClose} aria-label="Close menu" /> : null}
+
       <section className="admin-main">
         <header className="admin-topbar">
-          <div className="admin-topbar-title-wrap">
+          <div className="admin-topbar-title-area">
+            <button
+              type="button"
+              className={`admin-mobile-menu-btn${isMobileMenuOpen ? ' open' : ''}`}
+              onClick={handleMobileMenuToggle}
+              aria-label={isMobileMenuOpen ? 'Close admin menu' : 'Open admin menu'}
+              aria-expanded={isMobileMenuOpen}
+            >
+              <span />
+              <span />
+              <span />
+            </button>
+
+            <div className="admin-topbar-title-wrap">
             <p className="admin-topbar-label">Admin Workspace</p>
             <h1>{pageTitle}</h1>
+            </div>
           </div>
           <div className="admin-topbar-right">
             <div className="admin-topbar-quick-links" aria-label="Quick section navigation">
