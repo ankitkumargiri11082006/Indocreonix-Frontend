@@ -20,19 +20,30 @@ const permissionOptions = [
   { key: 'profile', label: 'Profile' },
 ]
 
+const roleOptions = ['admin', 'editor', 'viewer']
+
 function AdminUsersPage() {
   const { user: currentUser } = useAuth()
   const [users, setUsers] = useState([])
+  const [roleDrafts, setRoleDrafts] = useState({})
   const [expandedPermissionsUserId, setExpandedPermissionsUserId] = useState('')
   const [error, setError] = useState('')
   const [loadingPermissionKey, setLoadingPermissionKey] = useState('')
+  const [savingRoleUserId, setSavingRoleUserId] = useState('')
 
   const isSuperadmin = currentUser?.role === 'superadmin'
 
   async function loadUsers() {
     try {
       const result = await apiRequest('/users')
-      setUsers(result.users || [])
+      const nextUsers = result.users || []
+      setUsers(nextUsers)
+      setRoleDrafts(
+        nextUsers.reduce((accumulator, user) => {
+          accumulator[user._id] = user.role
+          return accumulator
+        }, {}),
+      )
     } catch (err) {
       setError(err.message)
     }
@@ -93,9 +104,39 @@ function AdminUsersPage() {
     }
   }
 
+  async function saveRole(targetUser) {
+    if (!isSuperadmin) return
+
+    const nextRole = roleDrafts[targetUser._id]
+    if (!nextRole || nextRole === targetUser.role) return
+
+    setSavingRoleUserId(targetUser._id)
+    setError('')
+
+    try {
+      await apiRequest(`/users/${targetUser._id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ role: nextRole }),
+      })
+      await loadUsers()
+      setExpandedPermissionsUserId((previous) => (previous === targetUser._id ? '' : previous))
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setSavingRoleUserId('')
+    }
+  }
+
+  const adminCount = users.filter((user) => user.role === 'admin').length
+
   return (
     <article className="admin-card wide">
       <h3>User Management</h3>
+      {isSuperadmin ? (
+        <p className="admin-muted">
+          Superadmin controls: assign roles first, then use <strong>Manage Access</strong> for admin permission toggles. Admins: {adminCount}
+        </p>
+      ) : null}
       {error ? <p className="admin-error">{error}</p> : null}
       <div className="admin-table-wrap">
         <table className="admin-table">
@@ -105,6 +146,7 @@ function AdminUsersPage() {
               <th>Email</th>
               <th>Role</th>
               <th>Status</th>
+              <th>Role Management</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -116,6 +158,45 @@ function AdminUsersPage() {
                   <td>{user.email}</td>
                   <td>{user.role}</td>
                   <td>{user.isActive ? 'Active' : 'Disabled'}</td>
+                  <td>
+                    {isSuperadmin ? (
+                      <div className="admin-action-group">
+                        <select
+                          className="admin-select"
+                          value={roleDrafts[user._id] || user.role}
+                          onChange={(event) =>
+                            setRoleDrafts((previous) => ({
+                              ...previous,
+                              [user._id]: event.target.value,
+                            }))
+                          }
+                          disabled={user.role === 'superadmin' || user._id === currentUser?._id || savingRoleUserId === user._id}
+                        >
+                          <option value="superadmin">superadmin</option>
+                          {roleOptions.map((roleOption) => (
+                            <option key={roleOption} value={roleOption}>
+                              {roleOption}
+                            </option>
+                          ))}
+                        </select>
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          onClick={() => saveRole(user)}
+                          disabled={
+                            user.role === 'superadmin' ||
+                            user._id === currentUser?._id ||
+                            savingRoleUserId === user._id ||
+                            (roleDrafts[user._id] || user.role) === user.role
+                          }
+                        >
+                          {savingRoleUserId === user._id ? 'Saving...' : 'Save Role'}
+                        </button>
+                      </div>
+                    ) : (
+                      <span>-</span>
+                    )}
+                  </td>
                   <td>
                     <div className="admin-action-group">
                       {isSuperadmin ? (
@@ -141,7 +222,7 @@ function AdminUsersPage() {
 
                 {isSuperadmin && user.role === 'admin' && expandedPermissionsUserId === user._id ? (
                   <tr>
-                    <td colSpan={5}>
+                    <td colSpan={6}>
                       <div className="admin-user-permissions-grid">
                         {permissionOptions.map((permission) => {
                           const controlId = `${user._id}-${permission.key}`
