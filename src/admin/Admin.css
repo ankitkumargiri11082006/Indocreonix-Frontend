@@ -1007,12 +1007,15 @@
   width: 40px;
   height: 40px;
   border-radius: 999px;
-  display: grid;
-  place-items: center;
-  font-weight: 700;
-  font-size: 0.94rem;
-  color: #fff;
-  background: linear-gradient(145deg, var(--brand-primary), color-mix(in srgb, var(--brand-secondary) 32%, var(--brand-primary)));
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--brand-primary) 18%, #d6e0eb);
+  background: #ffffff;
+}
+
+.admin-user-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .admin-user-meta h4 {

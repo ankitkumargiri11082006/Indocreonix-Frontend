@@ -181,7 +181,18 @@ function AdminUsersPage() {
           return (
             <section className="admin-user-card" key={user._id}>
               <header className="admin-user-head">
-                <div className="admin-user-avatar">{user.name?.trim()?.charAt(0)?.toUpperCase() || 'U'}</div>
+                <div className="admin-user-avatar">
+                  <img
+                    src={user.avatarUrl || '/logo.png'}
+                    alt={`${user.name || 'User'} profile`}
+                    className="admin-user-avatar-img"
+                    onError={(event) => {
+                      if (event.currentTarget.dataset.fallbackApplied) return
+                      event.currentTarget.dataset.fallbackApplied = 'true'
+                      event.currentTarget.src = '/logo.png'
+                    }}
+                  />
+                </div>
                 <div className="admin-user-meta">
                   <h4>{user.name}</h4>
                   <p>{user.email}</p>

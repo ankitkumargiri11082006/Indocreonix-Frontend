@@ -100,7 +100,16 @@ function AdminLayout() {
             ) : null}
             <div className="admin-topbar-user">
               <div className="admin-topbar-avatar">
-                <img src={topbarAvatar} alt="Admin avatar" className="admin-topbar-avatar-img" />
+                <img
+                  src={topbarAvatar}
+                  alt="Admin avatar"
+                  className="admin-topbar-avatar-img"
+                  onError={(event) => {
+                    if (event.currentTarget.dataset.fallbackApplied) return
+                    event.currentTarget.dataset.fallbackApplied = 'true'
+                    event.currentTarget.src = '/logo.png'
+                  }}
+                />
               </div>
               <div>
                 <p className="admin-topbar-user-name">{user?.name || 'Admin User'}</p>

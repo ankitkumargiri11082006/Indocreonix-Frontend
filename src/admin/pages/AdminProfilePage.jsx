@@ -14,7 +14,7 @@ function AdminProfilePage() {
     if (avatarFile) {
       return URL.createObjectURL(avatarFile)
     }
-    return user?.avatarUrl || ''
+    return user?.avatarUrl || '/logo.png'
   }, [avatarFile, user?.avatarUrl])
 
   async function handleAvatarUpload(event) {
@@ -53,11 +53,16 @@ function AdminProfilePage() {
       <h3>Profile</h3>
       <div className="admin-profile-avatar-section">
         <div className="admin-profile-avatar-wrap">
-          {previewUrl ? (
-            <img src={previewUrl} alt="Admin profile" className="admin-profile-avatar" />
-          ) : (
-            <div className="admin-profile-avatar-fallback">{user?.name?.trim()?.[0]?.toUpperCase() || 'A'}</div>
-          )}
+          <img
+            src={previewUrl}
+            alt="Admin profile"
+            className="admin-profile-avatar"
+            onError={(event) => {
+              if (event.currentTarget.dataset.fallbackApplied) return
+              event.currentTarget.dataset.fallbackApplied = 'true'
+              event.currentTarget.src = '/logo.png'
+            }}
+          />
         </div>
 
         <div className="admin-profile-avatar-form">
