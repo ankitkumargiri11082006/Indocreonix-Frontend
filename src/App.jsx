@@ -1,4 +1,5 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import PageLayout from './components/PageLayout'
 import HomePage from './pages/HomePage'
 import AboutPage from './pages/AboutPage'
@@ -35,20 +36,33 @@ import AdminAuditLogsPage from './admin/pages/AdminAuditLogsPage'
 import './App.css'
 import './admin/Admin.css'
 
+function ScrollToTopOnRouteChange() {
+  const location = useLocation()
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [location.pathname])
+
+  return null
+}
+
 function App() {
   return (
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<SignupPage />} />
+    <>
+      <ScrollToTopOnRouteChange />
 
-      <Route
-        path="/admin"
-        element={
-          <ProtectedRoute roles={['superadmin', 'admin', 'editor', 'viewer']}>
-            <AdminLayout />
-          </ProtectedRoute>
-        }
-      >
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute roles={['superadmin', 'admin', 'editor', 'viewer']}>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
         <Route
           index
           element={
@@ -169,25 +183,26 @@ function App() {
             </ProtectedRoute>
           }
         />
-      </Route>
+        </Route>
 
-      <Route element={<PageLayout />}>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/services" element={<ServicesPage />} />
-        <Route path="/solutions" element={<SolutionsPage />} />
-        <Route path="/products" element={<ProductsPage />} />
-        <Route path="/case-studies" element={<CaseStudiesPage />} />
-        <Route path="/careers" element={<CareersPage />} />
-        <Route path="/careers/internship" element={<InternshipApplyPage />} />
-        <Route path="/careers/job" element={<JobApplyPage />} />
-        <Route path="/insights" element={<InsightsPage />} />
-        <Route path="/faq" element={<FaqPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Route>
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        <Route element={<PageLayout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/solutions" element={<SolutionsPage />} />
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/case-studies" element={<CaseStudiesPage />} />
+          <Route path="/careers" element={<CareersPage />} />
+          <Route path="/careers/internship" element={<InternshipApplyPage />} />
+          <Route path="/careers/job" element={<JobApplyPage />} />
+          <Route path="/insights" element={<InsightsPage />} />
+          <Route path="/faq" element={<FaqPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
   )
 }
 
