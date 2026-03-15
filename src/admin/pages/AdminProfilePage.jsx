@@ -61,18 +61,18 @@ function AdminProfilePage() {
         </div>
 
         <div className="admin-profile-avatar-form">
-          <div className="admin-form-actions">
+          <div className="admin-form-actions admin-profile-edit-actions">
             {!isEditingAvatar ? (
               <button
                 type="button"
-                className="btn btn-secondary"
+                className="btn btn-secondary admin-profile-edit-btn"
                 onClick={() => {
                   setError('')
                   setSuccess('')
                   setIsEditingAvatar(true)
                 }}
               >
-                Edit Profile Picture
+                Edit
               </button>
             ) : null}
           </div>

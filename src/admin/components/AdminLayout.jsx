@@ -62,7 +62,7 @@ function AdminLayout() {
   const location = useLocation()
   const navigate = useNavigate()
   const pageTitle = routeTitleMap[location.pathname] || 'Admin Panel'
-  const userInitial = user?.name?.trim()?.[0]?.toUpperCase() || 'A'
+  const topbarAvatar = user?.avatarUrl || '/logo.png'
   const activeSection =
     menuSections.find((section) =>
       section.items.some((item) => (item.to === '/admin' ? location.pathname === '/admin' : location.pathname.startsWith(item.to))),
@@ -128,7 +128,9 @@ function AdminLayout() {
               </select>
             </label>
             <div className="admin-topbar-user">
-              <div className="admin-topbar-avatar">{userInitial}</div>
+              <div className="admin-topbar-avatar">
+                <img src={topbarAvatar} alt="Admin avatar" className="admin-topbar-avatar-img" />
+              </div>
               <div>
                 <p className="admin-topbar-user-name">{user?.name || 'Admin User'}</p>
                 <p className="admin-topbar-user-role">{user?.role || 'viewer'}</p>

@@ -454,6 +454,13 @@
   background: linear-gradient(120deg, color-mix(in srgb, var(--brand-primary) 24%, #e8f0fe), color-mix(in srgb, var(--brand-accent) 24%, #fff7ea));
   color: color-mix(in srgb, var(--brand-primary) 78%, #1a73e8);
   font-weight: 700;
+  overflow: hidden;
+}
+
+.admin-topbar-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .admin-topbar-user-name {
@@ -878,6 +885,19 @@
 .admin-profile-avatar-form {
   display: grid;
   gap: 0.55rem;
+}
+
+.admin-profile-edit-actions {
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.admin-profile-edit-btn {
+  min-height: 32px;
+  padding: 0.35rem 0.78rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
 }
 
 .admin-profile-grid p {
