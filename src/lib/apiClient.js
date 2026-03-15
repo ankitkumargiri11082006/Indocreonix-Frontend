@@ -1,4 +1,22 @@
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api').replace(/\/$/, '')
+function normalizeApiBaseUrl(rawBaseUrl) {
+  const fallback = 'http://localhost:5000/api'
+  const candidate = (rawBaseUrl || fallback).trim()
+
+  try {
+    const url = new URL(candidate)
+    const pathname = url.pathname.replace(/\/$/, '')
+    const normalizedPath = pathname && pathname !== '/' ? pathname : '/api'
+    return `${url.origin}${normalizedPath}`
+  } catch {
+    const sanitized = candidate.replace(/\/$/, '')
+    if (/\/api$/i.test(sanitized)) {
+      return sanitized
+    }
+    return `${sanitized}/api`
+  }
+}
+
+const API_BASE_URL = normalizeApiBaseUrl(import.meta.env.VITE_API_BASE_URL)
 const inflightGetRequests = new Map()
 const responseCache = new Map()
 const DEFAULT_CACHE_TTL_MS = 4000
