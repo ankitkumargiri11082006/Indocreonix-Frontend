@@ -16,6 +16,7 @@ export const ADMIN_MENU_SECTIONS = [
       { label: 'Content', to: '/admin/content', permission: 'content' },
       { label: 'Media', to: '/admin/media', permission: 'media' },
       { label: 'Leads', to: '/admin/leads', permission: 'leads' },
+      { label: 'Orders', to: '/admin/orders', permission: 'orders' },
     ],
   },
   {

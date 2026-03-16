@@ -65,7 +65,9 @@ export async function apiRequest(path, options = {}) {
       const data = contentType.includes('application/json') ? await response.json() : {}
 
       if (!response.ok) {
-        throw new Error(data.message || `Request failed with status ${response.status}`)
+        const error = new Error(data.message || `Request failed with status ${response.status}`)
+        error.status = response.status
+        throw error
       }
 
       if (isGet) {

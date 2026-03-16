@@ -26,8 +26,8 @@ function SolutionsPage() {
       cta={{
         title: 'Looking for an industry-specific approach?',
         description: 'Let us map your operational challenges to a practical, implementation-ready technology plan.',
-        primaryLabel: 'Book a Consultation',
-        primaryTo: '/contact',
+        primaryLabel: 'Request Project Quote',
+        primaryTo: '/request-quote?source=solutions-page',
       }}
     />
   )

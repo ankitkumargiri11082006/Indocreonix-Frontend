@@ -9,7 +9,7 @@ function getThemeFromTitle(title) {
   return themes[checksum % themes.length]
 }
 
-function CompanyPage({ eyebrow, title, subtitle, sectionTitle, sectionItems, cta, theme, metrics }) {
+function CompanyPage({ eyebrow, title, subtitle, sectionTitle, sectionItems, cta, theme, metrics, sectionImageLayout }) {
   return (
     <>
       <PageHero
@@ -25,7 +25,7 @@ function CompanyPage({ eyebrow, title, subtitle, sectionTitle, sectionItems, cta
           ]
         }
       />
-      <SectionBlock title={sectionTitle} items={sectionItems} />
+      <SectionBlock title={sectionTitle} items={sectionItems} imageLayout={sectionImageLayout} />
       <CtaBanner
         title={cta.title}
         description={cta.description}

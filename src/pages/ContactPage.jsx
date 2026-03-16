@@ -145,8 +145,8 @@ function ContactPage() {
       <CtaBanner
         title="Ready to discuss your roadmap with our team?"
         description="Send us your requirement and Indocreonix will share a practical execution plan."
-        primaryLabel="Talk to Indocreonix"
-        primaryTo="/contact"
+        primaryLabel="Request Project Quote"
+        primaryTo="/request-quote"
       />
     </>
   )

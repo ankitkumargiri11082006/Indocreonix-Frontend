@@ -58,7 +58,7 @@ function CareersPage() {
               {internships[0]?.summary ||
                 'For students and fresh graduates seeking practical industry experience and mentorship.'}
             </p>
-            <Link className="btn btn-primary career-track-btn" to="/careers/internship">
+            <Link className="btn btn-primary career-track-btn" to="/careers/apply/internship">
               Apply for Internship
             </Link>
             {internships.length > 0 ? (
@@ -82,7 +82,7 @@ function CareersPage() {
               {jobs[0]?.summary ||
                 'For professionals who want to work on production systems and client delivery projects.'}
             </p>
-            <Link className="btn btn-primary career-track-btn" to="/careers/job">
+            <Link className="btn btn-primary career-track-btn" to="/careers/apply/job">
               Apply for Job
             </Link>
             {jobs.length > 0 ? (

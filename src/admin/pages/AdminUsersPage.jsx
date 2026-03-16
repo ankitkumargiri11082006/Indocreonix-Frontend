@@ -12,6 +12,7 @@ const permissionOptions = [
   { key: 'content', label: 'Content' },
   { key: 'media', label: 'Media' },
   { key: 'leads', label: 'Leads' },
+  { key: 'orders', label: 'Orders' },
   { key: 'openings', label: 'Openings' },
   { key: 'applications', label: 'Applications' },
   { key: 'users', label: 'Users' },

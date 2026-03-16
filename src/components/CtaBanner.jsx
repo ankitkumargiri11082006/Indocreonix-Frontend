@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-function CtaBanner({ title, description, primaryLabel = 'Talk to Us', primaryTo = '/contact' }) {
+function CtaBanner({ title, description, primaryLabel = 'Request Project Quote', primaryTo = '/request-quote' }) {
   return (
     <section className="cta-banner container">
       <div>

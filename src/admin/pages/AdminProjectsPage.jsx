@@ -2,13 +2,19 @@ import { useEffect, useState } from 'react'
 import { apiRequest } from '../../lib/apiClient'
 import { uploadMediaAsset } from '../../lib/uploadMediaAsset'
 
+const OTHER_OPTION_VALUE = '__other__'
+const projectCategoryOptions = ['General', 'Website', 'Web Application', 'Android Application', 'iOS Application', 'Custom Software']
+
 const initialForm = {
   title: '',
   summary: '',
   details: '',
+  developerName: '',
   logo: '',
   website: '',
   category: 'General',
+  categoryOption: 'General',
+  categoryOther: '',
   tags: '',
   featured: false,
   order: 0,
@@ -36,15 +42,54 @@ function AdminProjectsPage() {
     loadItems()
   }, [])
 
+  function resolveCategoryValue(currentForm) {
+    if (currentForm.categoryOption === OTHER_OPTION_VALUE) {
+      return currentForm.categoryOther.trim()
+    }
+
+    return currentForm.categoryOption || currentForm.category || 'General'
+  }
+
+  function buildFormFromItem(item) {
+    const currentCategory = item.category || 'General'
+    const isKnownCategory = projectCategoryOptions.includes(currentCategory)
+
+    return {
+      title: item.title,
+      summary: item.summary,
+      details: item.details || '',
+      developerName: item.developerName || '',
+      logo: item.logo || '',
+      website: item.website || '',
+      category: currentCategory,
+      categoryOption: isKnownCategory ? currentCategory : OTHER_OPTION_VALUE,
+      categoryOther: isKnownCategory ? '' : currentCategory,
+      tags: (item.tags || []).join(', '),
+      featured: item.featured || false,
+      order: item.order || 0,
+      isActive: item.isActive,
+    }
+  }
+
   async function saveItem(event) {
     event.preventDefault()
     setError('')
 
     try {
+      const resolvedCategory = resolveCategoryValue(form)
+      if (!resolvedCategory) {
+        setError('Please select a category or provide a custom category')
+        return
+      }
+
       const payload = {
         ...form,
+        category: resolvedCategory,
         tags: form.tags,
       }
+
+      delete payload.categoryOption
+      delete payload.categoryOther
 
       if (logoFile) {
         setIsUploading(true)
@@ -96,8 +141,36 @@ function AdminProjectsPage() {
           </label>
           <label>
             Category
-            <input value={form.category} onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))} />
+            <select
+              className="admin-select"
+              value={form.categoryOption}
+              onChange={(e) =>
+                setForm((prev) => ({
+                  ...prev,
+                  categoryOption: e.target.value,
+                  categoryOther: e.target.value === OTHER_OPTION_VALUE ? prev.categoryOther : '',
+                }))
+              }
+            >
+              {projectCategoryOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+              <option value={OTHER_OPTION_VALUE}>Other (Please specify)</option>
+            </select>
           </label>
+          {form.categoryOption === OTHER_OPTION_VALUE ? (
+            <label>
+              Custom Category
+              <input
+                value={form.categoryOther}
+                onChange={(e) => setForm((prev) => ({ ...prev, categoryOther: e.target.value }))}
+                placeholder="Enter custom project category"
+                required
+              />
+            </label>
+          ) : null}
           <label className="admin-full-row">
             Summary
             <textarea rows="3" value={form.summary} onChange={(e) => setForm((prev) => ({ ...prev, summary: e.target.value }))} required />
@@ -105,6 +178,14 @@ function AdminProjectsPage() {
           <label className="admin-full-row">
             Details
             <textarea rows="5" value={form.details} onChange={(e) => setForm((prev) => ({ ...prev, details: e.target.value }))} />
+          </label>
+          <label>
+            Developer Credit Name
+            <input
+              value={form.developerName}
+              onChange={(e) => setForm((prev) => ({ ...prev, developerName: e.target.value }))}
+              placeholder="Example: Ankit Singh"
+            />
           </label>
           <label className="admin-upload-field">
             Upload Project Logo
@@ -158,6 +239,7 @@ function AdminProjectsPage() {
               <tr>
                 <th>Title</th>
                 <th>Category</th>
+                <th>Developer</th>
                 <th>Featured</th>
                 <th>Active</th>
                 <th>Actions</th>
@@ -168,11 +250,22 @@ function AdminProjectsPage() {
                 <tr key={item._id}>
                   <td>{item.title}</td>
                   <td>{item.category}</td>
+                  <td>{item.developerName || '-'}</td>
                   <td>{item.featured ? 'Yes' : 'No'}</td>
                   <td>{item.isActive ? 'Yes' : 'No'}</td>
                   <td>
                     <div className="admin-action-group">
-                      <button type="button" className="btn btn-secondary" onClick={() => { setEditingId(item._id); setLogoFile(null); setForm({ title: item.title, summary: item.summary, details: item.details || '', logo: item.logo || '', website: item.website || '', category: item.category || 'General', tags: (item.tags || []).join(', '), featured: item.featured || false, order: item.order || 0, isActive: item.isActive }) }}>Edit</button>
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => {
+                          setEditingId(item._id)
+                          setLogoFile(null)
+                          setForm(buildFormFromItem(item))
+                        }}
+                      >
+                        Edit
+                      </button>
                       <button type="button" className="btn btn-secondary" onClick={() => removeItem(item._id)}>Delete</button>
                     </div>
                   </td>

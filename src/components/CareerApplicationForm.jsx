@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { companyInfo } from '../data/companyInfo'
 import { apiRequest, apiBaseUrl } from '../lib/apiClient'
 
@@ -15,6 +16,7 @@ function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
     experience: '',
     portfolio: '',
     message: '',
+    consentAccepted: false,
   }
 
   const [formData, setFormData] = useState(initialData)
@@ -31,8 +33,8 @@ function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
   }, [roleType])
 
   const onChange = (event) => {
-    const { name, value } = event.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    const { name, value, type, checked } = event.target
+    setFormData((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
   }
 
   const onSubmit = async (event) => {
@@ -52,6 +54,11 @@ function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
 
     if (!cvFile.name.toLowerCase().endsWith('.pdf')) {
       setError('Only PDF files are allowed for CV upload.')
+      return
+    }
+
+    if (!formData.consentAccepted) {
+      setError('Please accept Indocreonix Terms and Privacy Policy to continue.')
       return
     }
 
@@ -151,6 +158,26 @@ function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
           <label>
             Why are you a good fit?
             <textarea name="message" value={formData.message} onChange={onChange} rows="4" required />
+          </label>
+          <label className="career-consent-row">
+            <input
+              type="checkbox"
+              name="consentAccepted"
+              checked={formData.consentAccepted}
+              onChange={onChange}
+              required
+            />
+            <span>
+              I agree to the Indocreonix{' '}
+              <Link to="/terms-and-conditions" target="_blank" rel="noreferrer">
+                Terms and Conditions
+              </Link>{' '}
+              and{' '}
+              <Link to="/privacy-policy" target="_blank" rel="noreferrer">
+                Privacy Policy
+              </Link>
+              .
+            </span>
           </label>
           {error ? <p className="auth-error">{error}</p> : null}
           <button type="submit" className="btn btn-primary">

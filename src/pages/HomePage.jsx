@@ -24,6 +24,7 @@ const highlights = [
 function HomePage() {
   const [servicesOffered, setServicesOffered] = useState([])
   const [clientsServed, setClientsServed] = useState([])
+  const [projectsDelivered, setProjectsDelivered] = useState([])
 
   useEffect(() => {
     apiRequest('/services/public')
@@ -33,7 +34,26 @@ function HomePage() {
     apiRequest('/clients/public')
       .then((result) => setClientsServed(result.items || []))
       .catch(() => setClientsServed([]))
+
+    apiRequest('/projects/public')
+      .then((result) => setProjectsDelivered(result.items || []))
+      .catch(() => setProjectsDelivered([]))
   }, [])
+
+  const projectItems = projectsDelivered.map((project) => ({
+    title: project.title,
+    description: project.summary,
+    meta: (project.developerName || project.developer || project.developerCredit || project.developer_name)
+      ? `Developer Credit: ${project.developerName || project.developer || project.developerCredit || project.developer_name}`
+      : '',
+    image: project.logo,
+    ...(project.website
+      ? {
+          primaryLabel: 'Website Link',
+          primaryHref: project.website,
+        }
+      : {}),
+  }))
 
   return (
     <>
@@ -49,31 +69,25 @@ function HomePage() {
         ]}
         actions={
           <>
-            <Link to="/services" className="btn btn-primary">
-              Explore Services
+            <Link to="/request-quote" className="btn btn-primary">
+              Request Project Quote
             </Link>
-            <Link to="/careers" className="btn btn-secondary">
-              Join Our Team
+            <Link to="/services" className="btn btn-secondary">
+              Explore Services
             </Link>
           </>
         }
       />
       <SectionBlock title="What We Deliver" items={highlights} />
       <SectionBlock title="Services We Offer" items={servicesOffered} />
+      {projectItems.length > 0 ? <SectionBlock title="Projects Delivered by Indocreonix" items={projectItems} /> : null}
 
       <section className="content-section container">
         <h2>Our Clients</h2>
         {clientsServed.length > 0 ? (
           <div className="clients-grid">
             {clientsServed.map((client) => (
-              <a
-                className="client-card"
-                key={client._id || client.name}
-                href={client.website || '#'}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={`Visit ${client.name} website`}
-              >
+              <article className="client-card client-card-minimal" key={client._id || client.name}>
                 <AdaptiveLogoImage
                   src={client.logo}
                   alt={`${client.name} logo`}
@@ -81,7 +95,7 @@ function HomePage() {
                   imageClassName="client-card-logo"
                 />
                 <h3>{client.name}</h3>
-              </a>
+              </article>
             ))}
           </div>
         ) : (
@@ -105,8 +119,8 @@ function HomePage() {
       <CtaBanner
         title="Need a dependable technology partner for your next build?"
         description="Partner with Indocreonix to plan, build, and scale modern digital products with clear delivery ownership."
-        primaryLabel="Start a Project"
-        primaryTo="/contact"
+        primaryLabel="Submit Project Request"
+        primaryTo="/request-quote"
       />
     </>
   )

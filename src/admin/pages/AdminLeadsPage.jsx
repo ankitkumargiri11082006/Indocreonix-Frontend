@@ -4,6 +4,7 @@ import { apiRequest } from '../../lib/apiClient'
 function AdminLeadsPage() {
   const [leads, setLeads] = useState([])
   const [error, setError] = useState('')
+  const [deletingLeadId, setDeletingLeadId] = useState('')
 
   async function loadLeads() {
     try {
@@ -30,6 +31,23 @@ function AdminLeadsPage() {
     }
   }
 
+  async function deleteLead(id, leadName) {
+    const confirmed = window.confirm(
+      `Delete lead ${leadName || ''}? This action cannot be undone.`,
+    )
+    if (!confirmed) return
+
+    try {
+      setDeletingLeadId(id)
+      await apiRequest(`/leads/${id}`, { method: 'DELETE' })
+      loadLeads()
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setDeletingLeadId('')
+    }
+  }
+
   return (
     <article className="admin-card wide">
       <h3>Lead Inbox</h3>
@@ -43,6 +61,7 @@ function AdminLeadsPage() {
               <th>Company</th>
               <th>Status</th>
               <th>Update</th>
+              <th>Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -62,6 +81,16 @@ function AdminLeadsPage() {
                     <option value="in_progress">in_progress</option>
                     <option value="closed">closed</option>
                   </select>
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => deleteLead(lead._id, lead.name)}
+                    disabled={deletingLeadId === lead._id}
+                  >
+                    {deletingLeadId === lead._id ? 'Deleting...' : 'Delete'}
+                  </button>
                 </td>
               </tr>
             ))}

@@ -10,6 +10,7 @@ const routeTitleMap = {
   '/admin/projects': 'Projects',
   '/admin/clients': 'Clients',
   '/admin/services': 'Services',
+  '/admin/orders': 'Orders',
   '/admin/openings': 'Openings',
   '/admin/applications': 'Applications',
   '/admin/audit-logs': 'Audit Logs',
@@ -27,7 +28,7 @@ function AdminLayout() {
   const { user, logout } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
-  const [indicators, setIndicators] = useState({ leads: 0, applications: 0 })
+  const [indicators, setIndicators] = useState({ leads: 0, applications: 0, orders: 0 })
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const menuSections = getAllowedMenuSections(user)
   const allRoutes = getAllowedAdminRoutes(user)
@@ -43,6 +44,7 @@ function AdminLayout() {
     () => ({
       leads: location.pathname.startsWith('/admin/leads') ? 0 : Number(indicators.leads || 0),
       applications: location.pathname.startsWith('/admin/applications') ? 0 : Number(indicators.applications || 0),
+      orders: location.pathname.startsWith('/admin/orders') ? 0 : Number(indicators.orders || 0),
     }),
     [indicators, location.pathname],
   )
@@ -51,6 +53,7 @@ function AdminLayout() {
     if (!user || user.role === 'viewer') return undefined
 
     let isCancelled = false
+    let intervalId = null
 
     const loadIndicators = () => {
       apiRequest('/dashboard/indicators')
@@ -59,20 +62,35 @@ function AdminLayout() {
           setIndicators({
             leads: Number(result?.sections?.leads || 0),
             applications: Number(result?.sections?.applications || 0),
+            orders: Number(result?.sections?.orders || 0),
           })
         })
-        .catch(() => {
+        .catch((error) => {
           if (isCancelled) return
-          setIndicators({ leads: 0, applications: 0 })
+
+          const unauthorized =
+            Number(error?.status) === 401 || /unauthorized|invalid token/i.test(String(error?.message || ''))
+
+          if (unauthorized) {
+            if (intervalId) {
+              window.clearInterval(intervalId)
+              intervalId = null
+            }
+            return
+          }
+
+          setIndicators({ leads: 0, applications: 0, orders: 0 })
         })
     }
 
     loadIndicators()
-    const intervalId = window.setInterval(loadIndicators, 20000)
+    intervalId = window.setInterval(loadIndicators, 20000)
 
     return () => {
       isCancelled = true
-      window.clearInterval(intervalId)
+      if (intervalId) {
+        window.clearInterval(intervalId)
+      }
     }
   }, [user, location.pathname])
 
@@ -94,6 +112,7 @@ function AdminLayout() {
   function getBadgeCount(routePath) {
     if (routePath === '/admin/leads') return visibleIndicators.leads
     if (routePath === '/admin/applications') return visibleIndicators.applications
+    if (routePath === '/admin/orders') return visibleIndicators.orders
     return 0
   }
 

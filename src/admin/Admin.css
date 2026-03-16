@@ -161,6 +161,24 @@
   background: #ffffff;
 }
 
+.admin-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  min-height: 42px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #5d6f85 50%),
+    linear-gradient(135deg, #5d6f85 50%, transparent 50%),
+    linear-gradient(180deg, #ffffff, #ffffff);
+  background-position:
+    calc(100% - 20px) calc(50% - 2px),
+    calc(100% - 14px) calc(50% - 2px),
+    0 0;
+  background-size: 6px 6px, 6px 6px, 100% 100%;
+  background-repeat: no-repeat;
+  padding-right: 2rem;
+}
+
 .auth-password-field {
   position: relative;
 }
@@ -616,6 +634,17 @@
   gap: 0.35rem;
 }
 
+.admin-doc-link {
+  color: #1a73e8;
+  text-decoration: none;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.admin-doc-link:hover {
+  text-decoration: underline;
+}
+
 .admin-page-stack > .admin-card {
   grid-column: 1 / -1;
 }
@@ -722,6 +751,8 @@
   text-align: left;
   padding: 0.52rem 0.48rem;
   vertical-align: top;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .admin-table th {
@@ -741,6 +772,7 @@
 
 .admin-table td .admin-select {
   min-width: 118px;
+  max-width: 100%;
 }
 
 .admin-table td textarea {
@@ -807,6 +839,10 @@
   gap: 0.62rem;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   margin-bottom: 0.62rem;
+}
+
+.admin-form-grid > * {
+  min-width: 0;
 }
 
 .admin-form-grid textarea {
@@ -1406,6 +1442,25 @@
   }
 }
 
+@media (max-width: 900px) {
+  .admin-table {
+    min-width: 560px;
+  }
+
+  .admin-table td textarea,
+  .admin-table td .admin-select,
+  .admin-form-grid input,
+  .admin-form-grid textarea,
+  .admin-select {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .admin-topbar-user {
+    min-width: 0;
+  }
+}
+
 @media (max-width: 768px) {
   .admin-mobile-menu-btn {
     display: inline-flex;
@@ -1646,5 +1701,57 @@
     min-height: 36px;
     padding: 0.4rem 0.65rem;
     font-size: 0.82rem;
+  }
+
+  .admin-table {
+    min-width: 500px;
+  }
+}
+
+@media (max-width: 360px) {
+  .admin-topbar {
+    padding: 0.46rem;
+  }
+
+  .admin-content {
+    padding: 0.5rem;
+  }
+
+  .admin-card {
+    padding: 0.58rem;
+  }
+
+  .admin-menu-link {
+    font-size: 0.82rem;
+    padding: 0.5rem 0.56rem;
+  }
+
+  .admin-table {
+    min-width: 460px;
+  }
+
+  .admin-form-grid input,
+  .admin-form-grid textarea,
+  .admin-select,
+  .btn {
+    font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .admin-topbar,
+  .admin-content {
+    width: min(1620px, 96%);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .admin-card {
+    padding: 0.95rem;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 0.6rem 0.55rem;
   }
 }

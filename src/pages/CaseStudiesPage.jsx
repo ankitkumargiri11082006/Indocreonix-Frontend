@@ -22,14 +22,21 @@ function CaseStudiesPage() {
       title: project.title,
       description: project.summary,
       image: project.logo,
+      primaryLabel: 'Make Similar Project',
+      primaryTo: `/request-quote?project=${encodeURIComponent(project.title)}`,
+      secondaryLabel: 'Website Link',
+      secondaryHref: project.website || '/contact',
+      meta: (project.developerName || project.developer || project.developerCredit || project.developer_name)
+        ? `Developer Credit: ${project.developerName || project.developer || project.developerCredit || project.developer_name}`
+        : '',
     }))
   }, [projects])
 
   return (
     <>
       <PageHero
-        eyebrow="Case Studies"
-        title="Proven Results Across Real-World Implementations"
+        eyebrow="Projects We Delivered"
+        title="Projects We Delivered for Real-World Businesses"
         subtitle="A snapshot of projects delivered by Indocreonix across website development and full software systems."
         theme="theme-d"
         metrics={[
@@ -52,13 +59,24 @@ function CaseStudiesPage() {
               <p className="project-highlight-tag">{featuredProject.category || 'Project Delivery'}</p>
               <h3>{featuredProject.title}</h3>
               <p>{featuredProject.details || featuredProject.summary}</p>
-              {featuredProject.website ? (
-                <p>
-                  <a href={featuredProject.website} target="_blank" rel="noreferrer" className="contact-link">
-                    Visit Project Website
-                  </a>
+              {featuredProject.developerName || featuredProject.developer || featuredProject.developerCredit || featuredProject.developer_name ? (
+                <p className="project-credit">
+                  Developer Credit: {featuredProject.developerName || featuredProject.developer || featuredProject.developerCredit || featuredProject.developer_name}
                 </p>
               ) : null}
+              <p>
+                <a
+                  href={`/request-quote?project=${encodeURIComponent(featuredProject.title)}`}
+                  className="contact-link"
+                >
+                  Make Similar Project
+                </a>
+              </p>
+              <p>
+                <a href={featuredProject.website || '/contact'} target="_blank" rel="noreferrer" className="contact-link">
+                  Website Link
+                </a>
+              </p>
             </div>
           </article>
         ) : (
@@ -68,7 +86,7 @@ function CaseStudiesPage() {
         )}
       </section>
 
-      <SectionBlock title="More Project Work by Indocreonix" items={sectionItems} />
+      <SectionBlock title="More Projects We Delivered" items={sectionItems} />
 
       <CtaBanner
         title="Need a team that can deliver both website and software systems?"

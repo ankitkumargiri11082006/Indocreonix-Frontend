@@ -231,3 +231,44 @@ h4,
     height: 260px;
   }
 }
+
+@media (max-width: 360px) {
+  .clean-hero-section {
+    padding: 3.5rem 0 2rem;
+  }
+
+  .clean-hero-title {
+    font-size: clamp(1.7rem, 8.6vw, 2.1rem);
+    line-height: 1.08;
+  }
+
+  .clean-hero-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .clean-hero-metrics {
+    gap: 0.75rem;
+  }
+
+  .clean-metric-chip strong {
+    font-size: 1.45rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .clean-hero-section {
+    padding: 6.5rem 0 4.5rem;
+  }
+
+  .clean-hero-title {
+    font-size: clamp(3.1rem, 4vw, 4.9rem);
+  }
+
+  .clean-hero-subtitle {
+    max-width: 680px;
+  }
+
+  .clean-hero-visual {
+    height: 560px;
+  }
+}
