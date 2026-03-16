@@ -13,12 +13,25 @@ function CaseStudiesPage() {
       .catch(() => setProjects([]))
   }, [])
 
-  const featuredProject = useMemo(() => {
-    return projects.find((project) => project.featured) || projects[0]
+  const featuredProjects = useMemo(() => {
+    const markedFeatured = projects.filter((project) => project.featured)
+    if (markedFeatured.length > 0) {
+      return markedFeatured
+    }
+
+    return projects.slice(0, 3)
+  }, [projects])
+
+  const featuredProjectIds = useMemo(() => {
+    return new Set(featuredProjects.map((project) => String(project._id || project.title)))
+  }, [featuredProjects])
+
+  const remainingProjects = useMemo(() => {
+    return projects.filter((project) => !featuredProjectIds.has(String(project._id || project.title)))
   }, [projects])
 
   const sectionItems = useMemo(() => {
-    return projects.map((project) => ({
+    return remainingProjects.map((project) => ({
       title: project.title,
       description: project.summary,
       image: project.logo,
@@ -30,7 +43,7 @@ function CaseStudiesPage() {
         ? `Developer Credit: ${project.developerName || project.developer || project.developerCredit || project.developer_name}`
         : '',
     }))
-  }, [projects])
+  }, [remainingProjects])
 
   return (
     <>
@@ -47,38 +60,42 @@ function CaseStudiesPage() {
       />
 
       <section className="content-section container">
-        <h2>Featured Project</h2>
-        {featuredProject ? (
-          <article className="project-highlight-card">
-            <img
-              src={featuredProject.logo}
-              alt={`${featuredProject.title} logo`}
-              className="project-highlight-logo"
-            />
-            <div>
-              <p className="project-highlight-tag">{featuredProject.category || 'Project Delivery'}</p>
-              <h3>{featuredProject.title}</h3>
-              <p>{featuredProject.details || featuredProject.summary}</p>
-              {featuredProject.developerName || featuredProject.developer || featuredProject.developerCredit || featuredProject.developer_name ? (
-                <p className="project-credit">
-                  Developer Credit: {featuredProject.developerName || featuredProject.developer || featuredProject.developerCredit || featuredProject.developer_name}
-                </p>
-              ) : null}
-              <p>
-                <a
-                  href={`/request-quote?project=${encodeURIComponent(featuredProject.title)}`}
-                  className="contact-link"
-                >
-                  Make Similar Project
-                </a>
-              </p>
-              <p>
-                <a href={featuredProject.website || '/contact'} target="_blank" rel="noreferrer" className="contact-link">
-                  Website Link
-                </a>
-              </p>
-            </div>
-          </article>
+        <h2>Featured Projects</h2>
+        {featuredProjects.length > 0 ? (
+          <div className="project-highlight-grid">
+            {featuredProjects.map((project) => (
+              <article className="project-highlight-card" key={project._id || project.title}>
+                <img
+                  src={project.logo}
+                  alt={`${project.title} logo`}
+                  className="project-highlight-logo"
+                />
+                <div>
+                  <p className="project-highlight-tag">{project.category || 'Project Delivery'}</p>
+                  <h3>{project.title}</h3>
+                  <p>{project.details || project.summary}</p>
+                  {project.developerName || project.developer || project.developerCredit || project.developer_name ? (
+                    <p className="project-credit">
+                      Developer Credit: {project.developerName || project.developer || project.developerCredit || project.developer_name}
+                    </p>
+                  ) : null}
+                  <p>
+                    <a
+                      href={`/request-quote?project=${encodeURIComponent(project.title)}`}
+                      className="contact-link"
+                    >
+                      Make Similar Project
+                    </a>
+                  </p>
+                  <p>
+                    <a href={project.website || '/contact'} target="_blank" rel="noreferrer" className="contact-link">
+                      Website Link
+                    </a>
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
         ) : (
           <article className="info-card">
             <p>No projects have been published yet. Add projects from Admin panel.</p>
@@ -86,7 +103,7 @@ function CaseStudiesPage() {
         )}
       </section>
 
-      <SectionBlock title="More Projects We Delivered" items={sectionItems} />
+      {sectionItems.length > 0 ? <SectionBlock title="More Projects We Delivered" items={sectionItems} /> : null}
 
       <CtaBanner
         title="Need a team that can deliver both website and software systems?"

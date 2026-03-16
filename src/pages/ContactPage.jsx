@@ -8,9 +8,15 @@ function ContactPage() {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', company: '', message: '' })
   const [status, setStatus] = useState({ error: '', success: '' })
 
-  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-    companyInfo.mapQuery,
-  )}`
+  const mapsUrl = companyInfo.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(companyInfo.mapQuery)}`
+  const whatsappUrl = `https://wa.me/91${companyInfo.whatsappNumber}`
+  const socialBarItems = [
+    { key: 'facebook', label: 'Facebook', icon: 'f', href: companyInfo.socialLinks.facebook, iconClass: 'social-pill-icon-facebook' },
+    { key: 'instagram', label: 'Instagram', icon: 'ig', href: companyInfo.socialLinks.instagram, iconClass: 'social-pill-icon-instagram' },
+    { key: 'x', label: 'X', icon: 'x', href: companyInfo.socialLinks.x, iconClass: 'social-pill-icon-x' },
+    { key: 'linkedin', label: 'LinkedIn', icon: 'in', href: companyInfo.socialLinks.linkedin, iconClass: 'social-pill-icon-linkedin' },
+    { key: 'whatsapp', label: 'WhatsApp', icon: 'wa', href: whatsappUrl, iconClass: 'social-pill-icon-whatsapp' },
+  ]
 
   async function submitLead(event) {
     event.preventDefault()
@@ -38,11 +44,26 @@ function ContactPage() {
         metrics={[
           { value: '<24h', label: 'Response Time' },
           { value: '2', label: 'Direct Contact Numbers' },
-          { value: 'Delhi', label: 'Primary Office Location' },
+          { value: 'Social + WhatsApp', label: 'Fast Communication' },
         ]}
       />
 
       <section className="content-section container contact-grid">
+        <article className="info-card contact-social-bar-card contact-social-bar-full">
+          <h3>Connect on Social Media</h3>
+          <p>Follow Indocreonix for updates and connect instantly on WhatsApp.</p>
+          <div className="contact-social-bar" role="navigation" aria-label="Indocreonix social links">
+            {socialBarItems.map((item) => (
+              <a key={item.key} href={item.href} target="_blank" rel="noreferrer" className="social-pill">
+                <span className={`social-pill-icon ${item.iconClass}`} aria-hidden="true">
+                  {item.icon}
+                </span>
+                <span>{item.label}</span>
+              </a>
+            ))}
+          </div>
+        </article>
+
         <article className="info-card">
           <h3>Email</h3>
           <p>
@@ -66,16 +87,13 @@ function ContactPage() {
         </article>
         <article className="info-card">
           <h3>Address</h3>
-          <address className="contact-address">
-            {companyInfo.addressLines[0]}
-            <br />
-            {companyInfo.addressLines[1]}
-          </address>
-          <p>
-            <a href={mapsUrl} target="_blank" rel="noreferrer" className="contact-link">
-              Open in Google Maps
-            </a>
-          </p>
+          <a href={mapsUrl} target="_blank" rel="noreferrer" className="contact-address-link" title="Open full address in Google Maps">
+            <address className="contact-address">
+              {companyInfo.addressLines[0]}
+              <br />
+              {companyInfo.addressLines[1]}
+            </address>
+          </a>
         </article>
       </section>
 
