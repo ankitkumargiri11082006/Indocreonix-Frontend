@@ -15,7 +15,6 @@ import FaqPage from './pages/FaqPage'
 import ContactPage from './pages/ContactPage'
 import NotFoundPage from './pages/NotFoundPage'
 import LoginPage from './pages/LoginPage'
-import SignupPage from './pages/SignupPage'
 import AdminLayout from './admin/components/AdminLayout'
 import ProtectedRoute from './admin/components/ProtectedRoute'
 import AdminDashboardPage from './admin/pages/AdminDashboardPage'
@@ -54,7 +53,6 @@ function App() {
 
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
 
         <Route
           path="/admin"

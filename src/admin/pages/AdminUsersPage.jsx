@@ -25,11 +25,15 @@ const roleOptions = ['admin', 'editor', 'viewer']
 function AdminUsersPage() {
   const { user: currentUser } = useAuth()
   const [users, setUsers] = useState([])
+  const [createForm, setCreateForm] = useState({ name: '', email: '', password: '', role: 'admin' })
   const [roleDrafts, setRoleDrafts] = useState({})
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const [loadingPermissionKey, setLoadingPermissionKey] = useState('')
   const [loadingAllPermissionsUserId, setLoadingAllPermissionsUserId] = useState('')
   const [savingRoleUserId, setSavingRoleUserId] = useState('')
+  const [creatingUser, setCreatingUser] = useState(false)
+  const [deletingUserId, setDeletingUserId] = useState('')
 
   const isSuperadmin = currentUser?.role === 'superadmin'
 
@@ -57,6 +61,8 @@ function AdminUsersPage() {
     if (!isSuperadmin) return
 
     try {
+      setError('')
+      setSuccess('')
       await apiRequest(`/users/${user._id}`, {
         method: 'PATCH',
         body: JSON.stringify({ isActive: !user.isActive }),
@@ -70,7 +76,7 @@ function AdminUsersPage() {
   async function togglePermission(targetUser, permissionKey) {
     if (!isSuperadmin || targetUser.role !== 'admin') return
 
-    const nextValue = !Boolean(targetUser.permissions?.[permissionKey])
+    const nextValue = !targetUser.permissions?.[permissionKey]
     const nextPermissions = {
       ...(targetUser.permissions || {}),
       [permissionKey]: nextValue,
@@ -147,6 +153,7 @@ function AdminUsersPage() {
 
     setSavingRoleUserId(targetUser._id)
     setError('')
+    setSuccess('')
 
     try {
       await apiRequest(`/users/${targetUser._id}`, {
@@ -154,10 +161,58 @@ function AdminUsersPage() {
         body: JSON.stringify({ role: nextRole }),
       })
       await loadUsers()
+      setSuccess('Role updated successfully')
     } catch (err) {
       setError(err.message)
     } finally {
       setSavingRoleUserId('')
+    }
+  }
+
+  async function createUserWithRole(event) {
+    event.preventDefault()
+    if (!isSuperadmin) return
+
+    setCreatingUser(true)
+    setError('')
+    setSuccess('')
+
+    try {
+      await apiRequest('/users', {
+        method: 'POST',
+        body: JSON.stringify(createForm),
+      })
+
+      setCreateForm({ name: '', email: '', password: '', role: 'admin' })
+      await loadUsers()
+      setSuccess('User created and role assigned successfully')
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setCreatingUser(false)
+    }
+  }
+
+  async function deleteUserRole(targetUser) {
+    if (!isSuperadmin || targetUser._id === currentUser?._id) return
+
+    const confirmed = window.confirm(
+      `Permanently delete ${targetUser.name || targetUser.email}? This action cannot be undone.`,
+    )
+    if (!confirmed) return
+
+    setDeletingUserId(targetUser._id)
+    setError('')
+    setSuccess('')
+
+    try {
+      await apiRequest(`/users/${targetUser._id}`, { method: 'DELETE' })
+      await loadUsers()
+      setSuccess('User role account deleted permanently')
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setDeletingUserId('')
     }
   }
 
@@ -171,7 +226,73 @@ function AdminUsersPage() {
           Superadmin controls: assign roles first, then use <strong>Manage Access</strong> for admin permission toggles. Admins: {adminCount}
         </p>
       ) : null}
+      {isSuperadmin ? (
+        <section className="admin-user-access-box">
+          <div>
+            <p className="admin-user-access-title">Superadmin Role Controls</p>
+            <p className="admin-user-access-copy">Create admin/editor/viewer accounts, assign roles, and permanently delete role accounts.</p>
+          </div>
+
+          <form className="admin-form-grid" onSubmit={createUserWithRole}>
+            <label>
+              Full name
+              <input
+                type="text"
+                value={createForm.name}
+                onChange={(event) => setCreateForm((previous) => ({ ...previous, name: event.target.value }))}
+                placeholder="Full name"
+                required
+              />
+            </label>
+
+            <label>
+              Email
+              <input
+                type="email"
+                value={createForm.email}
+                onChange={(event) => setCreateForm((previous) => ({ ...previous, email: event.target.value }))}
+                placeholder="user@indocreonix.com"
+                required
+              />
+            </label>
+
+            <label>
+              Temporary password
+              <input
+                type="password"
+                value={createForm.password}
+                onChange={(event) => setCreateForm((previous) => ({ ...previous, password: event.target.value }))}
+                placeholder="Minimum 6 characters"
+                minLength={6}
+                required
+              />
+            </label>
+
+            <label>
+              Role
+              <select
+                className="admin-select"
+                value={createForm.role}
+                onChange={(event) => setCreateForm((previous) => ({ ...previous, role: event.target.value }))}
+              >
+                {roleOptions.map((roleOption) => (
+                  <option key={roleOption} value={roleOption}>
+                    {roleOption}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <div className="admin-form-actions">
+              <button type="submit" className="btn btn-primary" disabled={creatingUser}>
+                {creatingUser ? 'Creating...' : 'Create Role Account'}
+              </button>
+            </div>
+          </form>
+        </section>
+      ) : null}
       {error ? <p className="admin-error">{error}</p> : null}
+      {success ? <p className="admin-success">{success}</p> : null}
       <div className="admin-user-cards">
         {users.map((user) => {
           const canEditUser = isSuperadmin && user._id !== currentUser?._id
@@ -256,6 +377,22 @@ function AdminUsersPage() {
                   ) : null}
                 </div>
               </div>
+
+              {isSuperadmin ? (
+                <div className="admin-user-row">
+                  <p className="admin-user-label">Superadmin Only</p>
+                  <div className="admin-action-group">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => deleteUserRole(user)}
+                      disabled={!canEditUser || deletingUserId === user._id}
+                    >
+                      {deletingUserId === user._id ? 'Deleting...' : 'Delete Permanently'}
+                    </button>
+                  </div>
+                </div>
+              ) : null}
 
               {canManagePermissions ? (
                 <div className="admin-user-access-box">

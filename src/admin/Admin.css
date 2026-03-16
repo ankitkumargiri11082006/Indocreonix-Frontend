@@ -763,6 +763,10 @@
   justify-content: flex-end;
 }
 
+.admin-audit-quick-filters {
+  margin: 0.55rem 0 0.7rem;
+}
+
 .audit-log-detail-box {
   border: 1px solid color-mix(in srgb, var(--brand-primary) 18%, #e8eaed);
   border-radius: 12px;

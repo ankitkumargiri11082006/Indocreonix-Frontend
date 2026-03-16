@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 function LoginPage() {
@@ -104,7 +104,7 @@ function LoginPage() {
           </form>
 
           <p className="auth-footer">
-            New here? <Link to="/signup">Create account</Link>
+            Need access? Contact your superadmin to create your account.
           </p>
         </div>
       </div>

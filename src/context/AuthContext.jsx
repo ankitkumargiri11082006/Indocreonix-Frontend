@@ -43,15 +43,6 @@ export function AuthProvider({ children }) {
         setUser(result.user)
         return result.user
       },
-      async signup(name, email, password) {
-        const result = await apiRequest('/auth/signup', {
-          method: 'POST',
-          body: JSON.stringify({ name, email, password }),
-        })
-        localStorage.setItem('indocx_token', result.token)
-        setUser(result.user)
-        return result.user
-      },
       logout() {
         localStorage.removeItem('indocx_token')
         setUser(null)

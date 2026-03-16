@@ -2,6 +2,13 @@ import { Fragment, useEffect, useState } from 'react'
 import { apiRequest } from '../../lib/apiClient'
 import { useAuth } from '../../context/AuthContext'
 
+const quickActionFilters = [
+  'USER_ROLE_ACCOUNT_CREATED',
+  'USER_ROLE_UPDATED',
+  'ADMIN_PERMISSIONS_UPDATED',
+  'USER_ROLE_ACCOUNT_DELETED',
+]
+
 function AdminAuditLogsPage() {
   const { user } = useAuth()
   const [items, setItems] = useState([])
@@ -15,16 +22,16 @@ function AdminAuditLogsPage() {
 
   const isSuperadmin = user?.role === 'superadmin'
 
-  async function loadLogs(page = 1) {
+  async function loadLogs(page = 1, nextFilters = filters) {
     try {
       setError('')
       const params = new URLSearchParams()
       params.set('page', String(page))
       params.set('limit', String(pagination.limit || 20))
-      if (filters.action.trim()) params.set('action', filters.action.trim())
-      if (filters.actorEmail.trim()) params.set('actorEmail', filters.actorEmail.trim())
-      if (filters.from) params.set('from', filters.from)
-      if (filters.to) params.set('to', filters.to)
+      if (nextFilters.action.trim()) params.set('action', nextFilters.action.trim())
+      if (nextFilters.actorEmail.trim()) params.set('actorEmail', nextFilters.actorEmail.trim())
+      if (nextFilters.from) params.set('from', nextFilters.from)
+      if (nextFilters.to) params.set('to', nextFilters.to)
 
       const result = await apiRequest(`/audit-logs?${params.toString()}`)
       setItems(result.items || [])
@@ -41,7 +48,18 @@ function AdminAuditLogsPage() {
   function applyFilters(event) {
     event.preventDefault()
     setSuccess('')
-    loadLogs(1)
+    loadLogs(1, filters)
+  }
+
+  function applyQuickActionFilter(action) {
+    const nextFilters = {
+      ...filters,
+      action,
+    }
+
+    setFilters(nextFilters)
+    setSuccess('')
+    loadLogs(1, nextFilters)
   }
 
   async function handleDelete(itemId) {
@@ -161,7 +179,20 @@ function AdminAuditLogsPage() {
   return (
     <article className="admin-card wide">
       <h3>Audit Logs</h3>
-      <p>Track admin-sensitive actions like exports and status updates.</p>
+      <p>Track admin-sensitive actions like role creation, role assignment, permissions updates, and permanent role deletion.</p>
+
+      <div className="admin-action-group admin-audit-quick-filters">
+        {quickActionFilters.map((action) => (
+          <button
+            type="button"
+            key={action}
+            className="btn btn-secondary"
+            onClick={() => applyQuickActionFilter(action)}
+          >
+            {action}
+          </button>
+        ))}
+      </div>
 
       <form className="admin-form-grid" onSubmit={applyFilters}>
         <label>
