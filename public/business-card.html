@@ -30,7 +30,6 @@
             padding: 24px;
             font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
             color: var(--ink);
-            overflow-x: auto;
             background:
                 radial-gradient(circle at 10% 8%, rgba(66, 133, 244, 0.16), transparent 30%),
                 radial-gradient(circle at 84% 82%, rgba(52, 168, 83, 0.12), transparent 34%),
@@ -386,7 +385,102 @@
             font-weight: 700;
         }
 
-        
+        @media (max-width: 900px) {
+            body {
+                min-height: 100dvh;
+                height: 100dvh;
+                padding: 8px;
+                overflow: hidden;
+            }
+
+            .cards {
+                width: 100%;
+                height: calc(100dvh - 16px);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+            }
+
+            .pvc-card {
+                height: calc((100dvh - 24px) / 2);
+                width: min(94vw, calc(((100dvh - 24px) / 2) * 1.586));
+                aspect-ratio: 1.586;
+                padding: clamp(9px, 1.7vh, 14px);
+                border-radius: 12px;
+                gap: 6px;
+                box-shadow: 0 6px 18px rgba(60, 64, 67, 0.16);
+            }
+
+            .front .logo {
+                width: clamp(76px, 10.5vh, 94px);
+            }
+
+            .logo-text {
+                font-size: clamp(0.66rem, 1.35vh, 0.8rem);
+            }
+
+            .tag {
+                font-size: clamp(0.5rem, 1.15vh, 0.62rem);
+                padding: 4px 10px;
+            }
+
+            h1 {
+                font-size: clamp(1rem, 2.35vh, 1.25rem);
+            }
+
+            .service {
+                font-size: clamp(0.62rem, 1.45vh, 0.76rem);
+            }
+
+            .contact {
+                gap: 3px;
+                font-size: clamp(0.56rem, 1.3vh, 0.68rem);
+                line-height: 1.18;
+            }
+
+            .back-title h2 {
+                font-size: clamp(0.96rem, 2.1vh, 1.16rem);
+            }
+
+            .back-title p {
+                font-size: clamp(0.56rem, 1.3vh, 0.68rem);
+            }
+
+            .services-grid {
+                gap: 6px;
+            }
+
+            .service-pill {
+                padding: 6px 7px;
+                font-size: clamp(0.55rem, 1.2vh, 0.66rem);
+            }
+
+            .links {
+                column-gap: 8px;
+                row-gap: 5px;
+                font-size: clamp(0.54rem, 1.2vh, 0.66rem);
+                line-height: 1.16;
+            }
+
+            .social-link {
+                gap: 5px;
+            }
+
+            .social-link svg {
+                width: 11px;
+                height: 11px;
+                flex: 0 0 11px;
+            }
+
+            .qr {
+                width: clamp(66px, 8.8vh, 84px);
+                height: clamp(66px, 8.8vh, 84px);
+                min-height: 0;
+            }
+        }
+
     </style>
 </head>
 <body>
