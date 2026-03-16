@@ -22,16 +22,8 @@ function CaseStudiesPage() {
     return projects.slice(0, 3)
   }, [projects])
 
-  const featuredProjectIds = useMemo(() => {
-    return new Set(featuredProjects.map((project) => String(project._id || project.title)))
-  }, [featuredProjects])
-
-  const remainingProjects = useMemo(() => {
-    return projects.filter((project) => !featuredProjectIds.has(String(project._id || project.title)))
-  }, [projects])
-
   const sectionItems = useMemo(() => {
-    return remainingProjects.map((project) => ({
+    return projects.map((project) => ({
       title: project.title,
       description: project.summary,
       image: project.logo,
@@ -43,7 +35,7 @@ function CaseStudiesPage() {
         ? `Developer Credit: ${project.developerName || project.developer || project.developerCredit || project.developer_name}`
         : '',
     }))
-  }, [remainingProjects])
+  }, [projects])
 
   return (
     <>
@@ -103,7 +95,7 @@ function CaseStudiesPage() {
         )}
       </section>
 
-      {sectionItems.length > 0 ? <SectionBlock title="More Projects We Delivered" items={sectionItems} /> : null}
+      {sectionItems.length > 0 ? <SectionBlock title="All Projects We Delivered" items={sectionItems} /> : null}
 
       <CtaBanner
         title="Need a team that can deliver both website and software systems?"
