@@ -1,8 +1,8 @@
 export const companyInfo = {
   name: 'Indocreonix',
   tagline: 'Technology partner for web, cloud, data, and AI solutions',
-  email: 'indocreonix@gmail.com',
-  careersEmail: 'indocreonix@gmail.com',
+  email: 'info@indocreonix.com',
+  careersEmail: 'info@indocreonix.com',
   phones: ['7827456620', '9667097901'],
   whatsappNumber: '7827456620',
   primaryPhone: '7827456620',
