@@ -13,10 +13,14 @@ const initialForm = {
 
 function AdminClientsPage() {
   const [items, setItems] = useState([])
+  const [mediaAssets, setMediaAssets] = useState([])
   const [form, setForm] = useState(initialForm)
+  const [logoSource, setLogoSource] = useState('upload')
   const [logoFile, setLogoFile] = useState(null)
+  const [logoPreviewUrl, setLogoPreviewUrl] = useState('')
   const [isUploading, setIsUploading] = useState(false)
   const [editingId, setEditingId] = useState('')
+  const [copiedAssetUrl, setCopiedAssetUrl] = useState('')
   const [error, setError] = useState('')
 
   async function loadItems() {
@@ -28,9 +32,41 @@ function AdminClientsPage() {
     }
   }
 
+  async function loadMediaAssets() {
+    try {
+      const result = await apiRequest('/media')
+      setMediaAssets(result.assets || [])
+    } catch {
+      setMediaAssets([])
+    }
+  }
+
   useEffect(() => {
     loadItems()
+    loadMediaAssets()
   }, [])
+
+  useEffect(() => {
+    if (!logoFile) {
+      setLogoPreviewUrl('')
+      return undefined
+    }
+
+    const objectUrl = URL.createObjectURL(logoFile)
+    setLogoPreviewUrl(objectUrl)
+
+    return () => URL.revokeObjectURL(objectUrl)
+  }, [logoFile])
+
+  async function copyAssetUrl(url) {
+    try {
+      await navigator.clipboard.writeText(url)
+      setCopiedAssetUrl(url)
+      setTimeout(() => setCopiedAssetUrl(''), 1600)
+    } catch {
+      setError('Unable to copy URL. Please copy manually.')
+    }
+  }
 
   async function saveItem(event) {
     event.preventDefault()
@@ -39,7 +75,11 @@ function AdminClientsPage() {
     try {
       const payload = { ...form }
 
-      if (logoFile) {
+      if (logoSource === 'url') {
+        payload.logo = form.logo.trim()
+      }
+
+      if (logoSource === 'upload' && logoFile) {
         setIsUploading(true)
         const uploadedUrl = await uploadMediaAsset(logoFile, form.name)
         payload.logo = uploadedUrl
@@ -58,6 +98,7 @@ function AdminClientsPage() {
       }
 
       setForm(initialForm)
+      setLogoSource('upload')
       setLogoFile(null)
       setEditingId('')
       loadItems()
@@ -67,6 +108,8 @@ function AdminClientsPage() {
       setIsUploading(false)
     }
   }
+
+  const previewUrl = logoSource === 'upload' ? logoPreviewUrl || form.logo : form.logo
 
   async function removeItem(id) {
     try {
@@ -91,17 +134,79 @@ function AdminClientsPage() {
             Website
             <input value={form.website} onChange={(e) => setForm((prev) => ({ ...prev, website: e.target.value }))} />
           </label>
-          <label className="admin-upload-field admin-full-row">
-            Upload Client Logo
-            <input type="file" accept="image/*" onChange={(e) => setLogoFile(e.target.files?.[0] || null)} />
-            <small>Best results: clean logo with transparent background.</small>
+
+          <label>
+            Logo Source
+            <select
+              className="admin-select"
+              value={logoSource}
+              onChange={(e) => {
+                const nextSource = e.target.value
+                setLogoSource(nextSource)
+                if (nextSource === 'url') {
+                  setLogoFile(null)
+                }
+              }}
+            >
+              <option value="upload">Upload New File</option>
+              <option value="url">Use Image URL</option>
+            </select>
           </label>
-          {form.logo || logoFile ? (
+
+          {logoSource === 'upload' ? (
+            <label className="admin-upload-field admin-full-row">
+              Upload Client Logo
+              <input type="file" accept="image/*" onChange={(e) => setLogoFile(e.target.files?.[0] || null)} />
+              <small>Best results: clean logo with transparent background.</small>
+            </label>
+          ) : (
+            <label className="admin-full-row">
+              Client Logo URL
+              <input
+                type="url"
+                value={form.logo}
+                onChange={(e) => setForm((prev) => ({ ...prev, logo: e.target.value }))}
+                placeholder="https://..."
+              />
+            </label>
+          )}
+
+          {previewUrl ? (
             <div className="admin-upload-preview admin-full-row">
               <p>Preview</p>
-              <img src={logoFile ? URL.createObjectURL(logoFile) : form.logo} alt="Client logo preview" />
+              <img src={previewUrl} alt="Client logo preview" />
             </div>
           ) : null}
+
+          {mediaAssets.length ? (
+            <div className="admin-media-reuse admin-full-row">
+              <p>Reuse from Media Library</p>
+              <div className="admin-media-reuse-grid">
+                {mediaAssets.slice(0, 2).map((asset) => (
+                  <div key={asset._id} className="admin-media-reuse-item">
+                    <img src={asset.url} alt={asset.title || 'Media asset'} />
+                    <div className="admin-media-reuse-actions">
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => {
+                          setLogoSource('url')
+                          setLogoFile(null)
+                          setForm((prev) => ({ ...prev, logo: asset.url }))
+                        }}
+                      >
+                        Use URL
+                      </button>
+                      <button type="button" className="btn btn-secondary" onClick={() => copyAssetUrl(asset.url)}>
+                        {copiedAssetUrl === asset.url ? 'Copied' : 'Copy URL'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
           <label className="admin-full-row">
             Description
             <textarea rows="3" value={form.description} onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))} />
@@ -146,7 +251,25 @@ function AdminClientsPage() {
                   <td>{item.isActive ? 'Yes' : 'No'}</td>
                   <td>
                     <div className="admin-action-group">
-                      <button type="button" className="btn btn-secondary" onClick={() => { setEditingId(item._id); setLogoFile(null); setForm({ name: item.name, logo: item.logo || '', website: item.website || '', description: item.description || '', order: item.order || 0, isActive: item.isActive }) }}>Edit</button>
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => {
+                          setEditingId(item._id)
+                          setLogoFile(null)
+                          setLogoSource(item.logo ? 'url' : 'upload')
+                          setForm({
+                            name: item.name,
+                            logo: item.logo || '',
+                            website: item.website || '',
+                            description: item.description || '',
+                            order: item.order || 0,
+                            isActive: item.isActive,
+                          })
+                        }}
+                      >
+                        Edit
+                      </button>
                       <button type="button" className="btn btn-secondary" onClick={() => removeItem(item._id)}>Delete</button>
                     </div>
                   </td>

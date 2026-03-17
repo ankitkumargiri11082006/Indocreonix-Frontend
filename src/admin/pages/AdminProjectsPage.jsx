@@ -23,10 +23,14 @@ const initialForm = {
 
 function AdminProjectsPage() {
   const [items, setItems] = useState([])
+  const [mediaAssets, setMediaAssets] = useState([])
   const [form, setForm] = useState(initialForm)
+  const [logoSource, setLogoSource] = useState('upload')
   const [logoFile, setLogoFile] = useState(null)
+  const [logoPreviewUrl, setLogoPreviewUrl] = useState('')
   const [isUploading, setIsUploading] = useState(false)
   const [editingId, setEditingId] = useState('')
+  const [copiedAssetUrl, setCopiedAssetUrl] = useState('')
   const [error, setError] = useState('')
 
   async function loadItems() {
@@ -38,9 +42,41 @@ function AdminProjectsPage() {
     }
   }
 
+  async function loadMediaAssets() {
+    try {
+      const result = await apiRequest('/media')
+      setMediaAssets(result.assets || [])
+    } catch {
+      setMediaAssets([])
+    }
+  }
+
   useEffect(() => {
     loadItems()
+    loadMediaAssets()
   }, [])
+
+  useEffect(() => {
+    if (!logoFile) {
+      setLogoPreviewUrl('')
+      return undefined
+    }
+
+    const objectUrl = URL.createObjectURL(logoFile)
+    setLogoPreviewUrl(objectUrl)
+
+    return () => URL.revokeObjectURL(objectUrl)
+  }, [logoFile])
+
+  async function copyAssetUrl(url) {
+    try {
+      await navigator.clipboard.writeText(url)
+      setCopiedAssetUrl(url)
+      setTimeout(() => setCopiedAssetUrl(''), 1600)
+    } catch {
+      setError('Unable to copy URL. Please copy manually.')
+    }
+  }
 
   function resolveCategoryValue(currentForm) {
     if (currentForm.categoryOption === OTHER_OPTION_VALUE) {
@@ -91,7 +127,11 @@ function AdminProjectsPage() {
       delete payload.categoryOption
       delete payload.categoryOther
 
-      if (logoFile) {
+      if (logoSource === 'url') {
+        payload.logo = form.logo.trim()
+      }
+
+      if (logoSource === 'upload' && logoFile) {
         setIsUploading(true)
         const uploadedUrl = await uploadMediaAsset(logoFile, form.title)
         payload.logo = uploadedUrl
@@ -110,6 +150,7 @@ function AdminProjectsPage() {
       }
 
       setForm(initialForm)
+      setLogoSource('upload')
       setLogoFile(null)
       setEditingId('')
       loadItems()
@@ -119,6 +160,8 @@ function AdminProjectsPage() {
       setIsUploading(false)
     }
   }
+
+  const previewUrl = logoSource === 'upload' ? logoPreviewUrl || form.logo : form.logo
 
   async function removeItem(id) {
     try {
@@ -187,17 +230,79 @@ function AdminProjectsPage() {
               placeholder="Example: Ankit Singh"
             />
           </label>
-          <label className="admin-upload-field">
-            Upload Project Logo
-            <input type="file" accept="image/*" onChange={(e) => setLogoFile(e.target.files?.[0] || null)} />
-            <small>Use high-quality image/logo for best front-page visibility.</small>
+
+          <label>
+            Logo Source
+            <select
+              className="admin-select"
+              value={logoSource}
+              onChange={(e) => {
+                const nextSource = e.target.value
+                setLogoSource(nextSource)
+                if (nextSource === 'url') {
+                  setLogoFile(null)
+                }
+              }}
+            >
+              <option value="upload">Upload New File</option>
+              <option value="url">Use Image URL</option>
+            </select>
           </label>
-          {form.logo || logoFile ? (
+
+          {logoSource === 'upload' ? (
+            <label className="admin-upload-field">
+              Upload Project Logo
+              <input type="file" accept="image/*" onChange={(e) => setLogoFile(e.target.files?.[0] || null)} />
+              <small>Use high-quality image/logo for best front-page visibility.</small>
+            </label>
+          ) : (
+            <label>
+              Project Logo URL
+              <input
+                type="url"
+                value={form.logo}
+                onChange={(e) => setForm((prev) => ({ ...prev, logo: e.target.value }))}
+                placeholder="https://..."
+              />
+            </label>
+          )}
+
+          {previewUrl ? (
             <div className="admin-upload-preview">
               <p>Preview</p>
-              <img src={logoFile ? URL.createObjectURL(logoFile) : form.logo} alt="Project logo preview" />
+              <img src={previewUrl} alt="Project logo preview" />
             </div>
           ) : null}
+
+          {mediaAssets.length ? (
+            <div className="admin-media-reuse admin-full-row">
+              <p>Reuse from Media Library</p>
+              <div className="admin-media-reuse-grid">
+                {mediaAssets.slice(0, 2).map((asset) => (
+                  <div key={asset._id} className="admin-media-reuse-item">
+                    <img src={asset.url} alt={asset.title || 'Media asset'} />
+                    <div className="admin-media-reuse-actions">
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => {
+                          setLogoSource('url')
+                          setLogoFile(null)
+                          setForm((prev) => ({ ...prev, logo: asset.url }))
+                        }}
+                      >
+                        Use URL
+                      </button>
+                      <button type="button" className="btn btn-secondary" onClick={() => copyAssetUrl(asset.url)}>
+                        {copiedAssetUrl === asset.url ? 'Copied' : 'Copy URL'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
           <label>
             Website URL
             <input value={form.website} onChange={(e) => setForm((prev) => ({ ...prev, website: e.target.value }))} />
@@ -261,6 +366,7 @@ function AdminProjectsPage() {
                         onClick={() => {
                           setEditingId(item._id)
                           setLogoFile(null)
+                          setLogoSource(item.logo ? 'url' : 'upload')
                           setForm(buildFormFromItem(item))
                         }}
                       >

@@ -1102,6 +1102,73 @@
   font-size: 0.84rem;
 }
 
+.admin-media-item-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem;
+  padding: 0 0.55rem 0.55rem;
+}
+
+.admin-media-item-actions .btn {
+  min-height: 32px;
+  padding: 0.32rem 0.5rem;
+  font-size: 0.76rem;
+}
+
+.admin-media-item-actions .admin-media-delete {
+  grid-column: 1 / -1;
+}
+
+.admin-media-reuse {
+  border: 1px solid #e8eaed;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 0.7rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.admin-media-reuse p {
+  margin: 0;
+  color: #5f6368;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.admin-media-reuse-grid {
+  display: grid;
+  gap: 0.55rem;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+}
+
+.admin-media-reuse-item {
+  border: 1px solid #e8eaed;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.admin-media-reuse-item img {
+  width: 100%;
+  height: 86px;
+  object-fit: cover;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.admin-media-reuse-actions {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.45rem;
+}
+
+.admin-media-reuse-actions .btn {
+  min-height: 30px;
+  font-size: 0.74rem;
+  padding: 0.28rem 0.45rem;
+}
+
 .admin-workbench {
   display: grid;
   grid-template-columns: minmax(340px, 460px) minmax(0, 1fr);

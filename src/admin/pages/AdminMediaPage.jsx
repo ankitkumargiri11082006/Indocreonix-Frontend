@@ -6,6 +6,7 @@ function AdminMediaPage() {
   const [title, setTitle] = useState('')
   const [file, setFile] = useState(null)
   const [error, setError] = useState('')
+  const [copiedAssetId, setCopiedAssetId] = useState('')
 
   async function loadAssets() {
     try {
@@ -54,6 +55,30 @@ function AdminMediaPage() {
     }
   }
 
+  async function copyAssetUrl(assetId, assetUrl) {
+    try {
+      await navigator.clipboard.writeText(assetUrl)
+      setCopiedAssetId(assetId)
+      setTimeout(() => setCopiedAssetId(''), 1600)
+    } catch {
+      setError('Unable to copy URL. Please copy manually.')
+    }
+  }
+
+  async function deleteAsset(assetId) {
+    setError('')
+
+    try {
+      await apiRequest(`/media/${assetId}`, { method: 'DELETE' })
+      setAssets((prev) => prev.filter((asset) => asset._id !== assetId))
+      if (copiedAssetId === assetId) {
+        setCopiedAssetId('')
+      }
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
   return (
     <div className="admin-page-grid">
       <article className="admin-card">
@@ -76,10 +101,25 @@ function AdminMediaPage() {
         <h3>Media Library</h3>
         <div className="admin-media-grid">
           {assets.map((asset) => (
-            <a key={asset._id} href={asset.url} className="admin-media-item" target="_blank" rel="noreferrer">
+            <div key={asset._id} className="admin-media-item">
               <img src={asset.url} alt={asset.title} />
               <p>{asset.title}</p>
-            </a>
+              <div className="admin-media-item-actions">
+                <a href={asset.url} className="btn btn-secondary" target="_blank" rel="noreferrer">
+                  Open
+                </a>
+                <button type="button" className="btn btn-secondary" onClick={() => copyAssetUrl(asset._id, asset.url)}>
+                  {copiedAssetId === asset._id ? 'Copied' : 'Copy URL'}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary admin-media-delete"
+                  onClick={() => deleteAsset(asset._id)}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
           ))}
         </div>
       </article>
