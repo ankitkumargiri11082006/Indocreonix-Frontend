@@ -1,14 +1,56 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { apiBaseUrl } from '../lib/apiClient'
 
 function LoginPage() {
-  const { login } = useAuth()
+  const { login, refreshUser } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [formData, setFormData] = useState({ email: '', password: '' })
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [oauthLoading, setOauthLoading] = useState(false)
+
+  const providerLoginUrls = useMemo(() => {
+    const base = apiBaseUrl()
+    return {
+      google: `${base}/auth/google`,
+      github: `${base}/auth/github`,
+      facebook: `${base}/auth/facebook`,
+    }
+  }, [])
+
+  useEffect(() => {
+    const token = searchParams.get('token')
+    const authError = searchParams.get('authError')
+
+    if (authError) {
+      setError('Social login failed. Please try again or use email/password.')
+      return
+    }
+
+    if (!token) {
+      return
+    }
+
+    async function completeOAuthLogin() {
+      try {
+        setOauthLoading(true)
+        localStorage.setItem('indocx_token', token)
+        await refreshUser()
+        navigate('/admin', { replace: true })
+      } catch (_error) {
+        localStorage.removeItem('indocx_token')
+        setError('Unable to complete social login. Please try again.')
+      } finally {
+        setOauthLoading(false)
+      }
+    }
+
+    completeOAuthLogin()
+  }, [navigate, refreshUser, searchParams])
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -102,6 +144,24 @@ function LoginPage() {
               {loading ? 'Signing in...' : 'Login'}
             </button>
           </form>
+
+          <div className="auth-divider" role="separator" aria-label="or continue with">
+            <span>or continue with</span>
+          </div>
+
+          <div className="auth-social-grid">
+            <a className="btn btn-secondary auth-social-btn" href={providerLoginUrls.google} aria-label="Login with Google">
+              Google
+            </a>
+            <a className="btn btn-secondary auth-social-btn" href={providerLoginUrls.github} aria-label="Login with GitHub">
+              GitHub
+            </a>
+            <a className="btn btn-secondary auth-social-btn" href={providerLoginUrls.facebook} aria-label="Login with Facebook">
+              Facebook
+            </a>
+          </div>
+
+          {oauthLoading ? <p className="auth-success">Completing social login...</p> : null}
 
           <p className="auth-footer">
             Need access? Contact your superadmin to create your account.
