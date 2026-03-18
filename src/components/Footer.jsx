@@ -213,6 +213,18 @@ function Footer() {
               </a>
             </li>
             <li>
+              <a href={`mailto:${companyInfo.supportEmail}`} className="footer-link-with-icon">
+                <span className="footer-icon footer-icon-email" aria-hidden="true">✉️</span>
+                <span>{companyInfo.supportEmail}</span>
+              </a>
+            </li>
+            <li>
+              <a href={`mailto:${companyInfo.careersEmail}`} className="footer-link-with-icon">
+                <span className="footer-icon footer-icon-email" aria-hidden="true">✉️</span>
+                <span>{companyInfo.careersEmail}</span>
+              </a>
+            </li>
+            <li>
               <a href={`tel:${companyInfo.phones[0]}`} className="footer-link-with-icon">
                 <span className="footer-icon footer-icon-phone-1" aria-hidden="true">📞</span>
                 <span>+91 {companyInfo.phones[0]}</span>

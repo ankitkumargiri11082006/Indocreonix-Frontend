@@ -110,8 +110,21 @@ function ContactPage() {
         <article className="info-card">
           <h3>Email</h3>
           <p>
+            Info:{' '}
             <a href={`mailto:${companyInfo.email}`} className="contact-link">
               {companyInfo.email}
+            </a>
+          </p>
+          <p>
+            Support:{' '}
+            <a href={`mailto:${companyInfo.supportEmail}`} className="contact-link">
+              {companyInfo.supportEmail}
+            </a>
+          </p>
+          <p>
+            Careers:{' '}
+            <a href={`mailto:${companyInfo.careersEmail}`} className="contact-link">
+              {companyInfo.careersEmail}
             </a>
           </p>
         </article>
