@@ -156,25 +156,25 @@ export const serviceCatalog = [
   {
     slug: 'social-media-handling',
     title: 'Social Media Handling',
-    image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=1200&q=80',
-    shortDescription: 'Comprehensive digital marketing, brand building, and engagement strategies across all platforms.',
-    details: 'We manage your online presence end-to-end. From eye-catching content creation to scheduled posting and lead-generating ad campaigns.',
+    image: 'https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?auto=format&fit=crop&w=1200&q=80',
+    shortDescription: 'Comprehensive digital marketing and social media handling services for platforms like YouTube, Instagram, and X.',
+    details: 'We handle your social media presence end-to-end as a dedicated service. From managing YouTube channels, designing Instagram grids, to engaging on X (Twitter), we drive growth, create eye-catching content, and optimize ad campaigns.',
     offerings: [
       {
-        type: 'Social Media Management',
-        brief: 'Organic growth, consistent branding, and daily engagement workflows.',
+        type: 'YouTube Channel Management',
+        brief: 'End-to-end YouTube handling — thumbnails, SEO titles, scheduling, and analytics growth.',
       },
       {
-        type: 'Paid Advertising Campaigns',
-        brief: 'Targeted Facebook, Instagram, and LinkedIn ads optimizing ROI.',
+        type: 'Instagram & Facebook Handling',
+        brief: 'Consistent visual branding, reels, stories, and community engagement across Meta platforms.',
       },
       {
-        type: 'Content Creation',
-        brief: 'High-quality graphics, reels, and copyrighting tailored to your audience.',
+        type: 'X (Twitter) & LinkedIn',
+        brief: 'Thought leadership posts, thread strategies, and professional brand presence on X and LinkedIn.',
       },
       {
-        type: 'Brand Strategy & Analytics',
-        brief: 'Data-driven audience targeting and monthly performance reporting.',
+        type: 'Paid Ad Campaigns',
+        brief: 'Targeted advertising on YouTube, Instagram, and Facebook optimizing reach and ROI.',
       },
     ],
   },
