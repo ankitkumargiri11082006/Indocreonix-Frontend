@@ -57,22 +57,9 @@ function HomePage() {
       : {}),
   }))
 
-  const combinedServices = [...serviceCatalog];
-  servicesOffered.forEach(apiService => {
-    const apiTitle = apiService.title || apiService.name;
-    const exists = combinedServices.some(s => s.title.toLowerCase() === apiTitle.toLowerCase());
-    if (!exists) {
-      combinedServices.push({
-        title: apiTitle,
-        shortDescription: apiService.description,
-        image: apiService.logo
-      });
-    }
-  });
-
-  const sectionServices = combinedServices.map(s => ({
+  const sectionServices = serviceCatalog.map(s => ({
     title: s.title,
-    description: s.shortDescription || s.description,
+    description: s.shortDescription,
     image: s.image
   }));
 

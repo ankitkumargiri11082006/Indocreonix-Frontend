@@ -32,40 +32,15 @@ function ServicesPage() {
       .catch(() => setServicesOffered([]))
   }, [])
 
-  // Start with the local curated catalog as the base
-  const combinedServiceList = [...serviceCatalog];
-  
-  // Add any services from the backend that aren't already represented in the catalog
-  servicesOffered.forEach((apiService) => {
-    const apiTitle = apiService.title || apiService.name || 'Service';
-    const existsLocally = combinedServiceList.some(
-      (cat) => cat.title.toLowerCase() === apiTitle.toLowerCase()
-    );
-    
-    if (!existsLocally) {
-      combinedServiceList.push({
-        title: apiTitle,
-        shortDescription: apiService.description,
-        image: apiService.logo,
-        slug: null // Backend-driven services won't have detail pages by default
-      });
-    }
-  });
-
-  const sectionItems = combinedServiceList.map((service) => {
-    const title = service.title || 'Service'
-    const matched =
-      serviceCatalog.find((item) => item.title.toLowerCase() === String(title).toLowerCase()) ||
-      keywordCatalogMatch(title)
-
+  const sectionItems = serviceCatalog.map((service) => {
     return {
-      title,
-      description: service.shortDescription || service.description || matched?.shortDescription || 'Professional technology service delivery for business growth.',
-      image: service.image || service.logo || matched?.image,
+      title: service.title,
+      description: service.shortDescription,
+      image: service.image,
       primaryLabel: 'View Service Details',
-      primaryTo: matched ? `/services/${matched.slug}` : '/request-quote',
+      primaryTo: `/services/${service.slug}`,
       secondaryLabel: 'Request Quote',
-      secondaryTo: `/request-quote?service=${encodeURIComponent(title)}`,
+      secondaryTo: `/request-quote?service=${encodeURIComponent(service.title)}`,
     }
   })
 

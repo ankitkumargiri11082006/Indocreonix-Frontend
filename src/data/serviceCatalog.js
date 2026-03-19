@@ -2,8 +2,7 @@ export const serviceCatalog = [
   {
     slug: 'website-development',
     title: 'Website Development',
-    image:
-      'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1200&q=80',
+    image: '/svc_web.png',
     shortDescription: 'Business-ready websites engineered for performance, security, and conversion.',
     details:
       'We design and build websites aligned with your branding, lead generation goals, and scalability requirements.',
@@ -29,8 +28,7 @@ export const serviceCatalog = [
   {
     slug: 'mobile-app-development',
     title: 'Mobile App Development',
-    image:
-      'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80',
+    image: '/svc_mobile.png',
     shortDescription: 'Cross-platform and native mobile applications for Android and iOS ecosystems.',
     details:
       'Our team develops robust mobile products with intuitive UX, API integrations, and release-ready architecture.',
@@ -56,8 +54,7 @@ export const serviceCatalog = [
   {
     slug: 'software-development',
     title: 'Custom Software Development',
-    image:
-      'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80',
+    image: '/svc_software.png',
     shortDescription: 'Tailored business software for operations, automation, and enterprise workflows.',
     details:
       'We build bespoke software systems for internal teams, customer portals, and operational control centers.',
@@ -83,8 +80,7 @@ export const serviceCatalog = [
   {
     slug: 'cloud-devops-data',
     title: 'Cloud, DevOps & Data Services',
-    image:
-      'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80',
+    image: '/svc_cloud.png',
     shortDescription: 'Infrastructure and data engineering for secure, scalable digital platforms.',
     details:
       'We modernize deployment and data ecosystems to improve reliability, observability, and decision velocity.',
