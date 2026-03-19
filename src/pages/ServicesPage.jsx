@@ -47,9 +47,9 @@ function ServicesPage() {
   return (
     <>
       <SEO 
-        title="Services | Web, Mobile & Custom Software Solutions"
-        description="Explore our full range of technology services: webdeveloipments, android social media handling, cloud engineering, and custom software. Indocreonix delivers high-performing solutions."
-        keywords="web development services, android app development, social media management, tech services list, software development agency delhi"
+        title="Our Services | Indocreonix Tech Solutions & App Development"
+        description="Explore the comprehensive suite of services by Indocreonix. From enterprise web applications to native Android app development, cloud infrastructure, and AI engineering, we are the #1 technology partner."
+        keywords="indocreonix services, indocreonix web development, indocreonix android development, top IT services delhi, top software agency, leading cloud migration experts, saas development company, robust UI UX design, indo digital services"
       />
       <CompanyPage
         eyebrow="Our Services"

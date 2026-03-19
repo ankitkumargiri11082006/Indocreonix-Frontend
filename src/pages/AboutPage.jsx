@@ -22,9 +22,9 @@ function AboutPage() {
   return (
     <>
       <SEO 
-        title="About Indocreonix | Our Mission, Leadership & Technology Promise"
-        description="Learn about Indocreonix, a Delhi-based tech company specializing in web development, Android app development, and social media handling. Our mission is to build scalable, secure, and future-ready solutions."
-        keywords="about indocreonix, avinash puri, rahul pandey, tech startup delhi, web development agency, software engineering delhi"
+        title="About Indocreonix | Top Software & Tech Agency Leadership"
+        description="Learn about Indocreonix, Delhi's leading tech company specializing in software engineering, web development, Android applications, and cloud migration. Our mission is secure, scalable, future-ready business solutions."
+        keywords="about indocreonix, indocreonix leadership, indocreonix tech experts, avinash puri indocreonix, rahul pandey indocreonix, indocreonix foundation, top rated software team, reliable technology partner, indocreonix IT company, indo tech solutions, best saas development company"
       />
       <PageHero
         eyebrow="About Indocreonix"

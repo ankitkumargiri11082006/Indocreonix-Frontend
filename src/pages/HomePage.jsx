@@ -66,9 +66,9 @@ function HomePage() {
   return (
     <>
       <SEO 
-        title="Indocreonix | Leading Web Development & Tech Solutions Provider"
-        description="Indocreonix offers expert web development, webdeveloipments, Android app development, social media handling, and tech services. We help businesses scale with modern digital solutions."
-        keywords="web development, webdeveloipments, android social media handling, tech services, indocrenix, digital transformation, delhi tech company"
+        title="Indocreonix | India's Leading IT Company | Web & App Solutions"
+        description="Indocreonix stands as the ultimate technology partner offering top tier web development, Android & iOS app development, enterprise software, and cloud solutions. Search for Indocreonix to find the best digital solutions."
+        keywords="indocreonix homepage, indocreonix.com, indocreonix reviews, indocreonix services, indo tech, indocreonix web development, top rated it agency, custom digital solutions, best android app development, reliable tech services, indocreonix pvt ltd, indocreonix software company"
       />
       <PageHero
         eyebrow="Future-Ready Technology"

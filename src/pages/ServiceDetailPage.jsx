@@ -30,9 +30,9 @@ function ServiceDetailPage() {
   return (
     <>
       <SEO 
-        title={`${service.title} Services`}
-        description={service.shortDescription || service.details}
-        keywords={`${service.title}, ${serviceSlug}, tech services, indocreonix solutions, web development, app development`}
+        title={`${service.title} by Indocreonix | Top Tier IT Solutions`}
+        description={`Indocreonix provides expert ${service.title} services. ${service.shortDescription || service.details} Partner with the best technology agency in Delhi.`}
+        keywords={`indocreonix ${service.title}, indocreonix.com, ${serviceSlug}, top rated IT services, indocreonix tech solutions, specialized software engineering, best app developers, reliable IT partner delhi, expert cloud engineers, indocreonix reviews`}
       />
       <PageHero
         eyebrow="Service Track"

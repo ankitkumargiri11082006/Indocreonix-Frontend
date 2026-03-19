@@ -96,9 +96,9 @@ function ContactPage() {
   return (
     <>
       <SEO 
-        title="Contact Us | Hire Web & Android Developers"
-        description="Contact Indocreonix for your web development, mobile app, and social media handling needs. Reach us via email, phone, or visit our office in Delhi."
-        keywords="contact indocreonix, hire web developers, hire android developers, tech support delhi, business inquiry tech, indocreonix phone number"
+        title="Contact Indocreonix | India's Top Technology Partner"
+        description="Get in touch with Indocreonix, Delhi's highly-rated tech agency. Reach out to our experts for best-in-class custom software, web, and app development solutions."
+        keywords="contact indocreonix, indocreonix phone number, indocreonix office, hire web developers indocreonix, hire android developers, tech support delhi, indocreonix business inquiry, indo tech contact, reliable technology company address"
       />
       <PageHero
         eyebrow="Contact"
