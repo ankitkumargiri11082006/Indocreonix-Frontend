@@ -6,6 +6,7 @@ import CtaBanner from '../components/CtaBanner'
 import AdaptiveLogoImage from '../components/AdaptiveLogoImage'
 import { apiRequest } from '../lib/apiClient'
 import SEO from '../components/SEO'
+import { serviceCatalog } from '../data/serviceCatalog'
 
 const highlights = [
   {
@@ -56,6 +57,25 @@ function HomePage() {
       : {}),
   }))
 
+  const combinedServices = [...serviceCatalog];
+  servicesOffered.forEach(apiService => {
+    const apiTitle = apiService.title || apiService.name;
+    const exists = combinedServices.some(s => s.title.toLowerCase() === apiTitle.toLowerCase());
+    if (!exists) {
+      combinedServices.push({
+        title: apiTitle,
+        shortDescription: apiService.description,
+        image: apiService.logo
+      });
+    }
+  });
+
+  const sectionServices = combinedServices.map(s => ({
+    title: s.title,
+    description: s.shortDescription || s.description,
+    image: s.image
+  }));
+
   return (
     <>
       <SEO 
@@ -85,7 +105,7 @@ function HomePage() {
         }
       />
       <SectionBlock title="What We Deliver" items={highlights} />
-      <SectionBlock title="Services We Offer" items={servicesOffered} />
+      <SectionBlock title="Services We Offer" items={sectionServices} />
       {projectItems.length > 0 ? <SectionBlock title="Projects Delivered by Indocreonix" items={projectItems} /> : null}
 
       <section className="content-section container">

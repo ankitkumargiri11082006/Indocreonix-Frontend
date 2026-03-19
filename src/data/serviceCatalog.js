@@ -107,6 +107,56 @@ export const serviceCatalog = [
       },
     ],
   },
+  {
+    slug: 'ai-data-solutions',
+    title: 'AI & Data Solutions',
+    image: '/svc_ai.png',
+    shortDescription: 'Advanced machine learning, predictive analytics, and data-driven business intelligence.',
+    details: 'We build intelligent systems that turn complex data into actionable insights through custom ML models and reporting dashboards.',
+    offerings: [
+      {
+        type: 'Machine Learning Models',
+        brief: 'Custom AI models for classification, regression, and pattern recognition tailored to business data.',
+      },
+      {
+        type: 'Data Warehousing',
+        brief: 'Scalable data storage and ETL pipelines designed for high-velocity information processing.',
+      },
+      {
+        type: 'Business Intelligence',
+        brief: 'Unified KPI dashboards providing real-time visibility into operational performance and growth metrics.',
+      },
+      {
+        type: 'Predictive Analytics',
+        brief: 'Forecasting systems to anticipate market trends, user behavior, and resource requirements.',
+      },
+    ],
+  },
+  {
+    slug: 'business-automation',
+    title: 'Business Automation',
+    image: '/svc_automation.png',
+    shortDescription: 'Streamline operations with intelligent workflow automation and API integrations.',
+    details: 'Our automation solutions eliminate manual bottlenecks by connecting disparate systems and optimizing repetitive tasks.',
+    offerings: [
+      {
+        type: 'Workflow Orchestration',
+        brief: 'End-to-end automation of complex business processes using modern middleware and logic apps.',
+      },
+      {
+        type: 'API Integrations',
+        brief: 'Seamlessly connecting internal software with third-party platforms for synchronized data flow.',
+      },
+      {
+        type: 'Legacy Modernization',
+        brief: 'Upgrading older systems with automation layers to improve efficiency without total replacement.',
+      },
+      {
+        type: 'Process Optimization',
+        brief: 'Technical audits and implementation of scripts to handle bulk data and repetitive operational tasks.',
+      },
+    ],
+  },
 ]
 
 export function getServiceBySlug(slug = '') {
