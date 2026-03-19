@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import PageHero from '../components/PageHero'
 import { apiRequest } from '../lib/apiClient'
+import StatusModal from '../components/StatusModal'
 
 const projectCategoryOptions = [
   { value: 'website', label: 'Website' },
@@ -70,7 +71,7 @@ function ProjectRequestPage() {
   })
   const [prdFile, setPrdFile] = useState(null)
   const [supportingDocs, setSupportingDocs] = useState([])
-  const [status, setStatus] = useState({ success: '', error: '' })
+  const [modalState, setModalState] = useState({ isOpen: false, title: '', message: '', type: 'success' })
   const [submitting, setSubmitting] = useState(false)
   const activeSubtypeConfig = categorySubtypeOptions[formData.projectCategory]
 
@@ -106,7 +107,7 @@ function ProjectRequestPage() {
 
   async function onSubmit(event) {
     event.preventDefault()
-    setStatus({ success: '', error: '' })
+    if (submitting) return
     setSubmitting(true)
 
     try {
@@ -147,9 +148,11 @@ function ProjectRequestPage() {
         body,
       })
 
-      setStatus({
-        success: 'Your project request has been submitted. Our solution team will contact you shortly.',
-        error: '',
+      setModalState({
+        isOpen: true,
+        title: 'Project Request Received',
+        message: 'Thank you for choosing Indocreonix. Your project brief has been successfully submitted to our solutions architecture team. We will review your requirements and a technical consultant will contact you shortly to discuss the next steps and provide a formal proposal.',
+        type: 'success'
       })
 
       setFormData((previous) => ({
@@ -172,9 +175,11 @@ function ProjectRequestPage() {
       setPrdFile(null)
       setSupportingDocs([])
     } catch (error) {
-      setStatus({
-        success: '',
-        error: error.message,
+      setModalState({
+        isOpen: true,
+        title: 'Submission Error',
+        message: error.message || 'We encountered an error while processing your request. Please check your connection and try again, or reach out to our support team.',
+        type: 'error'
       })
     } finally {
       setSubmitting(false)
@@ -385,10 +390,16 @@ function ProjectRequestPage() {
             </div>
           </form>
 
-          {status.success ? <p className="admin-success">{status.success}</p> : null}
-          {status.error ? <p className="admin-error">{status.error}</p> : null}
         </article>
       </section>
+
+      <StatusModal 
+        isOpen={modalState.isOpen}
+        title={modalState.title}
+        message={modalState.message}
+        type={modalState.type}
+        onClose={() => setModalState({ ...modalState, isOpen: false })}
+      />
     </>
   )
 }

@@ -4,6 +4,7 @@ import CtaBanner from '../components/CtaBanner'
 import { companyInfo } from '../data/companyInfo'
 import { apiRequest } from '../lib/apiClient'
 import SEO from '../components/SEO'
+import StatusModal from '../components/StatusModal'
 
 function SocialIcon({ type }) {
   if (type === 'facebook') {
@@ -50,7 +51,8 @@ function SocialIcon({ type }) {
 
 function ContactPage() {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', company: '', message: '' })
-  const [status, setStatus] = useState({ error: '', success: '' })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [modalState, setModalState] = useState({ isOpen: false, title: '', message: '', type: 'success' })
 
   const mapsUrl = companyInfo.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(companyInfo.mapQuery)}`
   const whatsappUrl = `https://wa.me/91${companyInfo.whatsappNumber}`
@@ -64,17 +66,30 @@ function ContactPage() {
 
   async function submitLead(event) {
     event.preventDefault()
-    setStatus({ error: '', success: '' })
+    if (isSubmitting) return
+    setIsSubmitting(true)
 
     try {
       await apiRequest('/leads', {
         method: 'POST',
         body: JSON.stringify(formData),
       })
-      setStatus({ error: '', success: 'Your message has been submitted successfully.' })
+      setModalState({
+        isOpen: true,
+        title: 'Thank You for Connecting!',
+        message: 'Your inquiry has been received successfully. We appreciate your interest in Indocreonix, and one of our dedicated technology consultants will reach out to you within the next 24 business hours.',
+        type: 'success'
+      })
       setFormData({ name: '', email: '', phone: '', company: '', message: '' })
     } catch (error) {
-      setStatus({ error: error.message, success: '' })
+      setModalState({
+        isOpen: true,
+        title: 'Submission Encountered an Issue',
+        message: error.message || 'We apologize, but we were unable to process your request at this time. Please try again or contact us directly via email.',
+        type: 'error'
+      })
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -215,12 +230,20 @@ function ContactPage() {
                 required
               />
             </label>
-            <button type="submit" className="btn btn-primary">Submit</button>
+            <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting...' : 'Submit Message'}
+            </button>
           </form>
-          {status.success ? <p className="admin-success">{status.success}</p> : null}
-          {status.error ? <p className="admin-error">{status.error}</p> : null}
         </article>
       </section>
+
+      <StatusModal 
+        isOpen={modalState.isOpen}
+        title={modalState.title}
+        message={modalState.message}
+        type={modalState.type}
+        onClose={() => setModalState({ ...modalState, isOpen: false })}
+      />
 
       <CtaBanner
         title="Ready to discuss your roadmap with our team?"

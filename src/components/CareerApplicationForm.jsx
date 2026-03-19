@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { companyInfo } from '../data/companyInfo'
 import { apiRequest, apiBaseUrl } from '../lib/apiClient'
+import StatusModal from './StatusModal'
 
 function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
   const initialData = {
@@ -21,8 +22,7 @@ function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
 
   const [formData, setFormData] = useState(initialData)
   const [cvFile, setCvFile] = useState(null)
-  const [submitted, setSubmitted] = useState(false)
-  const [error, setError] = useState('')
+  const [modalState, setModalState] = useState({ isOpen: false, title: '', message: '', type: 'success' })
   const [loading, setLoading] = useState(false)
   const [opportunities, setOpportunities] = useState([])
 
@@ -39,26 +39,46 @@ function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
 
   const onSubmit = async (event) => {
     event.preventDefault()
-    setSubmitted(false)
-    setError('')
+    if (loading) return
+    setModalState({ ...modalState, isOpen: false })
 
     if (!cvFile) {
-      setError('Please upload your CV in PDF format (max 2MB).')
+      setModalState({
+        isOpen: true,
+        title: 'Missing Document',
+        message: 'Please upload your CV in PDF format (max 2MB) to proceed with your application.',
+        type: 'error'
+      })
       return
     }
 
     if (cvFile.size > 2 * 1024 * 1024) {
-      setError('CV file size must be 2MB or less.')
+      setModalState({
+        isOpen: true,
+        title: 'File Too Large',
+        message: 'The CV file size exceeds our 2MB limit. Please compress your PDF and try again.',
+        type: 'error'
+      })
       return
     }
 
     if (!cvFile.name.toLowerCase().endsWith('.pdf')) {
-      setError('Only PDF files are allowed for CV upload.')
+      setModalState({
+        isOpen: true,
+        title: 'Invalid File Format',
+        message: 'Only PDF documents are accepted for CV uploads. Please convert your file to PDF.',
+        type: 'error'
+      })
       return
     }
 
     if (!formData.consentAccepted) {
-      setError('Please accept Indocreonix Terms and Privacy Policy to continue.')
+      setModalState({
+        isOpen: true,
+        title: 'Consent Required',
+        message: 'Please review and accept Indocreonix Terms and Privacy Policy to submit your application.',
+        type: 'error'
+      })
       return
     }
 
@@ -72,21 +92,34 @@ function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
     multipart.append('cv', cvFile)
 
     try {
-      await fetch(`${apiBaseUrl()}/careers/applications`, {
+      const response = await fetch(`${apiBaseUrl()}/careers/applications`, {
         method: 'POST',
         body: multipart,
-      }).then(async (response) => {
-        const data = await response.json()
-        if (!response.ok) {
-          throw new Error(data.message || 'Failed to submit application')
-        }
       })
+      
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to submit application')
+      }
 
-      setSubmitted(true)
+      setModalState({
+        isOpen: true,
+        title: 'Application Received',
+        message: 'Thank you for your interest in joining Indocreonix. Your application has been successfully submitted to our HR department. Our hiring team will carefully review your profile and contact you soon if your skills and experience align with our requirements.',
+        type: 'success'
+      })
+      
       setFormData(initialData)
       setCvFile(null)
+      // Reset file input manually if needed (omitted for simplicity as form resets)
     } catch (submissionError) {
-      setError(submissionError.message)
+      setModalState({
+        isOpen: true,
+        title: 'Application Error',
+        message: submissionError.message || 'We encountered an error while submitting your application. Please try again or email your CV directly to our careers mailbox.',
+        type: 'error'
+      })
     } finally {
       setLoading(false)
     }
@@ -179,8 +212,7 @@ function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
               .
             </span>
           </label>
-          {error ? <p className="auth-error">{error}</p> : null}
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="btn btn-primary" disabled={loading}>
             {loading
               ? 'Submitting...'
               : roleType === 'internship'
@@ -197,6 +229,14 @@ function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
           .
         </p>
       </article>
+
+      <StatusModal 
+        isOpen={modalState.isOpen}
+        title={modalState.title}
+        message={modalState.message}
+        type={modalState.type}
+        onClose={() => setModalState({ ...modalState, isOpen: false })}
+      />
     </section>
   )
 }
