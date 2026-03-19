@@ -5,6 +5,7 @@ import SectionBlock from '../components/SectionBlock'
 import CtaBanner from '../components/CtaBanner'
 import AdaptiveLogoImage from '../components/AdaptiveLogoImage'
 import { apiRequest } from '../lib/apiClient'
+import SEO from '../components/SEO'
 
 const highlights = [
   {
@@ -57,6 +58,11 @@ function HomePage() {
 
   return (
     <>
+      <SEO 
+        title="Indocreonix | Leading Web Development & Tech Solutions Provider"
+        description="Indocreonix offers expert web development, webdeveloipments, Android app development, social media handling, and tech services. We help businesses scale with modern digital solutions."
+        keywords="web development, webdeveloipments, android social media handling, tech services, indocrenix, digital transformation, delhi tech company"
+      />
       <PageHero
         eyebrow="Future-Ready Technology"
         title="Indocreonix Delivers Reliable Technology for Real Business Needs"

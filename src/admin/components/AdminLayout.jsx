@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { apiRequest } from '../../lib/apiClient'
 import { getAllowedAdminRoutes, getAllowedMenuSections } from '../permissions'
+import SEO from '../../components/SEO'
 
 const routeTitleMap = {
   '/admin': 'Dashboard',
@@ -126,6 +127,7 @@ function AdminLayout() {
 
   return (
     <div className="admin-shell">
+      <SEO title={pageTitle} description="Indocreonix Admin Panel" noindex={true} />
       <aside className={`admin-sidebar${isMobileMenuOpen ? ' mobile-open' : ''}`}>
         <div className="admin-brand">
           <img src="/logo.png" alt="Indocreonix" />

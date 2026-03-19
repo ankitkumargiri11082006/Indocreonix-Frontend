@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import SEO from '../components/SEO'
 
 function LoginPage() {
   const { login } = useAuth()
@@ -26,7 +27,9 @@ function LoginPage() {
   }
 
   return (
-    <section className="auth-shell">
+    <>
+      <SEO title="Login" description="Login to Indocreonix Admin Panel" noindex={true} />
+      <section className="auth-shell">
       <div className="auth-grid">
         <aside className="auth-showcase">
           <div className="auth-brand-row">
@@ -109,6 +112,7 @@ function LoginPage() {
         </div>
       </div>
     </section>
+    </>
   )
 }
 

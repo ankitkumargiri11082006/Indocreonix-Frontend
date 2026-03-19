@@ -3,6 +3,7 @@ import PageHero from '../components/PageHero'
 import CtaBanner from '../components/CtaBanner'
 import { companyInfo } from '../data/companyInfo'
 import { apiRequest } from '../lib/apiClient'
+import SEO from '../components/SEO'
 
 function SocialIcon({ type }) {
   if (type === 'facebook') {
@@ -79,6 +80,11 @@ function ContactPage() {
 
   return (
     <>
+      <SEO 
+        title="Contact Us | Hire Web & Android Developers"
+        description="Contact Indocreonix for your web development, mobile app, and social media handling needs. Reach us via email, phone, or visit our office in Delhi."
+        keywords="contact indocreonix, hire web developers, hire android developers, tech support delhi, business inquiry tech, indocreonix phone number"
+      />
       <PageHero
         eyebrow="Contact"
         title="Connect with Indocreonix"

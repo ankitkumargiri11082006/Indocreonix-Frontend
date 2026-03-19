@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom'
 import PageHero from '../components/PageHero'
 import CtaBanner from '../components/CtaBanner'
 import { getServiceBySlug } from '../data/serviceCatalog'
+import SEO from '../components/SEO'
 
 function ServiceDetailPage() {
   const { serviceSlug } = useParams()
@@ -28,6 +29,11 @@ function ServiceDetailPage() {
 
   return (
     <>
+      <SEO 
+        title={`${service.title} Services`}
+        description={service.shortDescription || service.details}
+        keywords={`${service.title}, ${serviceSlug}, tech services, indocreonix solutions, web development, app development`}
+      />
       <PageHero
         eyebrow="Service Track"
         title={service.title}

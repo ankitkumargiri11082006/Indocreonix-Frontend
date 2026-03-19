@@ -1,6 +1,7 @@
 import PageHero from '../components/PageHero'
 import SectionBlock from '../components/SectionBlock'
 import CtaBanner from '../components/CtaBanner'
+import SEO from '../components/SEO'
 
 const sectionItems = [
   {
@@ -20,6 +21,11 @@ const sectionItems = [
 function AboutPage() {
   return (
     <>
+      <SEO 
+        title="About Indocreonix | Our Mission, Leadership & Technology Promise"
+        description="Learn about Indocreonix, a Delhi-based tech company specializing in web development, Android app development, and social media handling. Our mission is to build scalable, secure, and future-ready solutions."
+        keywords="about indocreonix, avinash puri, rahul pandey, tech startup delhi, web development agency, software engineering delhi"
+      />
       <PageHero
         eyebrow="About Indocreonix"
         title="A Professional Technology Team Focused on Delivery"
