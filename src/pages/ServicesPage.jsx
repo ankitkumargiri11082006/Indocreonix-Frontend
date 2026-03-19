@@ -32,15 +32,18 @@ function ServicesPage() {
       .catch(() => setServicesOffered([]))
   }, [])
 
-  const sectionItems = serviceCatalog.map((service) => {
+  const sectionItems = serviceCatalog.map((catalogService) => {
+    // Attempt to override with DB record matching the title
+    const dbService = servicesOffered.find((s) => s.title === catalogService.title) || {}
+    
     return {
-      title: service.title,
-      description: service.shortDescription,
-      image: service.image,
+      title: dbService.title || catalogService.title,
+      description: dbService.description || catalogService.shortDescription,
+      image: dbService.image || catalogService.image,
       primaryLabel: 'View Service Details',
-      primaryTo: `/services/${service.slug}`,
+      primaryTo: `/services/${catalogService.slug}`,
       secondaryLabel: 'Request Quote',
-      secondaryTo: `/request-quote?service=${encodeURIComponent(service.title)}`,
+      secondaryTo: `/request-quote?service=${encodeURIComponent(dbService.title || catalogService.title)}`,
     }
   })
 
