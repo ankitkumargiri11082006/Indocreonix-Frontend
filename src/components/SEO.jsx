@@ -23,7 +23,11 @@ const SEO = ({
   const defaultKeywords = "web development, webdeveloipments, android social media handling, tech services, indocreonix, indocreonix.com, digital marketing, website design, android app development";
   const finalKeywords = keywords ? `${keywords}, ${defaultKeywords}` : defaultKeywords;
   const fullTitle = `${title} | ${siteName}`;
-  const currentUrl = canonical || window.location.href;
+  
+  // Ensure we always use indocreonix.com as the base, even on preview deploys
+  const baseUrl = "https://indocreonix.com";
+  const path = window.location.pathname;
+  const currentUrl = canonical || `${baseUrl}${path}`;
 
   return (
     <Helmet>

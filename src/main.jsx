@@ -5,15 +5,12 @@ import './index.css'
 import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
-import { SpeedInsights } from "@vercel/speed-insights/react"
-
 createRoot(document.getElementById('root')).render(
   <HelmetProvider>
     <ThemeProvider>
       <AuthProvider>
         <BrowserRouter>
           <App />
-          <SpeedInsights />
         </BrowserRouter>
       </AuthProvider>
     </ThemeProvider>
