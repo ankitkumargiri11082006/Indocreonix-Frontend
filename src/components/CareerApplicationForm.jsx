@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { companyInfo } from '../data/companyInfo'
 import { apiRequest, apiBaseUrl } from '../lib/apiClient'
@@ -24,6 +23,7 @@ function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
   const [cvFile, setCvFile] = useState(null)
   const [modalState, setModalState] = useState({ isOpen: false, title: '', message: '', type: 'success' })
   const [loading, setLoading] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
   const [opportunities, setOpportunities] = useState([])
 
   useEffect(() => {
@@ -41,6 +41,7 @@ function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
     event.preventDefault()
     if (loading) return
     setModalState({ ...modalState, isOpen: false })
+    setSubmitted(false)
 
     if (!cvFile) {
       setModalState({
@@ -112,6 +113,7 @@ function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
       
       setFormData(initialData)
       setCvFile(null)
+      setSubmitted(true)
       // Reset file input manually if needed (omitted for simplicity as form resets)
     } catch (submissionError) {
       setModalState({

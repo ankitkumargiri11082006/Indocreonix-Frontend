@@ -45,7 +45,7 @@ function ScrollToTopOnRouteChange() {
 
   useEffect(() => {
     window.scrollTo(0, 0)
-  }, [location.pathname])
+  }, [location])
 
   return null
 }
