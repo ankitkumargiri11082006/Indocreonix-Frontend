@@ -1,51 +1,81 @@
-# React + Vite
+# ✨ Indocreonix — Futuristic Digital Ecosystem
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A high-performance, immersive React application designed to represent the Indocreonix brand's commitment to digital innovation and engineering excellence.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🎨 Design Aesthetics & UX
 
-## React Compiler
+### 1. Visual Language
+- **Glassmorphism:** Premium frosted-glass UI elements for a modern, transparent look.
+- **Micro-Animations:** Fluid transitions and hover effects powered by `framer-motion`.
+- **Indocreonix Palette:** Deep Navys, Electric Cyans, and sophisticated Greys.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 2. Immersive Experiences
+- **Project Quote Builder:** A step-by-step interactive form for detailed project discovery.
+- **Service Catalog:** Dynamic categorization of Web, Mobile, and Software solutions.
+- **AI-Powered Sidekick:** Integrated ChatGPT/Gemini assistant for 24/7 site navigation.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🚀 Key Functionalities
 
-## Live Chatbot Setup
+### 💻 Client-Facing Pages
+- **Interactive Home:** High-hero metrics and value proposition highlights.
+- **Services:** Detailed deep-dives into specialized engineering modules.
+- **Careers:** Specialized portals for Job and Internship applications with asset tracking.
+- **Contact:** Real-time lead capture with instant automated email confirmations.
 
-1. Copy `.env.example` to `.env`.
-2. For ChatGPT, set `VITE_CHAT_PROVIDER=openai` and add `VITE_OPENAI_API_KEY`.
-3. Optionally change `VITE_CHAT_MODEL` (example: `gpt-4o-mini`).
-4. Optional fallback: set `VITE_GEMINI_API_KEY` with `VITE_CHAT_PROVIDER=gemini`.
-5. Optional fallback: set `VITE_OPENROUTER_API_KEY` with `VITE_CHAT_PROVIDER=openrouter`.
-6. Start the app with `npm run dev`.
+### 🛡️ Admin Command Center
+- **Performance Analytics:** Centralized health monitoring for leads and traffic.
+- **User Management:** Superadmin-level role and permission (RBAC) control.
+- **Project Inbox:** Unified interface to review, qualify, and manage incoming orders.
+- **Asset Hub:** Direct Cloudinary integration for managing site-wide media.
 
-The website assistant uses a live AI chat request and website context to answer customer questions about services, pages, careers, and contact details.
+---
 
-## Admin + Backend Connection
+## 🛠️ Technology Stack
 
-1. Copy `.env.example` to `.env`.
-2. Set `VITE_API_BASE_URL=http://localhost:5000/api` (or your backend URL).
-3. Run frontend: `npm run dev`.
-4. Run backend separately from `../Backend` with `npm run dev`.
+| Layer | Technology | Purpose |
+| :--- | :--- | :--- |
+| **Framework** | React 19 + Vite | Ultra-fast rendering and Hot Module Replacement |
+| **Styling** | Vanilla CSS (Layers) | High-precision design system with 0-CSS-in-JS overhead |
+| **Icons** | Lucide Icons | Minimalist, scalable vector iconography |
+| **Animation** | Framer Motion | Direct-manipulation physics-based animations |
+| **AI Integration** | OpenAI / Gemini | Real-time site assistant and content intelligence |
 
-### Auth Routes
+---
 
-- `/login`
-- `/signup`
+## 🏗️ Architecture & Paradigms
 
-### Admin Routes
+1. **Context-Driven State:** Global authentication and UI states.
+2. **Atomic Components:** Reusable layouts for Forms, Buttons, and Cards.
+3. **API Orchestration:** High-level `apiClient` for centralized request handling.
+4. **Conditional Routing:** Protected admin routes with role verification.
 
-- `/admin`
-- `/admin/analytics`
-- `/admin/users`
-- `/admin/leads`
-- `/admin/content`
-- `/admin/media`
-- `/admin/integrations`
-- `/admin/settings`
-- `/admin/profile`
+---
+
+## ⚙️ Operation & Setup
+
+### **1. Integration Configuration**
+Copy `.env.example` to `.env` and configure:
+- `VITE_API_BASE_URL`: Pointer to the Indocreonix backend.
+- `VITE_CHAT_PROVIDER`: Choose between `openai` or `gemini`.
+- `VITE_OPENAI_API_KEY`: Required if using OpenAI as the AI provider.
+
+### **2. Development Commands**
+```bash
+# Install core dependencies
+npm install
+
+# Live development environment
+npm run dev
+
+# Optimized production build
+npm run build
+```
+
+---
+
+## 📝 Developer Notes
+This application was engineered using **Antigravity (Gemini 2.0 Pro)** for state-of-the-art UI implementation and interaction design. The system follows a component-first architecture for extreme scalability and maintainability.
