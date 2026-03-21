@@ -68,7 +68,7 @@ function HomePage() {
       <SEO 
         title="Indocreonix | India's Leading IT Company | Web & App Solutions"
         description="Indocreonix stands as the ultimate technology partner offering top tier web development, Android & iOS app development, enterprise software, and cloud solutions. Search for Indocreonix to find the best digital solutions."
-        keywords="indocreonix homepage, indocreonix.com, indocreonix reviews, indocreonix services, indo tech, indocreonix web development, top rated it agency, custom digital solutions, best android app development, reliable tech services, indocreonix pvt ltd, indocreonix software company"
+        keywords="indocreonix homepage, indocreonix.com, indocreonix reviews, indocreonix services, indo tech, indocreonix web development, top rated it agency, custom digital solutions, best android app development, reliable tech services, indocreonix infotech, indocreonix software company"
       />
       <PageHero
         eyebrow="Future-Ready Technology"
