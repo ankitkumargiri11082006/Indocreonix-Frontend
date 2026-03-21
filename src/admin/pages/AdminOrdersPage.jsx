@@ -75,6 +75,22 @@ function AdminOrdersPage() {
     }
   }
 
+  async function deleteOrder(orderId, clientName) {
+    if (!window.confirm(`Are you sure you want to permanently delete the project request from ${clientName}? This will also remove any uploaded documents from Cloudinary.`)) {
+      return
+    }
+
+    try {
+      setError('')
+      await apiRequest(`/orders/${orderId}`, {
+        method: 'DELETE',
+      })
+      await loadOrders()
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
   return (
     <section className="admin-page-stack">
       <article className="admin-card wide">
@@ -227,6 +243,13 @@ function AdminOrdersPage() {
                           disabled={savingOrderId === order._id}
                         >
                           {savingOrderId === order._id ? 'Saving...' : 'Save'}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          onClick={() => deleteOrder(order._id, order.fullName)}
+                        >
+                          Delete
                         </button>
                       </div>
                     </td>
