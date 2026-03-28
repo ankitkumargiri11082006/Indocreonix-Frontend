@@ -1,15 +1,126 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import SEO from '../components/SEO'
 
 function LoginPage() {
-  const { login } = useAuth()
+  const { login, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
+  const googleButtonRef = useRef(null)
   const [formData, setFormData] = useState({ email: '', password: '' })
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
+  const [googleReady, setGoogleReady] = useState(false)
+
+  const googleClientId = useMemo(() => (import.meta.env.VITE_GOOGLE_CLIENT_ID || '').trim(), [])
+
+  useEffect(() => {
+    if (!googleClientId) return
+
+    let mounted = true
+    let resizeObserver = null
+
+    const renderGoogleButton = () => {
+      if (!googleButtonRef.current || !window.google?.accounts?.id) return
+
+      const containerWidth = googleButtonRef.current.clientWidth || 320
+      const responsiveWidth = Math.max(220, Math.min(380, Math.floor(containerWidth)))
+
+      googleButtonRef.current.innerHTML = ''
+      window.google.accounts.id.renderButton(googleButtonRef.current, {
+        type: 'standard',
+        theme: 'outline',
+        size: 'large',
+        text: 'signin_with',
+        shape: 'pill',
+        width: responsiveWidth,
+        logo_alignment: 'left',
+      })
+    }
+
+    const initializeGoogleSignIn = () => {
+      if (!mounted || !window.google?.accounts?.id || !googleButtonRef.current) return
+
+      window.google.accounts.id.initialize({
+        client_id: googleClientId,
+        callback: async (response) => {
+          if (!response?.credential) {
+            setError('Google sign-in failed. Please try again.')
+            return
+          }
+
+          setError('')
+          setGoogleLoading(true)
+
+          try {
+            await loginWithGoogle(response.credential)
+            navigate('/admin')
+          } catch (err) {
+            if (err?.status === 404) {
+              setError('Google login endpoint is not configured on backend yet. Please use email/password login for now.')
+            } else {
+              setError(err.message)
+            }
+          } finally {
+            setGoogleLoading(false)
+          }
+        },
+      })
+
+      renderGoogleButton()
+
+      if (typeof window.ResizeObserver === 'function') {
+        resizeObserver = new window.ResizeObserver(() => {
+          renderGoogleButton()
+        })
+        resizeObserver.observe(googleButtonRef.current)
+      }
+
+      setGoogleReady(true)
+    }
+
+    if (window.google?.accounts?.id) {
+      initializeGoogleSignIn()
+      return () => {
+        mounted = false
+        if (resizeObserver) {
+          resizeObserver.disconnect()
+        }
+      }
+    }
+
+    const scriptId = 'google-identity-services-script'
+    const existingScript = document.getElementById(scriptId)
+
+    if (existingScript) {
+      existingScript.addEventListener('load', initializeGoogleSignIn)
+      return () => {
+        mounted = false
+        existingScript.removeEventListener('load', initializeGoogleSignIn)
+        if (resizeObserver) {
+          resizeObserver.disconnect()
+        }
+      }
+    }
+
+    const script = document.createElement('script')
+    script.id = scriptId
+    script.src = 'https://accounts.google.com/gsi/client'
+    script.async = true
+    script.defer = true
+    script.addEventListener('load', initializeGoogleSignIn)
+    document.body.appendChild(script)
+
+    return () => {
+      mounted = false
+      script.removeEventListener('load', initializeGoogleSignIn)
+      if (resizeObserver) {
+        resizeObserver.disconnect()
+      }
+    }
+  }, [googleClientId, loginWithGoogle, navigate])
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -50,12 +161,68 @@ function LoginPage() {
             <li>Brand customization with live theme controls</li>
             <li>Cloud media and lead pipeline management</li>
           </ul>
+
+          <div className="auth-showcase-metrics" aria-hidden="true">
+            <article className="auth-showcase-metric">
+              <p>Workspace Health</p>
+              <strong>Live Ops Sync</strong>
+              <span>Leads, media, users and orders connected in one dashboard.</span>
+            </article>
+            <article className="auth-showcase-metric">
+              <p>Command Velocity</p>
+              <strong>Faster Admin Cycles</strong>
+              <span>Jump from analytics to execution in seconds with role-aware navigation.</span>
+            </article>
+          </div>
+
+          <div className="auth-trust-strip" aria-hidden="true">
+            <span>Session protection</span>
+            <span>Audit-ready actions</span>
+            <span>Permission boundaries</span>
+          </div>
         </aside>
 
         <div className="auth-card">
           <p className="auth-badge">Admin Access</p>
-          <h1>Login to Indocreonix</h1>
-          <p className="auth-subtitle">Manage users, leads, branding, content and media from one place.</p>
+          <h1>Sign in to Admin Control Room</h1>
+          <p className="auth-subtitle">Manage users, leads, branding, content, media, and operations from one secure dashboard.</p>
+
+          <ul className="auth-assurance-list" aria-hidden="true">
+            <li>
+              <strong>Restricted Access:</strong> Only approved team members can enter admin workflows.
+            </li>
+            <li>
+              <strong>Controlled Roles:</strong> Permissions define exactly what each account can edit.
+            </li>
+            <li>
+              <strong>Safer Sessions:</strong> Auth token sessions are validated against backend identity checks.
+            </li>
+          </ul>
+
+          <div className="auth-meta-grid" aria-hidden="true">
+            <p className="auth-meta-card">Role-aware access</p>
+            <p className="auth-meta-card">Session-protected API</p>
+            <p className="auth-meta-card">Audit-friendly workflows</p>
+          </div>
+
+          <div className="auth-sso-panel">
+            <p className="auth-sso-title">Quick Sign-In</p>
+            {googleClientId ? (
+              <>
+                <div className="auth-google-slot" ref={googleButtonRef} />
+                {!googleReady ? <p className="auth-inline-note">Loading Google Sign-In...</p> : null}
+                {googleLoading ? <p className="auth-inline-note">Verifying Google account...</p> : null}
+              </>
+            ) : (
+              <p className="auth-inline-note auth-inline-note-warning">
+                Google Sign-In is disabled. Add VITE_GOOGLE_CLIENT_ID in frontend .env to enable SSO.
+              </p>
+            )}
+          </div>
+
+          <div className="auth-divider" role="separator" aria-label="Alternative login methods">
+            <span>or continue with email and password</span>
+          </div>
 
           <form className="auth-form" onSubmit={handleSubmit}>
             <label>
@@ -101,7 +268,7 @@ function LoginPage() {
 
             {error ? <p className="auth-error">{error}</p> : null}
 
-            <button type="submit" className="btn btn-primary auth-submit" disabled={loading}>
+            <button type="submit" className="btn btn-primary auth-submit" disabled={loading || googleLoading}>
               {loading ? 'Signing in...' : 'Login'}
             </button>
           </form>
@@ -109,6 +276,7 @@ function LoginPage() {
           <p className="auth-footer">
             Need access? Contact your superadmin to create your account.
           </p>
+          <p className="auth-sub-footer">For enterprise onboarding, security policies, and role provisioning, contact the platform owner.</p>
         </div>
       </div>
     </section>

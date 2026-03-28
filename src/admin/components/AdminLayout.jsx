@@ -16,6 +16,7 @@ const routeTitleMap = {
   '/admin/applications': 'Applications',
   '/admin/audit-logs': 'Audit Logs',
   '/admin/users': 'Users',
+  '/admin/portal-control': 'Portal Control',
   '/admin/leads': 'Leads',
   '/admin/content': 'Content',
   '/admin/media': 'Media',

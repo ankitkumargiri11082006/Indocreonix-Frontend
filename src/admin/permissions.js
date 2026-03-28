@@ -30,6 +30,7 @@ export const ADMIN_MENU_SECTIONS = [
     title: 'System',
     items: [
       { label: 'Users', to: '/admin/users', permission: 'users' },
+      { label: 'Portal Control', to: '/admin/portal-control', permission: 'portalControl' },
       { label: 'Integrations', to: '/admin/integrations', permission: 'integrations' },
       { label: 'Settings', to: '/admin/settings', permission: 'settings' },
       { label: 'Profile', to: '/admin/profile', permission: 'profile' },

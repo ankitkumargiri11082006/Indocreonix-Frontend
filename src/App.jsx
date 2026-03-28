@@ -16,6 +16,11 @@ import FaqPage from './pages/FaqPage'
 import ContactPage from './pages/ContactPage'
 import NotFoundPage from './pages/NotFoundPage'
 import LoginPage from './pages/LoginPage'
+import PortalAccessPage from './pages/PortalAccessPage'
+import PortalSignInPage from './pages/PortalSignInPage'
+import PortalSignUpPage from './pages/PortalSignUpPage'
+import CareerDashboardPage from './pages/CareerDashboardPage'
+import ProjectDashboardPage from './pages/ProjectDashboardPage'
 import TermsAndConditionsPage from './pages/TermsAndConditionsPage'
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
 import AdminLayout from './admin/components/AdminLayout'
@@ -37,6 +42,7 @@ import AdminOpportunitiesPage from './admin/pages/AdminOpportunitiesPage'
 import AdminCareerApplicationsPage from './admin/pages/AdminCareerApplicationsPage'
 import AdminAuditLogsPage from './admin/pages/AdminAuditLogsPage'
 import AdminOrdersPage from './admin/pages/AdminOrdersPage'
+import AdminPortalControlPage from './admin/pages/AdminPortalControlPage'
 import './App.css'
 import './admin/Admin.css'
 
@@ -147,6 +153,14 @@ function App() {
           }
         />
         <Route
+          path="portal-control"
+          element={
+            <ProtectedRoute permission="portalControl">
+              <AdminPortalControlPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="leads"
           element={
             <ProtectedRoute permission="leads">
@@ -206,6 +220,11 @@ function App() {
 
         <Route element={<PageLayout />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/portal" element={<PortalAccessPage />} />
+          <Route path="/portal/signin" element={<Navigate to="/portal" replace />} />
+          <Route path="/portal/signup" element={<Navigate to="/portal" replace />} />
+          <Route path="/career/dashboard" element={<CareerDashboardPage />} />
+          <Route path="/project/dashboard" element={<ProjectDashboardPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/services/:serviceSlug" element={<ServiceDetailPage />} />

@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import PageHero from '../components/PageHero'
 import { apiRequest } from '../lib/apiClient'
 import StatusModal from '../components/StatusModal'
+import { getPortalUser } from './portalAuthShared'
 
 const projectCategoryOptions = [
   { value: 'website', label: 'Website' },
@@ -52,23 +53,28 @@ function ProjectRequestPage() {
   const initialCompany = searchParams.get('company') || ''
   const hasLockedProjectReference = Boolean(initialProjectReference)
 
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    company: initialCompany,
-    targetBudget: '',
-    targetTimeline: '',
-    projectCategory: 'website',
-    projectSubtype: initialCategory,
-    projectSubtypeOther: '',
-    requestedService: initialService,
-    requestedProduct: initialProduct,
-    projectReference: initialProjectReference,
-    businessGoals: '',
-    projectSummary: '',
-    featureRequirements: '',
-  })
+  function buildInitialFormData(user = null) {
+    const profile = user || getPortalUser() || {}
+    return {
+      fullName: profile.name || '',
+      email: profile.email || '',
+      phone: profile.phone || '',
+      company: initialCompany || profile.organization || '',
+      targetBudget: '',
+      targetTimeline: '',
+      projectCategory: 'website',
+      projectSubtype: initialCategory,
+      projectSubtypeOther: '',
+      requestedService: initialService,
+      requestedProduct: initialProduct,
+      projectReference: initialProjectReference,
+      businessGoals: '',
+      projectSummary: '',
+      featureRequirements: '',
+    }
+  }
+
+  const [formData, setFormData] = useState(() => buildInitialFormData(getPortalUser()))
   const [prdFile, setPrdFile] = useState(null)
   const [supportingDocs, setSupportingDocs] = useState([])
   const [modalState, setModalState] = useState({ isOpen: false, title: '', message: '', type: 'success' })
@@ -85,6 +91,29 @@ function ProjectRequestPage() {
 
     return 'You are submitting a direct project request. Provide your technical requirements for faster qualification.'
   }, [searchParams])
+
+  useEffect(() => {
+    const syncPortalProfile = () => {
+      const user = getPortalUser()
+      setFormData((previous) => ({
+        ...previous,
+        fullName: user?.name || previous.fullName,
+        email: user?.email || previous.email,
+        phone: user?.phone || previous.phone,
+        company: previous.company || user?.organization || '',
+      }))
+    }
+
+    window.addEventListener('portal-session-updated', syncPortalProfile)
+    window.addEventListener('storage', syncPortalProfile)
+    window.addEventListener('focus', syncPortalProfile)
+
+    return () => {
+      window.removeEventListener('portal-session-updated', syncPortalProfile)
+      window.removeEventListener('storage', syncPortalProfile)
+      window.removeEventListener('focus', syncPortalProfile)
+    }
+  }, [])
 
   function onInputChange(event) {
     const { name, value } = event.target
@@ -156,18 +185,9 @@ function ProjectRequestPage() {
       })
 
       setFormData((previous) => ({
-        ...previous,
-        fullName: '',
-        email: '',
-        phone: '',
-        company: '',
+        ...buildInitialFormData(getPortalUser()),
         targetBudget: '',
         targetTimeline: '',
-        projectSubtype: '',
-        projectSubtypeOther: '',
-        requestedService: initialService,
-        requestedProduct: initialProduct,
-        projectReference: initialProjectReference,
         businessGoals: '',
         projectSummary: '',
         featureRequirements: '',

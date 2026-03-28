@@ -60,10 +60,35 @@ A high-performance, immersive React application designed to represent the Indocr
 ### **1. Integration Configuration**
 Copy `.env.example` to `.env` and configure:
 - `VITE_API_BASE_URL`: Pointer to the Indocreonix backend.
+- `VITE_GOOGLE_CLIENT_ID`: Google OAuth Web Client ID for admin SSO.
 - `VITE_CHAT_PROVIDER`: Choose between `openai` or `gemini`.
 - `VITE_OPENAI_API_KEY`: Required if using OpenAI as the AI provider.
 
-### **2. Development Commands**
+### **2. Google Sign-In (Admin Login)**
+The admin login page supports both password login and Google SSO.
+
+Frontend requirements:
+- Set `VITE_GOOGLE_CLIENT_ID` in `.env`.
+- Add your local and production frontend URLs in Google OAuth authorized JavaScript origins.
+
+Backend requirements:
+- Implement `POST /api/auth/google` to accept `{ credential }` (Google ID token), verify it, map/create admin user, and return:
+```json
+{
+	"token": "your_app_jwt",
+	"user": {
+		"id": "...",
+		"name": "...",
+		"email": "...",
+		"role": "admin"
+	}
+}
+```
+- Ensure backend CORS allows your frontend origin.
+
+If `VITE_GOOGLE_CLIENT_ID` is missing, the login page automatically shows a guided fallback message and keeps email/password login available.
+
+### **3. Development Commands**
 ```bash
 # Install core dependencies
 npm install

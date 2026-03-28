@@ -1,6 +1,9 @@
+import { useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
 import PageHero from '../components/PageHero'
 import CareerApplicationForm from '../components/CareerApplicationForm'
+import { getPortalUser } from './portalAuthShared'
+import PortalAccessPage from './PortalAccessPage'
 
 const roleConfigMap = {
   internship: {
@@ -32,9 +35,30 @@ const roleConfigMap = {
 function CareerApplyPage() {
   const { roleType } = useParams()
   const config = roleConfigMap[roleType]
+  const [portalUser, setPortalUser] = useState(() => getPortalUser())
 
   if (!config) {
     return <Navigate to="/careers" replace />
+  }
+
+  if (!portalUser) {
+    return (
+      <>
+        <PageHero
+          eyebrow="Careers"
+          title={`${config.heroTitle} Access`}
+          subtitle="Sign in or sign up first to continue your application. Once authenticated, your application process will continue normally."
+          theme="theme-c"
+          metrics={config.metrics}
+        />
+
+        <PortalAccessPage
+          embedded={true}
+          nextPath={`/careers/apply/${roleType}`}
+          onAuthenticated={(user) => setPortalUser(user)}
+        />
+      </>
+    )
   }
 
   return (

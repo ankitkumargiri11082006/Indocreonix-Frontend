@@ -16,6 +16,7 @@ const permissionOptions = [
   { key: 'openings', label: 'Openings' },
   { key: 'applications', label: 'Applications' },
   { key: 'users', label: 'Users' },
+  { key: 'portalControl', label: 'Portal Control' },
   { key: 'integrations', label: 'Integrations' },
   { key: 'settings', label: 'Settings' },
   { key: 'profile', label: 'Profile' },

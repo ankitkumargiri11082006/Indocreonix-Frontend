@@ -3,23 +3,34 @@ import { Link } from 'react-router-dom'
 import { companyInfo } from '../data/companyInfo'
 import { apiRequest, apiBaseUrl } from '../lib/apiClient'
 import StatusModal from './StatusModal'
+import { getPortalUser, PORTAL_TOKEN_KEY } from '../pages/portalAuthShared'
 
 function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
-  const initialData = {
-    opportunityId: '',
-    fullName: '',
-    email: '',
-    phone: '',
-    city: '',
-    qualification: '',
-    skills: '',
-    experience: '',
-    portfolio: '',
-    message: '',
-    consentAccepted: false,
+  const [portalUser, setPortalUser] = useState(() => getPortalUser())
+
+  function buildInitialData(user = null) {
+    const profile = user || getPortalUser() || {}
+    const locationParts = String(profile.location || '')
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean)
+
+    return {
+      opportunityId: '',
+      fullName: profile.name || '',
+      email: profile.email || '',
+      phone: profile.phone || '',
+      city: locationParts[0] || '',
+      qualification: '',
+      skills: '',
+      experience: '',
+      portfolio: '',
+      message: '',
+      consentAccepted: false,
+    }
   }
 
-  const [formData, setFormData] = useState(initialData)
+  const [formData, setFormData] = useState(() => buildInitialData(portalUser))
   const [cvFile, setCvFile] = useState(null)
   const [modalState, setModalState] = useState({ isOpen: false, title: '', message: '', type: 'success' })
   const [loading, setLoading] = useState(false)
@@ -32,12 +43,52 @@ function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
       .catch(() => setOpportunities([]))
   }, [roleType])
 
+  useEffect(() => {
+    const syncPortalProfile = () => {
+      const user = getPortalUser()
+      setPortalUser(user)
+      setFormData((previous) => ({
+        ...previous,
+        fullName: user?.name || '',
+        email: user?.email || '',
+        phone: user?.phone || previous.phone,
+        city: user?.location
+          ? String(user.location)
+              .split(',')
+              .map((item) => item.trim())
+              .filter(Boolean)[0] || previous.city
+          : previous.city,
+      }))
+    }
+
+    window.addEventListener('portal-session-updated', syncPortalProfile)
+    window.addEventListener('storage', syncPortalProfile)
+    window.addEventListener('focus', syncPortalProfile)
+
+    return () => {
+      window.removeEventListener('portal-session-updated', syncPortalProfile)
+      window.removeEventListener('storage', syncPortalProfile)
+      window.removeEventListener('focus', syncPortalProfile)
+    }
+  }, [])
+
   const onChange = (event) => {
     const { name, value, type, checked } = event.target
     setFormData((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
   }
 
   const onSubmit = async (event) => {
+        const portalToken = localStorage.getItem(PORTAL_TOKEN_KEY)
+        if (!portalToken || !portalUser?.email) {
+          setModalState({
+            isOpen: true,
+            title: 'Sign In Required',
+            message: 'Please sign in to your portal account before applying for careers.',
+            type: 'error',
+          })
+          return
+        }
+
     event.preventDefault()
     if (loading) return
     setModalState({ ...modalState, isOpen: false })
@@ -95,6 +146,9 @@ function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
     try {
       const response = await fetch(`${apiBaseUrl()}/careers/applications`, {
         method: 'POST',
+        headers: {
+          Authorization: `Bearer ${portalToken}`,
+        },
         body: multipart,
       })
       
@@ -111,7 +165,7 @@ function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
         type: 'success'
       })
       
-      setFormData(initialData)
+      setFormData(buildInitialData(getPortalUser()))
       setCvFile(null)
       setSubmitted(true)
       // Reset file input manually if needed (omitted for simplicity as form resets)
@@ -155,7 +209,7 @@ function CareerApplicationForm({ roleType, title, subtitle, successMessage }) {
           </label>
           <label>
             Email Address
-            <input type="email" name="email" value={formData.email} onChange={onChange} required />
+            <input type="email" name="email" value={formData.email} onChange={onChange} readOnly required />
           </label>
           <label>
             Mobile Number
