@@ -12,6 +12,13 @@ A high-performance, immersive React application designed to represent the Indocr
 - **Micro-Animations:** Fluid transitions and hover effects powered by `framer-motion`.
 - **Indocreonix Palette:** Deep Navys, Electric Cyans, and sophisticated Greys.
 
+
+
+
+
+
+
+
 ### 2. Immersive Experiences
 
 - **Project Quote Builder:** A step-by-step interactive form for detailed project discovery.
