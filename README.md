@@ -59,6 +59,9 @@ A high-performance, immersive React application designed to represent the Indocr
 
 ## 🏗️ Architecture & Paradigms
 
+> README updated at 2026-03-29 to confirm new content and push attempt.
+
+
 1. **Context-Driven State:** Global authentication and UI states.
 2. **Atomic Components:** Reusable layouts for Forms, Buttons, and Cards.
 3. **API Orchestration:** High-level `apiClient` for centralized request handling.
