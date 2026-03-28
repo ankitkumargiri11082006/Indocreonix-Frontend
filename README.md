@@ -11,6 +11,13 @@ A high-performance, immersive React application designed to represent the Indocr
 - **Micro-Animations:** Fluid transitions and hover effects powered by `framer-motion`.
 - **Indocreonix Palette:** Deep Navys, Electric Cyans, and sophisticated Greys.
 
+
+
+
+
+
+
+
 ### 2. Immersive Experiences
 - **Project Quote Builder:** A step-by-step interactive form for detailed project discovery.
 - **Service Catalog:** Dynamic categorization of Web, Mobile, and Software solutions.
@@ -100,7 +107,3 @@ npm run dev
 npm run build
 ```
 
----
-
-## 📝 Developer Notes
-This application was engineered using **Antigravity (Gemini 2.0 Pro)** for state-of-the-art UI implementation and interaction design. The system follows a component-first architecture for extreme scalability and maintainability.
