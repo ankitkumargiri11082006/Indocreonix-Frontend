@@ -17,7 +17,11 @@
 .portal-shell-signup {
   background:
     radial-gradient(circle at 12% 12%, rgba(52, 168, 83, 0.2), transparent 28%),
-    radial-gradient(circle at 92% 16%, rgba(66, 133, 244, 0.16), transparent 34%),
+    radial-gradient(
+      circle at 92% 16%,
+      rgba(66, 133, 244, 0.16),
+      transparent 34%
+    ),
     linear-gradient(155deg, #f5fff9 0%, #f8fbff 48%, #fff8f5 100%);
 }
 
@@ -39,7 +43,11 @@
 .portal-status-card {
   border-radius: 22px;
   border: 1px solid rgba(188, 200, 216, 0.78);
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.95), rgba(248, 251, 255, 0.94));
+  background: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(248, 251, 255, 0.94)
+  );
   box-shadow: 0 20px 46px rgba(15, 31, 49, 0.1);
 }
 
@@ -64,8 +72,12 @@
 
 .portal-hero-card {
   padding: clamp(1rem, 2.4vw, 2rem);
-  background:
-    linear-gradient(165deg, rgba(34, 67, 104, 0.11), rgba(255, 255, 255, 0.92) 48%, rgba(31, 76, 132, 0.1));
+  background: linear-gradient(
+    165deg,
+    rgba(34, 67, 104, 0.11),
+    rgba(255, 255, 255, 0.92) 48%,
+    rgba(31, 76, 132, 0.1)
+  );
 }
 
 .portal-hero-card h1 {
@@ -154,7 +166,9 @@
   font-weight: 700;
   padding: 0.48rem 0.52rem;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
 .portal-mode-btn.active {
@@ -367,7 +381,7 @@
 }
 
 .portal-auth-divider::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   right: 0;
@@ -457,15 +471,24 @@
   font-weight: 800;
   letter-spacing: 0.01em;
   border-width: 1px;
-  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease,
+    background 0.22s ease;
 }
 
 .portal-shell .btn::after,
 .portal-dashboard-shell .btn::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(120deg, transparent 20%, rgba(255, 255, 255, 0.3) 50%, transparent 80%);
+  background: linear-gradient(
+    120deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 80%
+  );
   transform: translateX(-120%);
   transition: transform 0.38s ease;
   pointer-events: none;
@@ -503,7 +526,11 @@
 .portal-dashboard-shell .btn.btn-secondary {
   border-color: #c8d7e7;
   color: #234b74;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(237, 245, 252, 0.95));
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(237, 245, 252, 0.95)
+  );
   box-shadow: 0 8px 16px rgba(15, 40, 66, 0.1);
 }
 
@@ -560,7 +587,11 @@
   padding: clamp(1rem, 2.6vw, 2rem);
   background:
     radial-gradient(circle at 8% 10%, rgba(52, 112, 193, 0.2), transparent 34%),
-    radial-gradient(circle at 94% 16%, rgba(27, 78, 150, 0.12), transparent 40%),
+    radial-gradient(
+      circle at 94% 16%,
+      rgba(27, 78, 150, 0.12),
+      transparent 40%
+    ),
     linear-gradient(155deg, #eef3fa 0%, #f5f8fc 52%, #edf4fb 100%);
 }
 
@@ -569,7 +600,11 @@
   margin: 0 auto 1.05rem;
   border-radius: 22px;
   border: 1px solid rgba(178, 201, 228, 0.85);
-  background: linear-gradient(138deg, rgba(255, 255, 255, 0.96), rgba(246, 250, 255, 0.92));
+  background: linear-gradient(
+    138deg,
+    rgba(255, 255, 255, 0.96),
+    rgba(246, 250, 255, 0.92)
+  );
   padding: clamp(1rem, 2.4vw, 1.4rem);
   display: flex;
   justify-content: space-between;
@@ -581,14 +616,18 @@
 }
 
 .portal-dashboard-topbar::after {
-  content: '';
+  content: "";
   position: absolute;
   right: -90px;
   top: -76px;
   width: 250px;
   height: 250px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(73, 136, 219, 0.18), transparent 68%);
+  background: radial-gradient(
+    circle,
+    rgba(73, 136, 219, 0.18),
+    transparent 68%
+  );
   pointer-events: none;
 }
 
@@ -645,7 +684,11 @@
   border: 1px solid #cfdcec;
   border-radius: 16px;
   padding: 0.78rem 0.84rem;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(243, 249, 255, 0.88));
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(243, 249, 255, 0.88)
+  );
   box-shadow: 0 14px 28px rgba(14, 34, 57, 0.08);
   display: grid;
   gap: 0.2rem;
@@ -744,7 +787,9 @@
 .portal-shell .btn:focus-visible,
 .portal-dashboard-shell .btn:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(62, 126, 199, 0.25), 0 12px 20px rgba(20, 46, 77, 0.2);
+  box-shadow:
+    0 0 0 3px rgba(62, 126, 199, 0.25),
+    0 12px 20px rgba(20, 46, 77, 0.2);
 }
 
 .portal-status-card {
@@ -753,7 +798,9 @@
   border-radius: 16px;
   background: linear-gradient(152deg, #ffffff, #f7fbff);
   box-shadow: 0 16px 30px rgba(14, 31, 53, 0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .portal-status-card:hover {
@@ -798,7 +845,11 @@
 .portal-opening-card {
   border-color: #b9d0e9;
   background:
-    radial-gradient(circle at 92% 10%, rgba(75, 138, 219, 0.13), transparent 34%),
+    radial-gradient(
+      circle at 92% 10%,
+      rgba(75, 138, 219, 0.13),
+      transparent 34%
+    ),
     linear-gradient(150deg, #ffffff, #f5f9ff);
 }
 

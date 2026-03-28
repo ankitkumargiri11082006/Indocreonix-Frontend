@@ -12,9 +12,21 @@
   place-items: center;
   padding: 2rem 1rem;
   background:
-    radial-gradient(circle at 8% 10%, color-mix(in srgb, var(--brand-primary) 24%, transparent) 0 18%, transparent 35%),
-    radial-gradient(circle at 88% 20%, color-mix(in srgb, var(--brand-secondary) 22%, transparent) 0 18%, transparent 38%),
-    linear-gradient(145deg, color-mix(in srgb, var(--brand-primary) 10%, #f8fbff), color-mix(in srgb, var(--brand-success) 10%, #f8fbff));
+    radial-gradient(
+      circle at 8% 10%,
+      color-mix(in srgb, var(--brand-primary) 24%, transparent) 0 18%,
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 88% 20%,
+      color-mix(in srgb, var(--brand-secondary) 22%, transparent) 0 18%,
+      transparent 38%
+    ),
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--brand-primary) 10%, #f8fbff),
+      color-mix(in srgb, var(--brand-success) 10%, #f8fbff)
+    );
 }
 
 .auth-grid {
@@ -48,7 +60,9 @@
   height: 52px;
   border-radius: 50%;
   object-fit: contain;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--brand-primary) 30%, white), 0 10px 22px rgba(6, 24, 56, 0.15);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--brand-primary) 30%, white),
+    0 10px 22px rgba(6, 24, 56, 0.15);
 }
 
 .auth-brand-title {
@@ -56,7 +70,13 @@
   font-size: clamp(1.3rem, 2vw, 1.7rem);
   font-weight: 900;
   letter-spacing: -0.02em;
-  background: linear-gradient(90deg, var(--brand-primary), var(--brand-secondary), var(--brand-accent), var(--brand-success));
+  background: linear-gradient(
+    90deg,
+    var(--brand-primary),
+    var(--brand-secondary),
+    var(--brand-accent),
+    var(--brand-success)
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -110,7 +130,11 @@
   border: 1px solid rgba(255, 255, 255, 0.72);
   border-radius: 14px;
   padding: 0.72rem 0.8rem;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0.46));
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.76),
+    rgba(255, 255, 255, 0.46)
+  );
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
@@ -203,7 +227,11 @@
   margin: 0;
   border: 1px solid color-mix(in srgb, var(--brand-primary) 14%, #e8eaed);
   border-radius: 10px;
-  background: linear-gradient(150deg, #ffffff, color-mix(in srgb, var(--brand-primary) 5%, #ffffff));
+  background: linear-gradient(
+    150deg,
+    #ffffff,
+    color-mix(in srgb, var(--brand-primary) 5%, #ffffff)
+  );
   padding: 0.45rem 0.58rem;
   color: #365270;
   font-size: 0.8rem;
@@ -273,7 +301,7 @@
 }
 
 .auth-divider::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   right: 0;
@@ -355,7 +383,9 @@
   background: transparent;
   color: #5f6368;
   cursor: pointer;
-  transition: background 0.18s ease, color 0.18s ease;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease;
 }
 
 .auth-password-toggle:hover {
@@ -424,8 +454,16 @@
   display: grid;
   grid-template-columns: 248px 1fr;
   background:
-    radial-gradient(circle at 6% 8%, color-mix(in srgb, var(--brand-primary) 12%, transparent) 0 12%, transparent 32%),
-    radial-gradient(circle at 96% 16%, color-mix(in srgb, var(--brand-secondary) 10%, transparent) 0 14%, transparent 36%),
+    radial-gradient(
+      circle at 6% 8%,
+      color-mix(in srgb, var(--brand-primary) 12%, transparent) 0 12%,
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 96% 16%,
+      color-mix(in srgb, var(--brand-secondary) 10%, transparent) 0 14%,
+      transparent 36%
+    ),
     linear-gradient(155deg, #f7faff, #f8fbff 38%, #f9fcff);
 }
 
@@ -459,13 +497,21 @@
   height: 52px;
   border-radius: 50%;
   object-fit: contain;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--brand-primary) 28%, white), 0 8px 18px rgba(6, 24, 56, 0.16);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--brand-primary) 28%, white),
+    0 8px 18px rgba(6, 24, 56, 0.16);
 }
 
 .admin-brand-title {
   margin: 0;
   font-weight: 800;
-  background: linear-gradient(90deg, var(--brand-primary), var(--brand-secondary), var(--brand-accent), var(--brand-success));
+  background: linear-gradient(
+    90deg,
+    var(--brand-primary),
+    var(--brand-secondary),
+    var(--brand-accent),
+    var(--brand-success)
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -610,7 +656,9 @@
   height: 2px;
   border-radius: 999px;
   background: #2e3f55;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .admin-mobile-menu-btn.open span:nth-child(1) {
@@ -673,7 +721,10 @@
   padding: 0.34rem 0.62rem;
   font-size: 0.78rem;
   font-weight: 700;
-  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
 }
 
 .admin-topbar-quick-link:hover {
@@ -738,7 +789,11 @@
   border-radius: 999px;
   display: grid;
   place-items: center;
-  background: linear-gradient(120deg, color-mix(in srgb, var(--brand-primary) 24%, #e8f0fe), color-mix(in srgb, var(--brand-accent) 24%, #fff7ea));
+  background: linear-gradient(
+    120deg,
+    color-mix(in srgb, var(--brand-primary) 24%, #e8f0fe),
+    color-mix(in srgb, var(--brand-accent) 24%, #fff7ea)
+  );
   color: color-mix(in srgb, var(--brand-primary) 78%, #1a73e8);
   font-weight: 700;
   overflow: hidden;
@@ -809,7 +864,9 @@
   border: 1px solid color-mix(in srgb, var(--brand-primary) 14%, #e8eaed);
   border-radius: 14px;
   padding: 0.82rem;
-  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.1), 0 2px 6px rgba(60, 64, 67, 0.08);
+  box-shadow:
+    0 1px 2px rgba(60, 64, 67, 0.1),
+    0 2px 6px rgba(60, 64, 67, 0.08);
 }
 
 .admin-card h3 {
@@ -1060,7 +1117,7 @@
   font-size: 0.78rem;
 }
 
-.admin-upload-field input[type='file'] {
+.admin-upload-field input[type="file"] {
   border: none;
   padding: 0;
   border-radius: 0;
@@ -1104,29 +1161,47 @@
 
 .admin-quick-action-card {
   border: 1px solid color-mix(in srgb, var(--brand-primary) 24%, #d2e3fc);
-  background: linear-gradient(140deg, color-mix(in srgb, var(--brand-primary) 10%, #f8fbff), #ffffff);
+  background: linear-gradient(
+    140deg,
+    color-mix(in srgb, var(--brand-primary) 10%, #f8fbff),
+    #ffffff
+  );
   color: color-mix(in srgb, var(--brand-primary) 80%, #1a73e8);
   text-decoration: none;
   border-radius: 12px;
   padding: 0.78rem 0.8rem;
   font-weight: 700;
-  transition: transform 0.16s ease, background 0.16s ease;
+  transition:
+    transform 0.16s ease,
+    background 0.16s ease;
 }
 
 .admin-quick-action-card:hover {
   transform: translateY(-1px);
-  background: linear-gradient(140deg, color-mix(in srgb, var(--brand-accent) 14%, #eef4ff), #ffffff);
+  background: linear-gradient(
+    140deg,
+    color-mix(in srgb, var(--brand-accent) 14%, #eef4ff),
+    #ffffff
+  );
 }
 
 .admin-quick-action-card:nth-child(2n) {
   border-color: color-mix(in srgb, var(--brand-secondary) 24%, #e8eaed);
-  background: linear-gradient(140deg, color-mix(in srgb, var(--brand-secondary) 10%, #fff7f7), #ffffff);
+  background: linear-gradient(
+    140deg,
+    color-mix(in srgb, var(--brand-secondary) 10%, #fff7f7),
+    #ffffff
+  );
   color: color-mix(in srgb, var(--brand-secondary) 80%, #a41f20);
 }
 
 .admin-quick-action-card:nth-child(3n) {
   border-color: color-mix(in srgb, var(--brand-success) 24%, #e8eaed);
-  background: linear-gradient(140deg, color-mix(in srgb, var(--brand-success) 10%, #f1fff6), #ffffff);
+  background: linear-gradient(
+    140deg,
+    color-mix(in srgb, var(--brand-success) 10%, #f1fff6),
+    #ffffff
+  );
   color: color-mix(in srgb, var(--brand-success) 82%, #18753a);
 }
 
@@ -1158,7 +1233,11 @@
   border-radius: 18px;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--brand-primary) 24%, #e8eaed);
-  background: linear-gradient(145deg, color-mix(in srgb, var(--brand-primary) 10%, #ffffff), color-mix(in srgb, var(--brand-success) 9%, #ffffff));
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--brand-primary) 10%, #ffffff),
+    color-mix(in srgb, var(--brand-success) 9%, #ffffff)
+  );
 }
 
 .admin-profile-avatar {
@@ -1261,7 +1340,9 @@
   border-radius: 10px;
   overflow: hidden;
   background: #ffffff;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .admin-media-item:hover {
@@ -1553,7 +1634,11 @@
   border: 1px solid color-mix(in srgb, var(--brand-primary) 18%, #e8eaed);
   border-radius: 10px;
   padding: 0.48rem 0.55rem;
-  background: linear-gradient(140deg, color-mix(in srgb, var(--brand-primary) 8%, #ffffff), #ffffff);
+  background: linear-gradient(
+    140deg,
+    color-mix(in srgb, var(--brand-primary) 8%, #ffffff),
+    #ffffff
+  );
   color: #22384f;
   font-size: 0.82rem;
   font-weight: 600;
@@ -2146,67 +2231,66 @@
     display: none;
   }
 
+  @media (max-width: 560px) {
+    .auth-shell {
+      padding: 0.82rem 0.52rem;
+    }
 
-@media (max-width: 560px) {
-  .auth-shell {
-    padding: 0.82rem 0.52rem;
+    .auth-grid {
+      gap: 0.62rem;
+    }
+
+    .auth-showcase,
+    .auth-card {
+      padding: 0.88rem;
+      border-radius: 14px;
+    }
+
+    .auth-badge {
+      font-size: 0.7rem;
+      padding: 0.28rem 0.56rem;
+    }
+
+    .auth-sso-panel {
+      padding: 0.62rem;
+    }
+
+    .auth-sso-title {
+      font-size: 0.74rem;
+    }
+
+    .auth-inline-note,
+    .auth-sub-footer,
+    .auth-footer {
+      font-size: 0.74rem;
+    }
   }
 
-  .auth-grid {
-    gap: 0.62rem;
-  }
+  @media (max-width: 400px) {
+    .auth-brand-title {
+      font-size: 1.1rem;
+    }
 
-  .auth-showcase,
-  .auth-card {
-    padding: 0.88rem;
-    border-radius: 14px;
-  }
+    .auth-showcase h2 {
+      font-size: 1.08rem;
+    }
 
-  .auth-badge {
-    font-size: 0.7rem;
-    padding: 0.28rem 0.56rem;
-  }
+    .auth-card h1 {
+      font-size: 1.16rem;
+    }
 
-  .auth-sso-panel {
-    padding: 0.62rem;
-  }
+    .auth-trust-strip span,
+    .auth-meta-card {
+      width: 100%;
+      justify-content: center;
+    }
 
-  .auth-sso-title {
-    font-size: 0.74rem;
+    .auth-password-toggle {
+      right: 0.4rem;
+      width: 1.72rem;
+      height: 1.72rem;
+    }
   }
-
-  .auth-inline-note,
-  .auth-sub-footer,
-  .auth-footer {
-    font-size: 0.74rem;
-  }
-}
-
-@media (max-width: 400px) {
-  .auth-brand-title {
-    font-size: 1.1rem;
-  }
-
-  .auth-showcase h2 {
-    font-size: 1.08rem;
-  }
-
-  .auth-card h1 {
-    font-size: 1.16rem;
-  }
-
-  .auth-trust-strip span,
-  .auth-meta-card {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .auth-password-toggle {
-    right: 0.4rem;
-    width: 1.72rem;
-    height: 1.72rem;
-  }
-}
   .admin-topbar-jump-wrap,
   .admin-topbar-jump {
     width: 100%;

@@ -1,131 +1,152 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import SEO from '../components/SEO'
-import { portalRequest, setPortalSession } from './portalAuthShared'
-import './PortalPages.css'
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import SEO from "../components/SEO";
+import { portalRequest, setPortalSession } from "./portalAuthShared";
+import "./PortalPages.css";
 
 function PortalSignInPage() {
-  const navigate = useNavigate()
-  const googleButtonRef = useRef(null)
-  const [formData, setFormData] = useState({ email: '', password: '' })
-  const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [googleLoading, setGoogleLoading] = useState(false)
-  const [googleReady, setGoogleReady] = useState(false)
+  const navigate = useNavigate();
+  const googleButtonRef = useRef(null);
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [googleReady, setGoogleReady] = useState(false);
 
-  const googleClientId = useMemo(() => (import.meta.env.VITE_GOOGLE_CLIENT_ID || '').trim(), [])
+  const googleClientId = useMemo(
+    () => (import.meta.env.VITE_GOOGLE_CLIENT_ID || "").trim(),
+    [],
+  );
 
   useEffect(() => {
-    if (!googleClientId) return
+    if (!googleClientId) return;
 
-    let mounted = true
+    let mounted = true;
 
     const initializeGoogleSignIn = () => {
-      if (!mounted || !window.google?.accounts?.id || !googleButtonRef.current) return
+      if (!mounted || !window.google?.accounts?.id || !googleButtonRef.current)
+        return;
 
       window.google.accounts.id.initialize({
         client_id: googleClientId,
         callback: async (response) => {
           if (!response?.credential) {
-            setError('Google sign-in failed. Please try again.')
-            return
+            setError("Google sign-in failed. Please try again.");
+            return;
           }
 
-          setError('')
-          setGoogleLoading(true)
+          setError("");
+          setGoogleLoading(true);
 
           try {
-            const result = await portalRequest('/portal/auth/google', {
-              method: 'POST',
-              body: JSON.stringify({ credential: response.credential, flow: 'signin' }),
-            })
-            setPortalSession({ token: result.token, user: result.user })
-            navigate(result?.user?.defaultDashboard === 'project' ? '/project/dashboard' : '/career/dashboard')
+            const result = await portalRequest("/portal/auth/google", {
+              method: "POST",
+              body: JSON.stringify({
+                credential: response.credential,
+                flow: "signin",
+              }),
+            });
+            setPortalSession({ token: result.token, user: result.user });
+            navigate(
+              result?.user?.defaultDashboard === "project"
+                ? "/project/dashboard"
+                : "/career/dashboard",
+            );
           } catch (err) {
-            setError(err.message)
+            setError(err.message);
           } finally {
-            setGoogleLoading(false)
+            setGoogleLoading(false);
           }
         },
-      })
+      });
 
-      googleButtonRef.current.innerHTML = ''
-      const width = window.innerWidth <= 460 ? Math.max(240, window.innerWidth - 92) : 360
+      googleButtonRef.current.innerHTML = "";
+      const width =
+        window.innerWidth <= 460 ? Math.max(240, window.innerWidth - 92) : 360;
       window.google.accounts.id.renderButton(googleButtonRef.current, {
-        type: 'standard',
-        theme: 'filled_blue',
-        size: 'large',
-        text: 'signin_with',
-        shape: 'pill',
+        type: "standard",
+        theme: "filled_blue",
+        size: "large",
+        text: "signin_with",
+        shape: "pill",
         width,
-        logo_alignment: 'left',
-      })
+        logo_alignment: "left",
+      });
 
-      setGoogleReady(true)
-    }
+      setGoogleReady(true);
+    };
 
     if (window.google?.accounts?.id) {
-      initializeGoogleSignIn()
+      initializeGoogleSignIn();
       return () => {
-        mounted = false
-      }
+        mounted = false;
+      };
     }
 
-    const scriptId = 'google-identity-services-script'
-    const existingScript = document.getElementById(scriptId)
+    const scriptId = "google-identity-services-script";
+    const existingScript = document.getElementById(scriptId);
 
     if (existingScript) {
-      existingScript.addEventListener('load', initializeGoogleSignIn)
+      existingScript.addEventListener("load", initializeGoogleSignIn);
       return () => {
-        mounted = false
-        existingScript.removeEventListener('load', initializeGoogleSignIn)
-      }
+        mounted = false;
+        existingScript.removeEventListener("load", initializeGoogleSignIn);
+      };
     }
 
-    const script = document.createElement('script')
-    script.id = scriptId
-    script.src = 'https://accounts.google.com/gsi/client'
-    script.async = true
-    script.defer = true
-    script.addEventListener('load', initializeGoogleSignIn)
-    document.body.appendChild(script)
+    const script = document.createElement("script");
+    script.id = scriptId;
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    script.addEventListener("load", initializeGoogleSignIn);
+    document.body.appendChild(script);
 
     return () => {
-      mounted = false
-      script.removeEventListener('load', initializeGoogleSignIn)
-    }
-  }, [googleClientId, navigate])
+      mounted = false;
+      script.removeEventListener("load", initializeGoogleSignIn);
+    };
+  }, [googleClientId, navigate]);
 
   async function handleSubmit(event) {
-    event.preventDefault()
-    setLoading(true)
-    setError('')
+    event.preventDefault();
+    setLoading(true);
+    setError("");
 
     try {
-      const result = await portalRequest('/portal/auth/login', {
-        method: 'POST',
+      const result = await portalRequest("/portal/auth/login", {
+        method: "POST",
         body: JSON.stringify(formData),
-      })
-      setPortalSession({ token: result.token, user: result.user })
-      navigate(result?.user?.defaultDashboard === 'project' ? '/project/dashboard' : '/career/dashboard')
+      });
+      setPortalSession({ token: result.token, user: result.user });
+      navigate(
+        result?.user?.defaultDashboard === "project"
+          ? "/project/dashboard"
+          : "/career/dashboard",
+      );
     } catch (err) {
-      setError(err.message)
+      setError(err.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   return (
     <>
-      <SEO title="Portal Sign In" description="Sign in to career and project dashboards." noindex={true} />
+      <SEO
+        title="Portal Sign In"
+        description="Sign in to career and project dashboards."
+        noindex={true}
+      />
       <section className="portal-shell portal-shell-login">
         <div className="portal-grid">
           <aside className="portal-hero-card">
             <p className="portal-kicker">Candidate + Client Portal</p>
             <h1>One Sign-In For Careers And Projects</h1>
             <p>
-              Track applications, check project delivery stages, and stay connected with your updates in a single account.
+              Track applications, check project delivery stages, and stay
+              connected with your updates in a single account.
             </p>
             <div className="portal-pill-row" aria-hidden="true">
               <span>Google sign-in ready</span>
@@ -136,23 +157,34 @@ function PortalSignInPage() {
 
           <article className="portal-auth-card">
             <h2>Sign In</h2>
-            <p className="portal-auth-subtitle">Use Google for instant access or continue with email and password.</p>
+            <p className="portal-auth-subtitle">
+              Use Google for instant access or continue with email and password.
+            </p>
 
             <div className="portal-google-wrap">
               {googleClientId ? (
                 <>
                   <div className="portal-google-slot" ref={googleButtonRef} />
-                  {!googleReady ? <p className="portal-inline-note">Loading Google sign-in...</p> : null}
-                  {googleLoading ? <p className="portal-inline-note">Validating account...</p> : null}
+                  {!googleReady ? (
+                    <p className="portal-inline-note">
+                      Loading Google sign-in...
+                    </p>
+                  ) : null}
+                  {googleLoading ? (
+                    <p className="portal-inline-note">Validating account...</p>
+                  ) : null}
                 </>
               ) : (
                 <p className="portal-inline-note portal-inline-warning">
-                  Google sign-in is disabled. Add VITE_GOOGLE_CLIENT_ID in frontend env.
+                  Google sign-in is disabled. Add VITE_GOOGLE_CLIENT_ID in
+                  frontend env.
                 </p>
               )}
             </div>
 
-            <div className="portal-auth-divider"><span>or sign in with password</span></div>
+            <div className="portal-auth-divider">
+              <span>or sign in with password</span>
+            </div>
 
             <form className="portal-form" onSubmit={handleSubmit}>
               <label>
@@ -160,7 +192,12 @@ function PortalSignInPage() {
                 <input
                   type="email"
                   value={formData.email}
-                  onChange={(event) => setFormData((prev) => ({ ...prev, email: event.target.value }))}
+                  onChange={(event) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      email: event.target.value,
+                    }))
+                  }
                   placeholder="you@company.com"
                   required
                 />
@@ -170,9 +207,14 @@ function PortalSignInPage() {
                 Password
                 <div className="portal-password-row">
                   <input
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     value={formData.password}
-                    onChange={(event) => setFormData((prev) => ({ ...prev, password: event.target.value }))}
+                    onChange={(event) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        password: event.target.value,
+                      }))
+                    }
                     placeholder="Enter your password"
                     required
                   />
@@ -180,29 +222,38 @@ function PortalSignInPage() {
                     type="button"
                     className="portal-password-toggle"
                     onClick={() => setShowPassword((prev) => !prev)}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
                     aria-pressed={showPassword}
                   >
-                    {showPassword ? 'Hide' : 'Show'}
+                    {showPassword ? "Hide" : "Show"}
                   </button>
                 </div>
               </label>
 
               {error ? <p className="portal-error">{error}</p> : null}
 
-              <button type="submit" className="btn btn-primary portal-submit" disabled={loading || googleLoading}>
-                {loading ? 'Signing in...' : 'Sign In'}
+              <button
+                type="submit"
+                className="btn btn-primary portal-submit"
+                disabled={loading || googleLoading}
+              >
+                {loading ? "Signing in..." : "Sign In"}
               </button>
             </form>
 
             <p className="portal-auth-footnote">
-              New user? <Link to="/portal/signup">Create account with Google or OTP verification</Link>
+              New user?{" "}
+              <Link to="/portal/signup">
+                Create account with Google or OTP verification
+              </Link>
             </p>
           </article>
         </div>
       </section>
     </>
-  )
+  );
 }
 
-export default PortalSignInPage
+export default PortalSignInPage;

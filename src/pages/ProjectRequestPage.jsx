@@ -1,208 +1,255 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import PageHero from '../components/PageHero'
-import { apiRequest } from '../lib/apiClient'
-import StatusModal from '../components/StatusModal'
-import { getPortalUser } from './portalAuthShared'
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import PageHero from "../components/PageHero";
+import { apiRequest } from "../lib/apiClient";
+import StatusModal from "../components/StatusModal";
+import { getPortalUser } from "./portalAuthShared";
 
 const projectCategoryOptions = [
-  { value: 'website', label: 'Website' },
-  { value: 'web-app', label: 'Web Application' },
-  { value: 'android-app', label: 'Android Application' },
-  { value: 'ios-app', label: 'iOS Application' },
-  { value: 'software', label: 'Custom Software' },
-  { value: 'other', label: 'Other' },
-]
+  { value: "website", label: "Website" },
+  { value: "web-app", label: "Web Application" },
+  { value: "android-app", label: "Android Application" },
+  { value: "ios-app", label: "iOS Application" },
+  { value: "software", label: "Custom Software" },
+  { value: "other", label: "Other" },
+];
 
 const categorySubtypeOptions = {
   website: {
-    label: 'Website Type',
-    placeholder: 'Select website type',
-    options: ['Static Website', 'Dynamic Website', 'Landing Page', 'E-commerce Website', 'Portal / Dashboard'],
+    label: "Website Type",
+    placeholder: "Select website type",
+    options: [
+      "Static Website",
+      "Dynamic Website",
+      "Landing Page",
+      "E-commerce Website",
+      "Portal / Dashboard",
+    ],
   },
-  'web-app': {
-    label: 'Web App Type',
-    placeholder: 'Select web app type',
-    options: ['SaaS Platform', 'Admin Dashboard', 'Customer Portal', 'Marketplace', 'CRM / ERP Web App'],
+  "web-app": {
+    label: "Web App Type",
+    placeholder: "Select web app type",
+    options: [
+      "SaaS Platform",
+      "Admin Dashboard",
+      "Customer Portal",
+      "Marketplace",
+      "CRM / ERP Web App",
+    ],
   },
-  'android-app': {
-    label: 'Android App Type',
-    placeholder: 'Select Android app type',
-    options: ['E-commerce App', 'On-Demand Service App', 'Social / Community App', 'Business Utility App', 'Enterprise Android App'],
+  "android-app": {
+    label: "Android App Type",
+    placeholder: "Select Android app type",
+    options: [
+      "E-commerce App",
+      "On-Demand Service App",
+      "Social / Community App",
+      "Business Utility App",
+      "Enterprise Android App",
+    ],
   },
-  'ios-app': {
-    label: 'iOS App Type',
-    placeholder: 'Select iOS app type',
-    options: ['Consumer iOS App', 'Business iOS App', 'Subscription-Based App', 'Marketplace iOS App', 'Enterprise iOS App'],
+  "ios-app": {
+    label: "iOS App Type",
+    placeholder: "Select iOS app type",
+    options: [
+      "Consumer iOS App",
+      "Business iOS App",
+      "Subscription-Based App",
+      "Marketplace iOS App",
+      "Enterprise iOS App",
+    ],
   },
   software: {
-    label: 'Software Type',
-    placeholder: 'Select software type',
-    options: ['ERP System', 'CRM System', 'Inventory / Billing Software', 'Automation Software', 'Custom Internal Software'],
+    label: "Software Type",
+    placeholder: "Select software type",
+    options: [
+      "ERP System",
+      "CRM System",
+      "Inventory / Billing Software",
+      "Automation Software",
+      "Custom Internal Software",
+    ],
   },
-}
+};
 
-const OTHER_OPTION_VALUE = '__other__'
+const OTHER_OPTION_VALUE = "__other__";
 
 function ProjectRequestPage() {
-  const [searchParams] = useSearchParams()
-  const initialService = searchParams.get('service') || ''
-  const initialProduct = searchParams.get('product') || ''
-  const initialProjectReference = searchParams.get('project') || ''
-  const initialCategory = searchParams.get('category') || ''
-  const initialCompany = searchParams.get('company') || ''
-  const hasLockedProjectReference = Boolean(initialProjectReference)
+  const [searchParams] = useSearchParams();
+  const initialService = searchParams.get("service") || "";
+  const initialProduct = searchParams.get("product") || "";
+  const initialProjectReference = searchParams.get("project") || "";
+  const initialCategory = searchParams.get("category") || "";
+  const initialCompany = searchParams.get("company") || "";
+  const hasLockedProjectReference = Boolean(initialProjectReference);
 
   function buildInitialFormData(user = null) {
-    const profile = user || getPortalUser() || {}
+    const profile = user || getPortalUser() || {};
     return {
-      fullName: profile.name || '',
-      email: profile.email || '',
-      phone: profile.phone || '',
-      company: initialCompany || profile.organization || '',
-      targetBudget: '',
-      targetTimeline: '',
-      projectCategory: 'website',
+      fullName: profile.name || "",
+      email: profile.email || "",
+      phone: profile.phone || "",
+      company: initialCompany || profile.organization || "",
+      targetBudget: "",
+      targetTimeline: "",
+      projectCategory: "website",
       projectSubtype: initialCategory,
-      projectSubtypeOther: '',
+      projectSubtypeOther: "",
       requestedService: initialService,
       requestedProduct: initialProduct,
       projectReference: initialProjectReference,
-      businessGoals: '',
-      projectSummary: '',
-      featureRequirements: '',
-    }
+      businessGoals: "",
+      projectSummary: "",
+      featureRequirements: "",
+    };
   }
 
-  const [formData, setFormData] = useState(() => buildInitialFormData(getPortalUser()))
-  const [prdFile, setPrdFile] = useState(null)
-  const [supportingDocs, setSupportingDocs] = useState([])
-  const [modalState, setModalState] = useState({ isOpen: false, title: '', message: '', type: 'success' })
-  const [submitting, setSubmitting] = useState(false)
-  const activeSubtypeConfig = categorySubtypeOptions[formData.projectCategory]
+  const [formData, setFormData] = useState(() =>
+    buildInitialFormData(getPortalUser()),
+  );
+  const [prdFile, setPrdFile] = useState(null);
+  const [supportingDocs, setSupportingDocs] = useState([]);
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "success",
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const activeSubtypeConfig = categorySubtypeOptions[formData.projectCategory];
 
   const sourceContext = useMemo(() => {
-    const source = searchParams.get('source')
-    if (!source) return ''
+    const source = searchParams.get("source");
+    if (!source) return "";
 
-    if (source === 'client') {
-      return 'You are requesting a project from a client reference path. Include your expected scale and timeline for accurate estimation.'
+    if (source === "client") {
+      return "You are requesting a project from a client reference path. Include your expected scale and timeline for accurate estimation.";
     }
 
-    return 'You are submitting a direct project request. Provide your technical requirements for faster qualification.'
-  }, [searchParams])
+    return "You are submitting a direct project request. Provide your technical requirements for faster qualification.";
+  }, [searchParams]);
 
   useEffect(() => {
     const syncPortalProfile = () => {
-      const user = getPortalUser()
+      const user = getPortalUser();
       setFormData((previous) => ({
         ...previous,
         fullName: user?.name || previous.fullName,
         email: user?.email || previous.email,
         phone: user?.phone || previous.phone,
-        company: previous.company || user?.organization || '',
-      }))
-    }
+        company: previous.company || user?.organization || "",
+      }));
+    };
 
-    window.addEventListener('portal-session-updated', syncPortalProfile)
-    window.addEventListener('storage', syncPortalProfile)
-    window.addEventListener('focus', syncPortalProfile)
+    window.addEventListener("portal-session-updated", syncPortalProfile);
+    window.addEventListener("storage", syncPortalProfile);
+    window.addEventListener("focus", syncPortalProfile);
 
     return () => {
-      window.removeEventListener('portal-session-updated', syncPortalProfile)
-      window.removeEventListener('storage', syncPortalProfile)
-      window.removeEventListener('focus', syncPortalProfile)
-    }
-  }, [])
+      window.removeEventListener("portal-session-updated", syncPortalProfile);
+      window.removeEventListener("storage", syncPortalProfile);
+      window.removeEventListener("focus", syncPortalProfile);
+    };
+  }, []);
 
   function onInputChange(event) {
-    const { name, value } = event.target
+    const { name, value } = event.target;
     setFormData((previous) => ({
       ...previous,
       [name]: value,
-      ...(name === 'projectSubtype' && value !== OTHER_OPTION_VALUE ? { projectSubtypeOther: '' } : {}),
-    }))
+      ...(name === "projectSubtype" && value !== OTHER_OPTION_VALUE
+        ? { projectSubtypeOther: "" }
+        : {}),
+    }));
   }
 
   function onCategoryChange(event) {
-    const nextCategory = event.target.value
+    const nextCategory = event.target.value;
     setFormData((previous) => ({
       ...previous,
       projectCategory: nextCategory,
-      projectSubtype: '',
-      projectSubtypeOther: '',
-    }))
+      projectSubtype: "",
+      projectSubtypeOther: "",
+    }));
   }
 
   async function onSubmit(event) {
-    event.preventDefault()
-    if (submitting) return
-    setSubmitting(true)
+    event.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
 
     try {
-      const body = new FormData()
+      const body = new FormData();
       const normalizedSubtype =
         formData.projectSubtype === OTHER_OPTION_VALUE
           ? formData.projectSubtypeOther.trim()
-          : formData.projectSubtype
+          : formData.projectSubtype;
 
       if (activeSubtypeConfig && !normalizedSubtype) {
-        throw new Error(`Please select ${activeSubtypeConfig.label.toLowerCase()} or specify an other option`)
+        throw new Error(
+          `Please select ${activeSubtypeConfig.label.toLowerCase()} or specify an other option`,
+        );
       }
 
-      if (formData.projectCategory === 'other' && !String(formData.projectSubtype || '').trim()) {
-        throw new Error('Please specify your project type')
+      if (
+        formData.projectCategory === "other" &&
+        !String(formData.projectSubtype || "").trim()
+      ) {
+        throw new Error("Please specify your project type");
       }
 
       const payload = {
         ...formData,
         projectSubtype: normalizedSubtype || formData.projectSubtype,
-      }
+      };
 
       Object.entries(payload).forEach(([key, value]) => {
-        if (key === 'projectSubtypeOther') return
-        body.append(key, value)
-      })
+        if (key === "projectSubtypeOther") return;
+        body.append(key, value);
+      });
 
       if (prdFile) {
-        body.append('prd', prdFile)
+        body.append("prd", prdFile);
       }
 
       supportingDocs.forEach((file) => {
-        body.append('supportingDocs', file)
-      })
+        body.append("supportingDocs", file);
+      });
 
-      await apiRequest('/orders', {
-        method: 'POST',
+      await apiRequest("/orders", {
+        method: "POST",
         body,
-      })
+      });
 
       setModalState({
         isOpen: true,
-        title: 'Project Request Received',
-        message: 'Thank you for choosing Indocreonix. Your project brief has been successfully submitted to our solutions architecture team. We will review your requirements and a technical consultant will contact you shortly to discuss the next steps and provide a formal proposal.',
-        type: 'success'
-      })
+        title: "Project Request Received",
+        message:
+          "Thank you for choosing Indocreonix. Your project brief has been successfully submitted to our solutions architecture team. We will review your requirements and a technical consultant will contact you shortly to discuss the next steps and provide a formal proposal.",
+        type: "success",
+      });
 
       setFormData((previous) => ({
         ...buildInitialFormData(getPortalUser()),
-        targetBudget: '',
-        targetTimeline: '',
-        businessGoals: '',
-        projectSummary: '',
-        featureRequirements: '',
-      }))
-      setPrdFile(null)
-      setSupportingDocs([])
+        targetBudget: "",
+        targetTimeline: "",
+        businessGoals: "",
+        projectSummary: "",
+        featureRequirements: "",
+      }));
+      setPrdFile(null);
+      setSupportingDocs([]);
     } catch (error) {
       setModalState({
         isOpen: true,
-        title: 'Submission Error',
-        message: error.message || 'We encountered an error while processing your request. Please check your connection and try again, or reach out to our support team.',
-        type: 'error'
-      })
+        title: "Submission Error",
+        message:
+          error.message ||
+          "We encountered an error while processing your request. Please check your connection and try again, or reach out to our support team.",
+        type: "error",
+      });
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
   }
 
@@ -214,9 +261,12 @@ function ProjectRequestPage() {
         subtitle="Share your website, app, iOS, or software requirements with optional PRD upload. Our team will review and provide a structured proposal."
         theme="theme-launch"
         metrics={[
-          { value: 'Web · Android · iOS · Software', label: 'Project Coverage' },
-          { value: 'PRD PDF Optional', label: 'Documentation' },
-          { value: 'Technical Qualification', label: 'Review Model' },
+          {
+            value: "Web · Android · iOS · Software",
+            label: "Project Coverage",
+          },
+          { value: "PRD PDF Optional", label: "Documentation" },
+          { value: "Technical Qualification", label: "Review Model" },
         ]}
       />
 
@@ -224,36 +274,63 @@ function ProjectRequestPage() {
         <article className="info-card quote-form-card">
           <h3>Project Discovery Form</h3>
           <p>
-            Submit your project brief, budget expectations, and technical scope. This form is designed for website development, app development,
-            iOS applications, and custom software engagements.
+            Submit your project brief, budget expectations, and technical scope.
+            This form is designed for website development, app development, iOS
+            applications, and custom software engagements.
           </p>
 
-          {sourceContext ? <p className="quote-form-context">{sourceContext}</p> : null}
+          {sourceContext ? (
+            <p className="quote-form-context">{sourceContext}</p>
+          ) : null}
 
           <form className="quote-form-grid" onSubmit={onSubmit}>
             <label>
               Full Name
-              <input name="fullName" value={formData.fullName} onChange={onInputChange} required />
+              <input
+                name="fullName"
+                value={formData.fullName}
+                onChange={onInputChange}
+                required
+              />
             </label>
 
             <label>
               Business Email
-              <input type="email" name="email" value={formData.email} onChange={onInputChange} required />
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={onInputChange}
+                required
+              />
             </label>
 
             <label>
               Contact Number
-              <input name="phone" value={formData.phone} onChange={onInputChange} required />
+              <input
+                name="phone"
+                value={formData.phone}
+                onChange={onInputChange}
+                required
+              />
             </label>
 
             <label>
               Company Name
-              <input name="company" value={formData.company} onChange={onInputChange} />
+              <input
+                name="company"
+                value={formData.company}
+                onChange={onInputChange}
+              />
             </label>
 
             <label>
               Project Type
-              <select name="projectCategory" value={formData.projectCategory} onChange={onCategoryChange}>
+              <select
+                name="projectCategory"
+                value={formData.projectCategory}
+                onChange={onCategoryChange}
+              >
                 {projectCategoryOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
@@ -291,30 +368,51 @@ function ProjectRequestPage() {
                 placeholder="Example: Similar to Volkswagen Dealer Portal"
                 readOnly={hasLockedProjectReference}
               />
-              {hasLockedProjectReference ? <small>Reference is auto-selected from the project you chose.</small> : null}
+              {hasLockedProjectReference ? (
+                <small>
+                  Reference is auto-selected from the project you chose.
+                </small>
+              ) : null}
             </label>
 
             <label>
               Target Budget
-              <input name="targetBudget" value={formData.targetBudget} onChange={onInputChange} placeholder="Example: INR 2,50,000 - 4,00,000" />
+              <input
+                name="targetBudget"
+                value={formData.targetBudget}
+                onChange={onInputChange}
+                placeholder="Example: INR 2,50,000 - 4,00,000"
+              />
             </label>
 
             <label>
               Target Timeline
-              <input name="targetTimeline" value={formData.targetTimeline} onChange={onInputChange} placeholder="Example: 10-12 weeks" />
+              <input
+                name="targetTimeline"
+                value={formData.targetTimeline}
+                onChange={onInputChange}
+                placeholder="Example: 10-12 weeks"
+              />
             </label>
 
             {activeSubtypeConfig ? (
               <label>
                 {activeSubtypeConfig.label}
-                <select name="projectSubtype" value={formData.projectSubtype} onChange={onInputChange} required>
+                <select
+                  name="projectSubtype"
+                  value={formData.projectSubtype}
+                  onChange={onInputChange}
+                  required
+                >
                   <option value="">{activeSubtypeConfig.placeholder}</option>
                   {activeSubtypeConfig.options.map((item) => (
                     <option key={item} value={item}>
                       {item}
                     </option>
                   ))}
-                  <option value={OTHER_OPTION_VALUE}>Other (Please specify)</option>
+                  <option value={OTHER_OPTION_VALUE}>
+                    Other (Please specify)
+                  </option>
                 </select>
 
                 {formData.projectSubtype === OTHER_OPTION_VALUE ? (
@@ -379,10 +477,17 @@ function ProjectRequestPage() {
               <input
                 type="file"
                 accept=".pdf,application/pdf"
-                onChange={(event) => setPrdFile(event.target.files?.[0] || null)}
+                onChange={(event) =>
+                  setPrdFile(event.target.files?.[0] || null)
+                }
               />
-              <small>Upload your Product Requirement Document with project idea and scope details (optional).</small>
-              {prdFile ? <p className="quote-file-name">Selected: {prdFile.name}</p> : null}
+              <small>
+                Upload your Product Requirement Document with project idea and
+                scope details (optional).
+              </small>
+              {prdFile ? (
+                <p className="quote-file-name">Selected: {prdFile.name}</p>
+              ) : null}
             </label>
 
             <label className="quote-full-row quote-upload-zone">
@@ -391,9 +496,16 @@ function ProjectRequestPage() {
                 type="file"
                 accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
                 multiple
-                onChange={(event) => setSupportingDocs(Array.from(event.target.files || []).slice(0, 3))}
+                onChange={(event) =>
+                  setSupportingDocs(
+                    Array.from(event.target.files || []).slice(0, 3),
+                  )
+                }
               />
-              <small>Attach additional reference files such as wireframes, design notes, or requirement snapshots.</small>
+              <small>
+                Attach additional reference files such as wireframes, design
+                notes, or requirement snapshots.
+              </small>
               {supportingDocs.length ? (
                 <ul className="quote-file-list">
                   {supportingDocs.map((file) => (
@@ -404,16 +516,21 @@ function ProjectRequestPage() {
             </label>
 
             <div className="quote-full-row quote-actions">
-              <button type="submit" className="btn btn-primary" disabled={submitting}>
-                {submitting ? 'Submitting Request...' : 'Submit Project Request'}
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={submitting}
+              >
+                {submitting
+                  ? "Submitting Request..."
+                  : "Submit Project Request"}
               </button>
             </div>
           </form>
-
         </article>
       </section>
 
-      <StatusModal 
+      <StatusModal
         isOpen={modalState.isOpen}
         title={modalState.title}
         message={modalState.message}
@@ -421,7 +538,7 @@ function ProjectRequestPage() {
         onClose={() => setModalState({ ...modalState, isOpen: false })}
       />
     </>
-  )
+  );
 }
 
-export default ProjectRequestPage
+export default ProjectRequestPage;
