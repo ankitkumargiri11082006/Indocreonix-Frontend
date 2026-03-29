@@ -27,9 +27,9 @@ function CaseStudiesPage() {
       title: project.title,
       description: project.summary,
       image: project.logo,
-      primaryLabel: 'Make Similar Project',
+      primaryLabel: 'Clone',
       primaryTo: `/request-quote?project=${encodeURIComponent(project.title)}`,
-      secondaryLabel: 'Website Link',
+      secondaryLabel: 'Website',
       secondaryHref: project.website || '/contact',
       meta: (project.developerName || project.developer || project.developerCredit || project.developer_name)
         ? `Developer Credit: ${project.developerName || project.developer || project.developerCredit || project.developer_name}`
@@ -76,7 +76,7 @@ function CaseStudiesPage() {
                       href={`/request-quote?project=${encodeURIComponent(project.title)}`}
                       className="contact-link"
                     >
-                      Make Similar Project
+                      Clone Project
                     </a>
                   </p>
                   <p>
