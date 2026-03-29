@@ -46,9 +46,9 @@ function HomePage() {
     title: project.title,
     description: project.summary,
     image: project.logo,
-    primaryLabel: 'Make Similar Project',
+    primaryLabel: 'Clone',
     primaryTo: `/request-quote?project=${encodeURIComponent(project.title)}`,
-    secondaryLabel: 'Website Link',
+    secondaryLabel: 'Website',
     secondaryHref: project.website || '/contact',
     meta:
       project.developerName ||
@@ -74,9 +74,9 @@ function HomePage() {
       title: serviceTitle,
       description: dbService.description || catalogService.shortDescription,
       image: dbService.image || catalogService.image,
-      primaryLabel: 'Details',
+      primaryLabel: 'Explore',
       primaryTo: `/services/${catalogService.slug}`,
-      secondaryLabel: 'Get Quote',
+      secondaryLabel: 'Quote',
       secondaryTo: `/request-quote?service=${encodeURIComponent(serviceTitle)}`,
     };
   })
