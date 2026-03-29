@@ -22,6 +22,8 @@ const initialForm = {
 }
 
 function AdminProjectsPage() {
+
+  const PAGE_SIZE = 30
   const [items, setItems] = useState([])
   const [mediaAssets, setMediaAssets] = useState([])
   const [form, setForm] = useState(initialForm)
@@ -32,13 +34,26 @@ function AdminProjectsPage() {
   const [editingId, setEditingId] = useState('')
   const [copiedAssetUrl, setCopiedAssetUrl] = useState('')
   const [error, setError] = useState('')
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
+  const [loading, setLoading] = useState(false)
 
-  async function loadItems() {
+  async function loadItems(nextPage = 1) {
+    setLoading(true)
+    setError('')
     try {
-      const result = await apiRequest('/projects')
-      setItems(result.items || [])
+      const result = await apiRequest(`/projects?page=${nextPage}&limit=${PAGE_SIZE}`)
+      if (nextPage === 1) {
+        setItems(result.items || [])
+      } else {
+        setItems((prev) => [...prev, ...(result.items || [])])
+      }
+      setHasMore(result.hasMore)
+      setPage(nextPage)
     } catch (err) {
       setError(err.message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -51,10 +66,18 @@ function AdminProjectsPage() {
     }
   }
 
+
   useEffect(() => {
-    loadItems()
+    loadItems(1)
     loadMediaAssets()
+    // eslint-disable-next-line
   }, [])
+
+  function handleLoadMore() {
+    if (!loading && hasMore) {
+      loadItems(page + 1)
+    }
+  }
 
   useEffect(() => {
     if (!logoFile) {
@@ -377,9 +400,24 @@ function AdminProjectsPage() {
                   </td>
                 </tr>
               ))}
+              {loading &&
+                Array.from({ length: PAGE_SIZE }).map((_, i) => (
+                  <tr className="skeleton" key={`skeleton-${i}`}>
+                    <td colSpan={6}>
+                      <div style={{ height: 24, background: '#eee', borderRadius: 4, margin: '6px 0' }} />
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
+        {hasMore && !loading && (
+          <div style={{ textAlign: 'center', margin: '1.5rem 0' }}>
+            <button className="btn" onClick={handleLoadMore} disabled={loading}>
+              Load More
+            </button>
+          </div>
+        )}
       </article>
     </div>
   )

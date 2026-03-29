@@ -195,6 +195,43 @@ function Navbar() {
       : "/career/dashboard";
   }
 
+  function hasCareerAccess(user) {
+    return Boolean(user?.access?.career);
+  }
+
+  function hasProjectAccess(user) {
+    return Boolean(user?.access?.project);
+  }
+
+  function getPortalContextFromPath(pathname) {
+    const path = String(pathname || "").toLowerCase();
+    if (path.startsWith("/careers")) return "career";
+    if (
+      path.startsWith("/project") ||
+      path.startsWith("/projects-delivered") ||
+      path.startsWith("/request-quote")
+    ) {
+      return "project";
+    }
+    return "";
+  }
+
+  function getPortalAuthLink(mode) {
+    const params = new URLSearchParams();
+    params.set("mode", mode);
+
+    const context = getPortalContextFromPath(location.pathname);
+    if (context) {
+      params.set("context", context);
+    }
+
+    if (location.pathname !== "/" && !location.pathname.startsWith("/portal")) {
+      params.set("next", location.pathname);
+    }
+
+    return `/portal?${params.toString()}`;
+  }
+
   function getUserFirstName(user) {
     const name = String(user?.name || "").trim();
     if (!name) return "Account";
@@ -466,6 +503,24 @@ function Navbar() {
                   >
                     Open Dashboard
                   </NavLink>
+                  {hasCareerAccess(portalUser) ? (
+                    <NavLink
+                      to="/career/dashboard"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="nav-auth-btn nav-auth-btn-secondary"
+                    >
+                      Career Dashboard
+                    </NavLink>
+                  ) : null}
+                  {hasProjectAccess(portalUser) ? (
+                    <NavLink
+                      to="/project/dashboard"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="nav-auth-btn nav-auth-btn-secondary"
+                    >
+                      Service Dashboard
+                    </NavLink>
+                  ) : null}
                   <button
                     type="button"
                     className="nav-auth-btn nav-auth-btn-secondary"
@@ -488,14 +543,14 @@ function Navbar() {
                   aria-label="Sign in and sign up"
                 >
                   <NavLink
-                    to="/portal?mode=signin"
+                    to={getPortalAuthLink("signin")}
                     onClick={() => setIsMenuOpen(false)}
                     className={getAuthButtonClass("signin")}
                   >
                     Sign in
                   </NavLink>
                   <NavLink
-                    to="/portal?mode=signup"
+                    to={getPortalAuthLink("signup")}
                     onClick={() => setIsMenuOpen(false)}
                     className={getAuthButtonClass("signup")}
                   >
@@ -614,6 +669,26 @@ function Navbar() {
                 >
                   Open Dashboard
                 </NavLink>
+                {hasCareerAccess(portalUser) ? (
+                  <NavLink
+                    to="/career/dashboard"
+                    className="nav-profile-menu-item"
+                    role="menuitem"
+                    onClick={() => setIsProfileMenuOpen(false)}
+                  >
+                    Career Dashboard
+                  </NavLink>
+                ) : null}
+                {hasProjectAccess(portalUser) ? (
+                  <NavLink
+                    to="/project/dashboard"
+                    className="nav-profile-menu-item"
+                    role="menuitem"
+                    onClick={() => setIsProfileMenuOpen(false)}
+                  >
+                    Service Dashboard
+                  </NavLink>
+                ) : null}
                 <button
                   type="button"
                   className="nav-profile-menu-item"
@@ -644,13 +719,13 @@ function Navbar() {
                 </svg>
               </span>
               <NavLink
-                to="/portal?mode=signin"
+                to={getPortalAuthLink("signin")}
                 className={getAuthButtonClass("signin")}
               >
                 Sign in
               </NavLink>
               <NavLink
-                to="/portal?mode=signup"
+                to={getPortalAuthLink("signup")}
                 className={getAuthButtonClass("signup")}
               >
                 Join

@@ -63,6 +63,55 @@ function PortalAccessPage({
     [],
   );
 
+  const portalIntent = useMemo(() => {
+    const inferFromPath = (rawPath) => {
+      const path = String(rawPath || "").trim().toLowerCase();
+      if (!path.startsWith("/")) return "";
+      if (path.startsWith("/careers")) return "career";
+      if (
+        path.startsWith("/project") ||
+        path.startsWith("/projects-delivered") ||
+        path.startsWith("/request-quote")
+      ) {
+        return "project";
+      }
+      return "";
+    };
+
+    const contextParam = String(searchParams.get("context") || "").toLowerCase();
+    if (contextParam === "career" || contextParam === "project") {
+      return contextParam;
+    }
+
+    const nextFromProp = String(nextPath || "").trim();
+    const propIntent = inferFromPath(nextFromProp);
+    if (propIntent) return propIntent;
+
+    const nextFromQuery = String(searchParams.get("next") || "").trim();
+    const queryIntent = inferFromPath(nextFromQuery);
+    if (queryIntent) return queryIntent;
+
+    return "both";
+  }, [nextPath, searchParams]);
+
+  const resolvedSignupTrack =
+    portalIntent === "career"
+      ? "career"
+      : portalIntent === "project"
+        ? "project"
+        : "both";
+
+  useEffect(() => {
+    setSignupForm((prev) =>
+      prev.track === "both"
+        ? {
+            ...prev,
+            track: resolvedSignupTrack,
+          }
+        : prev,
+    );
+  }, [resolvedSignupTrack]);
+
   useEffect(() => {
     const requestedMode = String(searchParams.get("mode") || "").toLowerCase();
     if (requestedMode === "signin" || requestedMode === "signup") {
@@ -132,6 +181,16 @@ function PortalAccessPage({
       }
 
       navigate(requestedNext);
+      return;
+    }
+
+    if (portalIntent === "career" && user?.access?.career) {
+      navigate("/career/dashboard");
+      return;
+    }
+
+    if (portalIntent === "project" && user?.access?.project) {
+      navigate("/project/dashboard");
       return;
     }
 
@@ -210,13 +269,18 @@ function PortalAccessPage({
           setGoogleLoading(true);
 
           try {
+            const googlePayload = {
+              credential: response.credential,
+              flow: mode,
+            };
+
+            if (mode === "signup") {
+              googlePayload.track = signupForm.track;
+            }
+
             const result = await portalRequest("/portal/auth/google", {
               method: "POST",
-              body: JSON.stringify({
-                credential: response.credential,
-                flow: mode,
-                track: signupForm.track,
-              }),
+              body: JSON.stringify(googlePayload),
             });
             setPortalSession({ token: result.token, user: result.user });
             goToPostAuthDestination(result.user);
@@ -497,27 +561,24 @@ function PortalAccessPage({
                   className="portal-session-top-actions"
                   aria-label="Session quick actions"
                 >
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() => navigate("/career/dashboard")}
-                  >
-                    Career Dashboard
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() => navigate("/project/dashboard")}
-                  >
-                    Project Dashboard
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() => navigate("/portal")}
-                  >
-                    All Dashboards
-                  </button>
+                  {currentUser?.access?.career ? (
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => navigate("/career/dashboard")}
+                    >
+                      Career Dashboard
+                    </button>
+                  ) : null}
+                  {currentUser?.access?.project ? (
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => navigate("/project/dashboard")}
+                    >
+                      Service Dashboard
+                    </button>
+                  ) : null}
                   <button
                     type="button"
                     className="btn btn-primary"
@@ -736,7 +797,7 @@ function PortalAccessPage({
                       />
                     </label>
                     <label>
-                      Portal Track
+                      Register For
                       <select
                         value={signupForm.track}
                         onChange={(event) =>
@@ -746,9 +807,9 @@ function PortalAccessPage({
                           }))
                         }
                       >
-                        <option value="both">Career + Project</option>
-                        <option value="career">Career only</option>
-                        <option value="project">Project only</option>
+                        <option value="project">Service</option>
+                        <option value="career">Career</option>
+                        <option value="both">Both Service + Career</option>
                       </select>
                     </label>
                     {error ? <p className="portal-error">{error}</p> : null}

@@ -45,6 +45,7 @@ import AdminCareerApplicationsPage from "./admin/pages/AdminCareerApplicationsPa
 import AdminAuditLogsPage from "./admin/pages/AdminAuditLogsPage";
 import AdminOrdersPage from "./admin/pages/AdminOrdersPage";
 import AdminPortalControlPage from "./admin/pages/AdminPortalControlPage";
+// import PwaInstallPrompt from "./components/PwaInstallPrompt";
 import "./App.css";
 import "./admin/Admin.css";
 
@@ -62,6 +63,7 @@ function App() {
   return (
     <>
       <ScrollToTopOnRouteChange />
+      {/* <PwaInstallPrompt /> */}
 
       <Routes>
         <Route path="/login" element={<LoginPage />} />
