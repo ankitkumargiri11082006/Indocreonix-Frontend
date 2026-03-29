@@ -173,12 +173,6 @@ function Footer() {
                 <span>Contact</span>
               </Link>
             </li>
-          </ul>
-        </div>
-
-        <div>
-          <h4>Careers</h4>
-          <ul className="footer-links">
             <li>
               <Link to="/careers" className="footer-link-with-icon">
                 <span className="footer-icon footer-icon-careers" aria-hidden="true">💼</span>

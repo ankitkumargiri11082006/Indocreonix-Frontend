@@ -2536,7 +2536,7 @@ canvas {
   display: flex;
   flex-wrap: nowrap;
   gap: 0.9rem;
-  justify-content: flex-start;
+  justify-content: center;
   overflow-x: auto;
   overflow-y: hidden;
   padding-bottom: 0.2rem;
@@ -2779,8 +2779,14 @@ canvas {
   margin-bottom: 0.8rem;
 }
 
+.footer-brand .brand-logo {
+  width: 52px;
+  height: 52px;
+}
+
 .footer-brand .brand-text {
   text-shadow: 0 0 14px rgba(66, 133, 244, 0.3);
+  font-size: 1.32rem;
 }
 
 .footer-copy {
@@ -4494,6 +4500,40 @@ canvas {
 }
 
 @media (max-width: 700px) {
+  .site-footer {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .footer-grid {
+    order: 1;
+    padding-top: 1.1rem;
+    padding-bottom: 0.9rem;
+  }
+
+  .footer-brand .brand-logo {
+    width: 60px;
+    height: 60px;
+  }
+
+  .footer-brand .brand-text {
+    font-size: 1.44rem;
+  }
+
+  .footer-resources-highlight {
+    order: 2;
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+
+  .footer-social-strip-mobile {
+    order: 3;
+  }
+
+  .copyright {
+    order: 4;
+  }
+
   .site-chatbot-panel {
     width: min(360px, calc(100vw - 14px));
   }
