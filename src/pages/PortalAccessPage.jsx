@@ -28,7 +28,7 @@ function PortalAccessPage({
   onAuthenticated,
 }) {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const googleButtonRef = useRef(null);
   const hasAutoOpenedProfileEditorRef = useRef(false);
 
@@ -160,6 +160,24 @@ function PortalAccessPage({
 
     return () => window.clearInterval(intervalId);
   }, [currentUser]);
+
+  function switchAuthMode(nextMode) {
+    setMode(nextMode);
+    setError("");
+    setMessage("");
+
+    if (nextMode === "signup") {
+      setSignupStep(1);
+    }
+
+    if (embedded) {
+      return;
+    }
+
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.set("mode", nextMode);
+    setSearchParams(nextParams, { replace: true });
+  }
 
   useEffect(() => {
     if (!currentUser) return;
@@ -582,11 +600,7 @@ function PortalAccessPage({
                         ? "portal-mode-btn active"
                         : "portal-mode-btn"
                     }
-                    onClick={() => {
-                      setMode("signin");
-                      setError("");
-                      setMessage("");
-                    }}
+                    onClick={() => switchAuthMode("signin")}
                   >
                     Sign In
                   </button>
@@ -597,11 +611,7 @@ function PortalAccessPage({
                         ? "portal-mode-btn active"
                         : "portal-mode-btn"
                     }
-                    onClick={() => {
-                      setMode("signup");
-                      setError("");
-                      setMessage("");
-                    }}
+                    onClick={() => switchAuthMode("signup")}
                   >
                     Sign Up
                   </button>
