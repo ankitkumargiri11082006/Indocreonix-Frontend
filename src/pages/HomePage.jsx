@@ -74,9 +74,9 @@ function HomePage() {
       title: serviceTitle,
       description: dbService.description || catalogService.shortDescription,
       image: dbService.image || catalogService.image,
-      primaryLabel: 'View Service Details',
+      primaryLabel: 'Details',
       primaryTo: `/services/${catalogService.slug}`,
-      secondaryLabel: 'Request Quote',
+      secondaryLabel: 'Get Quote',
       secondaryTo: `/request-quote?service=${encodeURIComponent(serviceTitle)}`,
     };
   })
