@@ -124,9 +124,5 @@ npm run build
 
 ---
 
-## 📝 Developer Notes
-
-This application was engineered using **Antigravity (Gemini 2.0 Pro)** for state-of-the-art UI implementation and interaction design. The system follows a component-first architecture for extreme scalability and maintainability.
-
 > Update confirmed 2026-03-29: README change merged and push retry pending.
 
