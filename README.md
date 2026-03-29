@@ -35,6 +35,7 @@ A high-performance, immersive React application designed to represent the Indocr
 - **Services:** Detailed deep-dives into specialized engineering modules.
 - **Careers:** Specialized portals for Job and Internship applications with asset tracking.
 - **Contact:** Real-time lead capture with instant automated email confirmations.
+- **Accessibility:** WCAG 2.2 AA compliance and keyboard navigation support.
 
 ### 🛡️ Admin Command Center
 
