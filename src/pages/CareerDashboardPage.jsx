@@ -65,6 +65,47 @@ function CareerDashboardPage() {
     );
   }).length;
 
+  const profileCompleteness = useMemo(() => {
+    const fields = [
+      user?.name,
+      user?.email,
+      user?.phone,
+      user?.organization,
+      user?.roleTitle,
+      user?.location,
+      user?.bio,
+    ];
+    const filled = fields.filter((value) => String(value || "").trim()).length;
+    return Math.round((filled / fields.length) * 100);
+  }, [user]);
+
+  const priorityApplications = useMemo(() => {
+    const scoreMap = {
+      interview: 1,
+      screening: 2,
+      review: 3,
+      pending: 4,
+      delivered: 5,
+      completed: 5,
+      rejected: 6,
+    };
+
+    return [...applications]
+      .sort((a, b) => {
+        const statusA = String(a.status || "pending").toLowerCase();
+        const statusB = String(b.status || "pending").toLowerCase();
+        const scoreA = scoreMap[statusA] ?? 99;
+        const scoreB = scoreMap[statusB] ?? 99;
+
+        if (scoreA !== scoreB) {
+          return scoreA - scoreB;
+        }
+
+        return new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0);
+      })
+      .slice(0, 3);
+  }, [applications]);
+
   useEffect(() => {
     let mounted = true;
 
@@ -171,6 +212,77 @@ function CareerDashboardPage() {
               ? "All opportunities shown"
               : `Filtered by ${openingFilter}`}
           </span>
+        </article>
+        <article className="portal-metric-card portal-metric-card-highlight">
+          <p>Profile Strength</p>
+          <strong>{profileCompleteness}%</strong>
+          <span>
+            {profileCompleteness >= 85
+              ? "Excellent profile quality"
+              : "Complete profile to increase shortlist chance"}
+          </span>
+        </article>
+      </div>
+
+      <div className="portal-priority-grid" aria-label="Career priorities">
+        <article className="portal-priority-card portal-priority-card-focus">
+          <p className="portal-priority-label">High Priority</p>
+          <h2>Applications Needing Attention</h2>
+          <p>
+            Focus on interview and screening stages first to improve your
+            conversion into offers.
+          </p>
+          <div className="portal-priority-list">
+            {priorityApplications.length ? (
+              priorityApplications.map((item) => (
+                <div
+                  key={item.id || `${item.role}-${item.submittedAt}`}
+                  className="portal-priority-item"
+                >
+                  <div>
+                    <h3>{item.role || "Applied Role"}</h3>
+                    <p>{item.id || "Application"}</p>
+                  </div>
+                  <span
+                    className={`portal-status-pill portal-status-${String(
+                      item.status || "pending",
+                    )
+                      .toLowerCase()
+                      .replace(/\s+/g, "-")}`}
+                  >
+                    {item.status || "Pending"}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <p className="portal-inline-note">
+                No active applications yet. Start with current openings.
+              </p>
+            )}
+          </div>
+        </article>
+
+        <article className="portal-priority-card">
+          <p className="portal-priority-label">Quick Actions</p>
+          <h2>Move Faster</h2>
+          <div className="portal-quick-grid">
+            <Link to="/careers" className="portal-quick-card">
+              <h3>Explore Roles</h3>
+              <p>Browse all active job and internship opportunities.</p>
+            </Link>
+            <Link to="/portal?profile=edit" className="portal-quick-card">
+              <h3>Update Profile</h3>
+              <p>Increase match quality by keeping profile data fresh.</p>
+            </Link>
+            <Link to="/project/dashboard" className="portal-quick-card">
+              <h3>Track Projects</h3>
+              <p>Switch to your project delivery dashboard instantly.</p>
+            </Link>
+            <Link to="/portal" className="portal-quick-card">
+              <h3>Portal Home</h3>
+              <p>Access account controls and all dashboard modules.</p>
+            </Link>
+          </div>
         </article>
       </div>
 

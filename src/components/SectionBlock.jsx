@@ -1,12 +1,21 @@
 import { Link } from 'react-router-dom'
 import AdaptiveLogoImage from './AdaptiveLogoImage'
 
-function SectionBlock({ title, items, imageLayout = 'contained' }) {
+function SectionBlock({
+  title,
+  items,
+  imageLayout = 'contained',
+  sectionClassName = '',
+  eyebrow,
+  subtitle,
+}) {
   const isFullImageLayout = imageLayout === 'full'
 
   return (
-    <section className="content-section container">
+    <section className={`content-section container ${sectionClassName}`.trim()}>
+      {eyebrow ? <p className="section-eyebrow">{eyebrow}</p> : null}
       <h2>{title}</h2>
+      {subtitle ? <p className="section-subtitle">{subtitle}</p> : null}
       <div className="card-grid">
         {items.map((item, index) => (
           <article className="info-card" key={item.title}>

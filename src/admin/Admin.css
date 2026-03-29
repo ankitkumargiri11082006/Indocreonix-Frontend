@@ -449,6 +449,24 @@
   text-decoration: none;
 }
 
+.auth-forgot-link {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 13px;
+}
+
+.auth-forgot-link a {
+  color: #0a1f3d;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.auth-forgot-link a:hover {
+  color: #0d3063;
+  text-decoration: underline;
+}
+
 .admin-shell {
   min-height: 100vh;
   display: grid;

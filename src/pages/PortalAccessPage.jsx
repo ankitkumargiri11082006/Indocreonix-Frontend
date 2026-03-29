@@ -211,8 +211,12 @@ function PortalAccessPage({
       });
 
       googleButtonRef.current.innerHTML = "";
-      const width =
-        window.innerWidth <= 460 ? Math.max(240, window.innerWidth - 92) : 360;
+      const containerWidth = Math.floor(
+        googleButtonRef.current.getBoundingClientRect().width ||
+          googleButtonRef.current.clientWidth ||
+          360,
+      );
+      const width = Math.max(220, containerWidth - 2);
       window.google.accounts.id.renderButton(googleButtonRef.current, {
         type: "standard",
         theme: "filled_blue",
@@ -471,6 +475,43 @@ function PortalAccessPage({
           <article className="portal-auth-card">
             {currentUser ? (
               <div className="portal-session-card">
+                <div
+                  className="portal-session-top-actions"
+                  aria-label="Session quick actions"
+                >
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => navigate("/career/dashboard")}
+                  >
+                    Career Dashboard
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => navigate("/project/dashboard")}
+                  >
+                    Project Dashboard
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => navigate("/portal")}
+                  >
+                    All Dashboards
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => {
+                      clearPortalSession();
+                      setCurrentUser(null);
+                    }}
+                  >
+                    Logout
+                  </button>
+                </div>
+
                 <div className="portal-session-head">
                   {currentUser.avatarUrl ? (
                     <img
@@ -489,8 +530,8 @@ function PortalAccessPage({
                   <div>
                     <h2>Profile Session Active</h2>
                     <p className="portal-auth-subtitle">
-                      You are already logged in. Login/sign-up forms are hidden
-                      until your session expires.
+                      You are securely signed in. Continue using your dashboards
+                      or update profile details from the quick actions below.
                     </p>
                   </div>
                 </div>
@@ -524,30 +565,6 @@ function PortalAccessPage({
                     onClick={openProfileEditor}
                   >
                     Edit Profile
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() => navigate("/career/dashboard")}
-                  >
-                    Open Career Dashboard
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() => navigate("/project/dashboard")}
-                  >
-                    Open Project Dashboard
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={() => {
-                      clearPortalSession();
-                      setCurrentUser(null);
-                    }}
-                  >
-                    Logout
                   </button>
                 </div>
               </div>
@@ -672,6 +689,9 @@ function PortalAccessPage({
                     >
                       {loading ? "Signing in..." : "Sign In"}
                     </button>
+                    <p className="portal-forgot-link">
+                      <a href="/portal-forgot-password">Forgot Password?</a>
+                    </p>
                   </form>
                 ) : signupStep === 1 ? (
                   <form className="portal-form" onSubmit={handleSendOtp}>

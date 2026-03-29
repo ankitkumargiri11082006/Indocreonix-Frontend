@@ -62,8 +62,12 @@ function PortalSignInPage() {
       });
 
       googleButtonRef.current.innerHTML = "";
-      const width =
-        window.innerWidth <= 460 ? Math.max(240, window.innerWidth - 92) : 360;
+      const containerWidth = Math.floor(
+        googleButtonRef.current.getBoundingClientRect().width ||
+          googleButtonRef.current.clientWidth ||
+          360,
+      );
+      const width = Math.max(220, containerWidth - 2);
       window.google.accounts.id.renderButton(googleButtonRef.current, {
         type: "standard",
         theme: "filled_blue",

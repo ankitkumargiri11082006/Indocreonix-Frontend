@@ -180,6 +180,22 @@ function Navbar() {
     setOpenMobileGroup((prev) => (prev === groupLabel ? null : groupLabel));
   }
 
+  function getPortalAuthMode() {
+    if (location.pathname === "/portal-signup") return "signup";
+    if (location.pathname === "/portal-signin") return "signin";
+    if (location.pathname === "/portal") {
+      const mode = new URLSearchParams(location.search).get("mode");
+      return mode === "signup" ? "signup" : "signin";
+    }
+    return "signin";
+  }
+
+  function getAuthButtonClass(mode) {
+    return mode === getPortalAuthMode()
+      ? "nav-auth-btn nav-auth-btn-primary"
+      : "nav-auth-btn nav-auth-btn-secondary";
+  }
+
   function getDashboardPath(user) {
     return user?.defaultDashboard === "project"
       ? "/project/dashboard"
@@ -356,14 +372,6 @@ function Navbar() {
                 <p className="nav-mobile-tag">Build. Scale. Lead.</p>
               </div>
             </div>
-            <button
-              type="button"
-              className="nav-close-btn"
-              onClick={() => setIsMenuOpen(false)}
-              aria-label="Close menu"
-            >
-              &times;
-            </button>
           </div>
 
           <div className="nav-mobile-scroll">
@@ -489,14 +497,14 @@ function Navbar() {
                   <NavLink
                     to="/portal?mode=signin"
                     onClick={() => setIsMenuOpen(false)}
-                    className="nav-auth-btn nav-auth-btn-secondary"
+                    className={getAuthButtonClass("signin")}
                   >
                     Sign In
                   </NavLink>
                   <NavLink
                     to="/portal?mode=signup"
                     onClick={() => setIsMenuOpen(false)}
-                    className="nav-auth-btn nav-auth-btn-primary"
+                    className={getAuthButtonClass("signup")}
                   >
                     Sign Up
                   </NavLink>
@@ -644,13 +652,13 @@ function Navbar() {
               </span>
               <NavLink
                 to="/portal?mode=signin"
-                className="nav-auth-btn nav-auth-btn-secondary"
+                className={getAuthButtonClass("signin")}
               >
                 Sign In
               </NavLink>
               <NavLink
                 to="/portal?mode=signup"
-                className="nav-auth-btn nav-auth-btn-primary"
+                className={getAuthButtonClass("signup")}
               >
                 Sign Up
               </NavLink>

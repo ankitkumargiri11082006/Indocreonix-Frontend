@@ -335,6 +335,10 @@ function LoginPage() {
               >
                 {loading ? "Signing in..." : "Login"}
               </button>
+
+              <p className="auth-forgot-link">
+                <a href="/forgot-password">Forgot Password?</a>
+              </p>
             </form>
 
             <p className="auth-footer">

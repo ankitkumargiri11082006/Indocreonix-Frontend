@@ -16,7 +16,9 @@ import FaqPage from "./pages/FaqPage";
 import ContactPage from "./pages/ContactPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import LoginPage from "./pages/LoginPage";
+import AdminForgotPasswordPage from "./pages/AdminForgotPasswordPage";
 import PortalAccessPage from "./pages/PortalAccessPage";
+import PortalForgotPasswordPage from "./pages/PortalForgotPasswordPage";
 import PortalSignInPage from "./pages/PortalSignInPage";
 import PortalSignUpPage from "./pages/PortalSignUpPage";
 import CareerDashboardPage from "./pages/CareerDashboardPage";
@@ -63,6 +65,7 @@ function App() {
 
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/forgot-password" element={<AdminForgotPasswordPage />} />
 
         <Route
           path="/admin"
@@ -221,6 +224,7 @@ function App() {
         <Route element={<PageLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/portal" element={<PortalAccessPage />} />
+          <Route path="/portal-forgot-password" element={<PortalForgotPasswordPage />} />
           <Route
             path="/portal/signin"
             element={<Navigate to="/portal" replace />}

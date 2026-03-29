@@ -95,7 +95,12 @@ function CaseStudiesPage() {
         )}
       </section>
 
-      {sectionItems.length > 0 ? <SectionBlock title="All Projects We Delivered" items={sectionItems} /> : null}
+      {sectionItems.length > 0 ? (
+        <SectionBlock
+          title="All Projects We Delivered"
+          items={sectionItems}
+        />
+      ) : null}
 
       <CtaBanner
         title="Need a team that can deliver both website and software systems?"

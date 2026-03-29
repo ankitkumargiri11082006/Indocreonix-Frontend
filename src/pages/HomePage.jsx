@@ -45,23 +45,41 @@ function HomePage() {
   const projectItems = projectsDelivered.map((project) => ({
     title: project.title,
     description: project.summary,
-    meta: (project.developerName || project.developer || project.developerCredit || project.developer_name)
-      ? `Developer Credit: ${project.developerName || project.developer || project.developerCredit || project.developer_name}`
-      : '',
     image: project.logo,
-    ...(project.website
-      ? {
-          primaryLabel: 'Website Link',
-          primaryHref: project.website,
-        }
-      : {}),
+    primaryLabel: 'Make Similar Project',
+    primaryTo: `/request-quote?project=${encodeURIComponent(project.title)}`,
+    secondaryLabel: 'Website Link',
+    secondaryHref: project.website || '/contact',
+    meta:
+      project.developerName ||
+      project.developer ||
+      project.developerCredit ||
+      project.developer_name
+        ? `Developer Credit: ${
+            project.developerName ||
+            project.developer ||
+            project.developerCredit ||
+            project.developer_name
+          }`
+        : '',
   }))
 
-  const sectionServices = serviceCatalog.map(s => ({
-    title: s.title,
-    description: s.shortDescription,
-    image: s.image
-  }));
+  const sectionServices = serviceCatalog.map((catalogService) => {
+    const dbService =
+      servicesOffered.find((item) => item.title === catalogService.title) || {};
+
+    const serviceTitle = dbService.title || catalogService.title;
+
+    return {
+      title: serviceTitle,
+      description: dbService.description || catalogService.shortDescription,
+      image: dbService.image || catalogService.image,
+      primaryLabel: 'View Service Details',
+      primaryTo: `/services/${catalogService.slug}`,
+      secondaryLabel: 'Request Quote',
+      secondaryTo: `/request-quote?service=${encodeURIComponent(serviceTitle)}`,
+    };
+  })
 
   return (
     <>
@@ -91,12 +109,38 @@ function HomePage() {
           </>
         }
       />
-      <SectionBlock title="What We Deliver" items={highlights} />
-      <SectionBlock title="Services We Offer" items={sectionServices} />
-      {projectItems.length > 0 ? <SectionBlock title="Projects Delivered by Indocreonix" items={projectItems} /> : null}
+      <SectionBlock
+        title="What We Deliver"
+        items={highlights}
+        sectionClassName="home-deliver-section"
+        eyebrow="Core Value"
+        subtitle="Focused capabilities designed to solve practical business challenges with speed and quality."
+      />
+      <SectionBlock
+        title="Services We Offer"
+        items={sectionServices}
+        imageLayout="full"
+        sectionClassName="home-services-section"
+        eyebrow="End-to-End Services"
+        subtitle="Explore specialized technology services tailored for startups, enterprises, and growth-stage teams."
+      />
 
-      <section className="content-section container">
+      {projectItems.length > 0 ? (
+        <SectionBlock
+          title="Projects Delivered by Indocreonix"
+          items={projectItems}
+          sectionClassName="home-projects-section"
+          eyebrow="Proven Outcomes"
+          subtitle="A snapshot of successful digital products delivered with strong execution and measurable impact."
+        />
+      ) : null}
+
+      <section className="content-section container home-clients-section">
+        <p className="home-clients-eyebrow">Trusted Collaborations</p>
         <h2>Our Clients</h2>
+        <p className="home-clients-subtitle">
+          Organizations that trust Indocreonix to design, build, and grow their digital products.
+        </p>
         {clientsServed.length > 0 ? (
           <div className="clients-grid">
             {clientsServed.map((client) => (
@@ -116,17 +160,6 @@ function HomePage() {
             <p>No clients have been published yet. Add clients from Admin panel.</p>
           </article>
         )}
-      </section>
-      
-      <section className="container">
-        <div className="cloud-illustration-wrapper">
-          <img 
-            src="/cloud_isometric.png" 
-            alt="Cloud Architecture Isometric Illustration" 
-            className="cloud-illustration"
-            loading="lazy"
-          />
-        </div>
       </section>
 
       <CtaBanner
