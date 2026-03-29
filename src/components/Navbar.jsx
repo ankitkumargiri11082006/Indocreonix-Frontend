@@ -29,13 +29,6 @@ const groupedNavItems = [
       { label: "Privacy Policy", path: "/privacy-policy" },
     ],
   },
-  {
-    label: "Resources",
-    items: [
-      { label: "Insights", path: "/insights" },
-      { label: "FAQ", path: "/faq" },
-    ],
-  },
 ];
 
 function Navbar() {
@@ -490,7 +483,7 @@ function Navbar() {
                 </div>
               ) : (
                 <div
-                  className="nav-auth-card nav-auth-card-mobile"
+                  className="nav-auth-card nav-auth-card-mobile nav-auth-card-mobile-compact"
                   role="group"
                   aria-label="Sign in and sign up"
                 >
@@ -499,14 +492,14 @@ function Navbar() {
                     onClick={() => setIsMenuOpen(false)}
                     className={getAuthButtonClass("signin")}
                   >
-                    Sign In
+                    Sign in
                   </NavLink>
                   <NavLink
                     to="/portal?mode=signup"
                     onClick={() => setIsMenuOpen(false)}
                     className={getAuthButtonClass("signup")}
                   >
-                    Sign Up
+                    Join
                   </NavLink>
                 </div>
               )}
@@ -641,7 +634,7 @@ function Navbar() {
             </div>
           ) : (
             <div
-              className="nav-auth-card nav-auth-card-outside"
+              className="nav-auth-card nav-auth-card-outside nav-auth-card-compact"
               role="group"
               aria-label="Sign in and sign up"
             >
@@ -654,13 +647,13 @@ function Navbar() {
                 to="/portal?mode=signin"
                 className={getAuthButtonClass("signin")}
               >
-                Sign In
+                Sign in
               </NavLink>
               <NavLink
                 to="/portal?mode=signup"
                 className={getAuthButtonClass("signup")}
               >
-                Sign Up
+                Join
               </NavLink>
             </div>
           )}

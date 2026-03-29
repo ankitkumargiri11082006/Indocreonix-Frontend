@@ -66,6 +66,12 @@ function Footer() {
     { key: 'linkedin', label: 'LinkedIn', href: companyInfo.socialLinks.linkedin },
     { key: 'whatsapp', label: 'WhatsApp', href: `https://wa.me/91${companyInfo.whatsappNumber}` },
   ]
+  const resourceItems = [
+    { label: 'Insights', to: '/insights', icon: '📘' },
+    { label: 'FAQ', to: '/faq', icon: '❓' },
+    { label: 'Terms & Conditions', to: '/terms-and-conditions', icon: '📜' },
+    { label: 'Privacy Policy', to: '/privacy-policy', icon: '🔒' },
+  ]
 
   const renderSocialStrip = (extraClassName = '') => (
     <section className={`footer-social-strip ${extraClassName}`.trim()} aria-label="Social media links">
@@ -91,6 +97,21 @@ function Footer() {
   return (
     <footer className="site-footer">
       <AnimatedDeepBackground photoUrl="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=2000&q=80" />
+      <section className="container footer-resources-highlight" aria-label="Helpful resources">
+        <div className="footer-resources-highlight-copy">
+          <p className="footer-resources-kicker">Resource Hub</p>
+          <h3>Need quick answers and updates?</h3>
+          <p>Browse our most useful pages in one place.</p>
+        </div>
+        <div className="footer-resources-pills">
+          {resourceItems.map((item) => (
+            <Link key={item.to} to={item.to} className="footer-resource-pill">
+              <span className="footer-resource-pill-icon" aria-hidden="true">{item.icon}</span>
+              <span>{item.label}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
       <div className="container footer-grid">
         <div className="footer-brand-wrap">
           <Link className="brand footer-brand" to="/">
@@ -156,7 +177,7 @@ function Footer() {
         </div>
 
         <div>
-          <h4>Resources & Careers</h4>
+          <h4>Careers</h4>
           <ul className="footer-links">
             <li>
               <Link to="/careers" className="footer-link-with-icon">
@@ -174,30 +195,6 @@ function Footer() {
               <Link to="/careers/job" className="footer-link-with-icon">
                 <span className="footer-icon footer-icon-job" aria-hidden="true">🧑‍💻</span>
                 <span>Job Apply</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/insights" className="footer-link-with-icon">
-                <span className="footer-icon footer-icon-insights" aria-hidden="true">📚</span>
-                <span>Insights</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/faq" className="footer-link-with-icon">
-                <span className="footer-icon footer-icon-faq" aria-hidden="true">❓</span>
-                <span>FAQ</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/terms-and-conditions" className="footer-link-with-icon">
-                <span className="footer-icon footer-icon-terms" aria-hidden="true">📜</span>
-                <span>Terms and Conditions</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/privacy-policy" className="footer-link-with-icon">
-                <span className="footer-icon footer-icon-privacy" aria-hidden="true">🔒</span>
-                <span>Privacy Policy</span>
               </Link>
             </li>
           </ul>
