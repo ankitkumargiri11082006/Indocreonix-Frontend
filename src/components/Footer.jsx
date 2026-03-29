@@ -97,21 +97,6 @@ function Footer() {
   return (
     <footer className="site-footer">
       <AnimatedDeepBackground photoUrl="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=2000&q=80" />
-      <section className="container footer-resources-highlight" aria-label="Helpful resources">
-        <div className="footer-resources-highlight-copy">
-          <p className="footer-resources-kicker">Resource Hub</p>
-          <h3>Need quick answers and updates?</h3>
-          <p>Browse our most useful pages in one place.</p>
-        </div>
-        <div className="footer-resources-pills">
-          {resourceItems.map((item) => (
-            <Link key={item.to} to={item.to} className="footer-resource-pill">
-              <span className="footer-resource-pill-icon" aria-hidden="true">{item.icon}</span>
-              <span>{item.label}</span>
-            </Link>
-          ))}
-        </div>
-      </section>
       <div className="container footer-grid">
         <div className="footer-brand-wrap">
           <Link className="brand footer-brand" to="/">
@@ -248,6 +233,21 @@ function Footer() {
           </ul>
         </div>
       </div>
+      <section className="container footer-resources-highlight" aria-label="Helpful resources">
+        <div className="footer-resources-highlight-copy">
+          <p className="footer-resources-kicker">Resource Hub</p>
+          <h3>Need quick answers and updates?</h3>
+          <p>Browse our most useful pages in one place.</p>
+        </div>
+        <div className="footer-resources-pills">
+          {resourceItems.map((item) => (
+            <Link key={item.to} to={item.to} className="footer-resource-pill">
+              <span className="footer-resource-pill-icon" aria-hidden="true">{item.icon}</span>
+              <span>{item.label}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
       {renderSocialStrip('container footer-social-strip-mobile')}
       <p className="copyright">Copyright {year} Indocreonix. All rights reserved.</p>
     </footer>
