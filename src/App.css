@@ -1719,20 +1719,44 @@ canvas {
 
 .home-deliver-section {
   background:
-    radial-gradient(circle at 10% 12%, rgba(76, 152, 238, 0.12), transparent 31%),
-    linear-gradient(165deg, rgba(251, 253, 255, 0.98), rgba(241, 247, 255, 0.95));
+    radial-gradient(
+      circle at 10% 12%,
+      rgba(76, 152, 238, 0.12),
+      transparent 31%
+    ),
+    linear-gradient(
+      165deg,
+      rgba(251, 253, 255, 0.98),
+      rgba(241, 247, 255, 0.95)
+    );
 }
 
 .home-services-section {
   background:
-    radial-gradient(circle at 88% 8%, rgba(45, 176, 123, 0.11), transparent 32%),
-    linear-gradient(160deg, rgba(251, 255, 252, 0.98), rgba(240, 250, 245, 0.95));
+    radial-gradient(
+      circle at 88% 8%,
+      rgba(45, 176, 123, 0.11),
+      transparent 32%
+    ),
+    linear-gradient(
+      160deg,
+      rgba(251, 255, 252, 0.98),
+      rgba(240, 250, 245, 0.95)
+    );
 }
 
 .home-projects-section {
   background:
-    radial-gradient(circle at 90% 10%, rgba(89, 141, 223, 0.14), transparent 33%),
-    linear-gradient(162deg, rgba(251, 253, 255, 0.99), rgba(242, 248, 255, 0.96));
+    radial-gradient(
+      circle at 90% 10%,
+      rgba(89, 141, 223, 0.14),
+      transparent 33%
+    ),
+    linear-gradient(
+      162deg,
+      rgba(251, 253, 255, 0.99),
+      rgba(242, 248, 255, 0.96)
+    );
 }
 
 .home-deliver-section .card-grid,
@@ -1786,9 +1810,21 @@ canvas {
   border-radius: 22px;
   padding: clamp(1rem, 2vw, 1.45rem);
   background:
-    radial-gradient(circle at 88% 10%, rgba(71, 140, 223, 0.14), transparent 34%),
-    radial-gradient(circle at 12% 14%, rgba(46, 178, 124, 0.12), transparent 33%),
-    linear-gradient(160deg, rgba(250, 253, 255, 0.98), rgba(241, 248, 255, 0.96));
+    radial-gradient(
+      circle at 88% 10%,
+      rgba(71, 140, 223, 0.14),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 12% 14%,
+      rgba(46, 178, 124, 0.12),
+      transparent 33%
+    ),
+    linear-gradient(
+      160deg,
+      rgba(250, 253, 255, 0.98),
+      rgba(241, 248, 255, 0.96)
+    );
   box-shadow: 0 16px 34px rgba(10, 40, 72, 0.1);
 }
 
@@ -1822,7 +1858,11 @@ canvas {
   border-color: rgba(168, 203, 237, 0.84);
   background:
     radial-gradient(circle at 90% 8%, rgba(80, 145, 224, 0.1), transparent 32%),
-    linear-gradient(152deg, rgba(255, 255, 255, 0.97), rgba(243, 249, 255, 0.96));
+    linear-gradient(
+      152deg,
+      rgba(255, 255, 255, 0.97),
+      rgba(243, 249, 255, 0.96)
+    );
   box-shadow: 0 10px 24px rgba(8, 35, 61, 0.08);
 }
 
@@ -3522,7 +3562,6 @@ canvas {
   }
 }
 
-
 @media (max-width: 960px) {
   .site-header {
     position: fixed;
@@ -4065,7 +4104,12 @@ canvas {
   }
 
   .brand-text {
-    display: none;
+    display: inline-block;
+    font-size: 0.98rem;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .nav-toggle {
@@ -4128,7 +4172,12 @@ canvas {
 /* Tablet devices (481px - 768px) */
 @media (max-width: 768px) and (min-width: 481px) {
   .brand-text {
-    display: none;
+    display: inline-block;
+    font-size: 1rem;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .site-nav {
@@ -4179,7 +4228,6 @@ canvas {
     display: none;
   }
 }
-
 
 @media (max-width: 1100px) {
   .clients-grid {
