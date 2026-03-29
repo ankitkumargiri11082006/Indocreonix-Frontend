@@ -103,7 +103,8 @@ function Footer() {
             <img src="/logo.png" alt="Indocreonix logo" className="brand-logo" />
             <span className="brand-text">Indocreonix</span>
           </Link>
-          <p className="footer-copy">{companyInfo.tagline}</p>
+          <p className="footer-tagline">{companyInfo.tagline}</p>
+          <p className="footer-copy">Helping customers build scalable digital experiences with modern web, cloud, data, and AI.</p>
           {renderSocialStrip('footer-social-strip-desktop')}
         </div>
 
