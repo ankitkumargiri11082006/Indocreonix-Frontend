@@ -4634,6 +4634,26 @@ canvas {
     flex-direction: column;
   }
 
+  .footer-brand-wrap {
+    display: block;
+    margin-bottom: 0.8rem;
+  }
+
+  .footer-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .footer-copy {
+    margin-top: 0.45rem;
+    max-width: none;
+    line-height: 1.35;
+  }
+
   .footer-grid {
     order: 1;
     grid-template-columns: 1fr;
