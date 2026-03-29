@@ -2,7 +2,7 @@
 
 A high-performance, immersive React application designed to represent the Indocreonix brand's commitment to digital innovation and engineering excellence.
 
-> NOTE: UI labels      were recently optimized for compact display and better mobile fit.
+> NOTE: UI labels were recently optimized for compact display and better mobile fit.
 
 ---
 
