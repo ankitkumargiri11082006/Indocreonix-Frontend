@@ -139,7 +139,7 @@ function AdminCareerApplicationsPage() {
               <th>CV</th>
               <th>Status</th>
               <th>Admin Notes</th>
-              <th>Actions</th>
+              <th style={{ minWidth: '130px' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
