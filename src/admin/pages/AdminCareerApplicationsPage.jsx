@@ -137,6 +137,7 @@ function AdminCareerApplicationsPage() {
               <th>Opening</th>
               <th>Email</th>
               <th>CV</th>
+              <th>Docs</th>
               <th>Status</th>
               <th>Admin Notes</th>
               <th style={{ minWidth: '130px' }}>Actions</th>
@@ -151,6 +152,21 @@ function AdminCareerApplicationsPage() {
                 <td>{item.email}</td>
                 <td>
                   <a href={item.cvUrl} target="_blank" rel="noreferrer" className="contact-link">View CV</a>
+                </td>
+                <td>
+                  {item.onboardingDocsUrl ? (
+                    <a
+                      href={item.onboardingDocsUrl.split(',')[0]}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="contact-link"
+                      style={{ color: '#34a853' }}
+                    >
+                      View Docs
+                    </a>
+                  ) : (
+                    <span style={{ color: '#9aa0a6', fontSize: '0.78rem' }}>Pending</span>
+                  )}
                 </td>
                 <td>
                   <select className="admin-select" value={item.status} onChange={(e) => updateStatus(item._id, e.target.value)}>

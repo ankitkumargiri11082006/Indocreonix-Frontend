@@ -25,6 +25,7 @@ import CareerDashboardPage from "./pages/CareerDashboardPage";
 import ProjectDashboardPage from "./pages/ProjectDashboardPage";
 import TermsAndConditionsPage from "./pages/TermsAndConditionsPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import CareerOnboardingDocsPage from "./pages/CareerOnboardingDocsPage";
 import AdminLayout from "./admin/components/AdminLayout";
 import ProtectedRoute from "./admin/components/ProtectedRoute";
 import AdminDashboardPage from "./admin/pages/AdminDashboardPage";
@@ -68,6 +69,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/forgot-password" element={<AdminForgotPasswordPage />} />
+        <Route path="/career/onboarding-documents" element={<CareerOnboardingDocsPage />} />
 
         <Route
           path="/admin"
