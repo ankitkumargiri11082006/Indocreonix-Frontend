@@ -2,69 +2,64 @@ import { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api').replace(/\/$/, '')
-
-const DOCS = [
-  { key: 'aadhaar', label: 'Aadhaar Card', icon: '🏛️', hint: 'Front & back — PDF or clear image', accept: 'image/*,application/pdf' },
-  { key: 'pan', label: 'PAN Card', icon: '📄', hint: 'Photocopy or scan — PDF or image', accept: 'image/*,application/pdf' },
-  { key: 'academic', label: 'Academic Certificates', icon: '🎓', hint: 'Degree certificate & marksheets', accept: 'image/*,application/pdf' },
-  { key: 'bank', label: 'Bank Passbook / Cheque', icon: '🏦', hint: 'First page showing account details', accept: 'image/*,application/pdf' },
-  { key: 'photo', label: 'Passport Size Photo', icon: '🖼️', hint: '2 recent photos — JPG or PNG', accept: 'image/*' },
-  { key: 'emergency', label: 'Emergency Contact Form', icon: '📞', hint: 'Name, relation & phone (any format)', accept: 'image/*,application/pdf' },
-]
+const MAX_MB = 5
+const MAX_BYTES = MAX_MB * 1024 * 1024
 
 export default function CareerOnboardingDocsPage() {
   const [params] = useSearchParams()
   const appId = params.get('token') || ''
 
-  const [files, setFiles] = useState({})
-  const [dragOver, setDragOver] = useState(null)
+  const [file, setFile] = useState(null)
+  const [dragOver, setDragOver] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [progress, setProgress] = useState(0)
   const [done, setDone] = useState(false)
   const [error, setError] = useState('')
-  const [progress, setProgress] = useState(0)
-  const fileRefs = useRef({})
+  const fileRef = useRef(null)
 
   useEffect(() => {
     document.title = 'Submit Onboarding Documents — Indocreonix'
   }, [])
 
-  function handleFileChange(key, e) {
-    const file = e.target.files?.[0]
-    if (file) setFiles(prev => ({ ...prev, [key]: file }))
+  function pickFile(chosen) {
+    setError('')
+    if (!chosen) return
+    if (chosen.type !== 'application/pdf') {
+      setError('Only PDF files are accepted. Please merge all your documents into one PDF.')
+      return
+    }
+    if (chosen.size > MAX_BYTES) {
+      setError(`File is too large (${(chosen.size / 1024 / 1024).toFixed(1)} MB). Maximum size is ${MAX_MB} MB.`)
+      return
+    }
+    setFile(chosen)
   }
 
-  function handleDrop(key, e) {
+  function handleInputChange(e) { pickFile(e.target.files?.[0]) }
+
+  function handleDrop(e) {
     e.preventDefault()
-    setDragOver(null)
-    const file = e.dataTransfer.files?.[0]
-    if (file) setFiles(prev => ({ ...prev, [key]: file }))
+    setDragOver(false)
+    pickFile(e.dataTransfer.files?.[0])
   }
 
-  function removeFile(key) {
-    setFiles(prev => { const n = { ...prev }; delete n[key]; return n })
-    if (fileRefs.current[key]) fileRefs.current[key].value = ''
+  function removeFile() {
+    setFile(null)
+    setError('')
+    if (fileRef.current) fileRef.current.value = ''
   }
 
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
-
-    const required = ['aadhaar', 'pan', 'academic', 'bank', 'photo']
-    const missing = required.filter(k => !files[k])
-    if (missing.length) {
-      setError(`Please upload all required documents: ${missing.map(k => DOCS.find(d => d.key === k)?.label).join(', ')}`)
-      return
-    }
-    if (!appId) {
-      setError('Invalid link — application ID is missing. Please use the link from your email.')
-      return
-    }
+    if (!file) { setError('Please select your PDF document first.'); return }
+    if (!appId) { setError('Invalid link. Please use the link from your email.'); return }
 
     setSubmitting(true)
-    setProgress(10)
+    setProgress(15)
 
     const fd = new FormData()
-    DOCS.forEach(({ key }) => { if (files[key]) fd.append(key, files[key]) })
+    fd.append('documents', file)
 
     try {
       setProgress(40)
@@ -72,9 +67,9 @@ export default function CareerOnboardingDocsPage() {
         method: 'POST',
         body: fd,
       })
-      setProgress(80)
+      setProgress(85)
       const data = await res.json().catch(() => ({}))
-      if (!res.ok) throw new Error(data.message || 'Upload failed')
+      if (!res.ok) throw new Error(data.message || 'Upload failed. Please try again.')
       setProgress(100)
       setDone(true)
     } catch (err) {
@@ -84,38 +79,37 @@ export default function CareerOnboardingDocsPage() {
     }
   }
 
+  /* ── Success state ── */
   if (done) {
     return (
       <div className="odp-page">
-        <div className="odp-card odp-success-card">
-          <div className="odp-success-icon">✅</div>
-          <h1 className="odp-success-title">Documents Submitted!</h1>
-          <p className="odp-success-body">
-            Your onboarding documents have been received successfully.<br />
-            Our HR team will review them and contact you within <strong>1–2 business days</strong>.
+        <div className="odp-card">
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✅</div>
+          <h1 className="odp-card-title">Documents Received!</h1>
+          <p className="odp-card-body">
+            Your onboarding document has been submitted successfully.<br />
+            Our HR team will review it and contact you within <strong>1–2 working days</strong>.
           </p>
-          <div className="odp-success-footer">
-            <span>Questions?</span>
-            <a href="mailto:hr@indocreonix.com">hr@indocreonix.com</a>
+          <div className="odp-card-footer">
+            Questions? &nbsp;<a href="mailto:hr@indocreonix.com">hr@indocreonix.com</a>
           </div>
         </div>
       </div>
     )
   }
 
+  /* ── Invalid link state ── */
   if (!appId) {
     return (
       <div className="odp-page">
-        <div className="odp-success-card" style={{ borderColor: 'rgba(248,113,113,0.35)', marginTop: '4rem' }}>
-          <div className="odp-success-icon">⚠️</div>
-          <h1 className="odp-success-title" style={{ fontSize: '1.5rem' }}>Invalid Link</h1>
-          <p className="odp-success-body">
-            This link is invalid or has expired.<br />
-            Please use the <strong style={{ color: '#7dd3fc' }}>Upload Documents</strong> button from
-            the email sent to you by Indocreonix HR.
+        <div className="odp-card" style={{ borderColor: 'rgba(248,113,113,0.4)' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⚠️</div>
+          <h1 className="odp-card-title">Invalid Link</h1>
+          <p className="odp-card-body">
+            This link is missing a required parameter.<br />
+            Please use the <strong>Upload Documents</strong> button from the HR email.
           </p>
-          <div className="odp-success-footer">
-            <span>Need help?</span>
+          <div className="odp-card-footer">
             <a href="mailto:hr@indocreonix.com">hr@indocreonix.com</a>
           </div>
         </div>
@@ -123,126 +117,111 @@ export default function CareerOnboardingDocsPage() {
     )
   }
 
-  const uploadedCount = Object.keys(files).length
-  const totalDocs = DOCS.length
+  const pct = file ? Math.round((file.size / MAX_BYTES) * 100) : 0
 
+  /* ── Main form ── */
   return (
     <div className="odp-page">
-      <div className="odp-container">
+      <div className="odp-wrap">
 
         {/* Header */}
         <div className="odp-header">
-          <div className="odp-logo-badge">
-            <img src="/logo.png" alt="Indocreonix" className="odp-logo" onError={e => { e.target.style.display = 'none' }} />
-          </div>
-          <div className="odp-eyebrow">Indocreonix Infotech</div>
-          <h1 className="odp-title">Onboarding Document <span className="odp-title-highlight">Submission</span></h1>
+          <img
+            src="/logo.png"
+            alt="Indocreonix"
+            className="odp-logo"
+            onError={e => { e.target.style.display = 'none' }}
+          />
+          <p className="odp-eyebrow">Indocreonix Infotech · HR Portal</p>
+          <h1 className="odp-title">
+            Submit Your<br />
+            <span className="odp-highlight">Onboarding Documents</span>
+          </h1>
           <p className="odp-subtitle">
-            Please upload the required documents below to complete your onboarding process.
-            All files are securely transmitted and stored.
+            Merge all required documents into a <strong>single PDF</strong> and upload it below.<br />
+            Aadhaar · PAN · Certificates · Bank Passbook · Passport Photo
           </p>
-
-          {/* Progress bar */}
-          <div className="odp-progress-wrap">
-            <div className="odp-progress-bar">
-              <div className="odp-progress-fill" style={{ width: `${(uploadedCount / totalDocs) * 100}%` }} />
-            </div>
-            <span className="odp-progress-label">{uploadedCount} of {totalDocs} documents ready</span>
-          </div>
         </div>
 
-        {/* Info banner */}
-        <div className="odp-info-banner">
-          <span className="odp-info-icon">🔒</span>
-          <span>Your documents are encrypted during transfer and stored securely. We never share your personal information with third parties.</span>
-        </div>
-
-        {/* Form */}
+        {/* Upload card */}
         <form className="odp-form" onSubmit={handleSubmit}>
-          <div className="odp-docs-grid">
-            {DOCS.map(({ key, label, icon, hint, accept }) => {
-              const file = files[key]
-              const isRequired = ['aadhaar','pan','academic','bank','photo'].includes(key)
-              return (
-                <div
-                  key={key}
-                  className={`odp-doc-card${file ? ' odp-doc-card--filled' : ''}${dragOver === key ? ' odp-doc-card--drag' : ''}`}
-                  onDragOver={e => { e.preventDefault(); setDragOver(key) }}
-                  onDragLeave={() => setDragOver(null)}
-                  onDrop={e => handleDrop(key, e)}
-                >
-                  <div className="odp-doc-header">
-                    <span className="odp-doc-icon">{icon}</span>
-                    <div className="odp-doc-meta">
-                      <div className="odp-doc-label">
-                        {label}
-                        {isRequired && <span className="odp-required">*</span>}
-                      </div>
-                      <div className="odp-doc-hint">{hint}</div>
-                    </div>
-                    {file && (
-                      <button type="button" className="odp-doc-remove" onClick={() => removeFile(key)} title="Remove">✕</button>
-                    )}
-                  </div>
 
-                  {file ? (
-                    <div className="odp-doc-preview">
-                      <span className="odp-doc-preview-icon">📎</span>
-                      <span className="odp-doc-filename">{file.name}</span>
-                      <span className="odp-doc-filesize">({(file.size / 1024).toFixed(0)} KB)</span>
-                    </div>
-                  ) : (
-                    <div className="odp-doc-dropzone" onClick={() => fileRefs.current[key]?.click()}>
-                      <span className="odp-dropzone-icon">⬆️</span>
-                      <span className="odp-dropzone-text">Click to browse or drag & drop</span>
-                      <span className="odp-dropzone-hint">PDF, JPG, PNG — max 5 MB</span>
-                    </div>
-                  )}
-
-                  <input
-                    ref={el => fileRefs.current[key] = el}
-                    type="file"
-                    accept={accept}
-                    style={{ display: 'none' }}
-                    onChange={e => handleFileChange(key, e)}
-                  />
+          {!file ? (
+            /* Drop zone */
+            <div
+              className={`odp-dropzone${dragOver ? ' odp-dropzone--active' : ''}`}
+              onClick={() => fileRef.current?.click()}
+              onDragOver={e => { e.preventDefault(); setDragOver(true) }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={handleDrop}
+            >
+              <div className="odp-dz-icon">📄</div>
+              <p className="odp-dz-main">Click to select or drag &amp; drop your PDF</p>
+              <p className="odp-dz-sub">PDF only &mdash; maximum {MAX_MB} MB</p>
+              <input
+                ref={fileRef}
+                type="file"
+                accept="application/pdf"
+                style={{ display: 'none' }}
+                onChange={handleInputChange}
+              />
+            </div>
+          ) : (
+            /* File preview */
+            <div className="odp-preview">
+              <div className="odp-preview-icon">📎</div>
+              <div className="odp-preview-info">
+                <div className="odp-preview-name">{file.name}</div>
+                <div className="odp-preview-meta">
+                  {(file.size / 1024 / 1024).toFixed(2)} MB &mdash; PDF document
                 </div>
-              )
-            })}
-          </div>
-
-          {error && (
-            <div className="odp-error-box">
-              <span>⚠️</span> {error}
+                {/* Size bar */}
+                <div className="odp-size-bar">
+                  <div className="odp-size-fill" style={{ width: `${Math.min(pct, 100)}%` }} />
+                </div>
+              </div>
+              <button type="button" className="odp-remove" onClick={removeFile} title="Remove">✕</button>
             </div>
           )}
 
+          {/* Error */}
+          {error && (
+            <div className="odp-error">⚠️&nbsp; {error}</div>
+          )}
+
+          {/* Upload progress */}
           {submitting && (
             <div className="odp-upload-progress">
-              <div className="odp-upload-bar">
+              <div className="odp-upload-track">
                 <div className="odp-upload-fill" style={{ width: `${progress}%` }} />
               </div>
-              <span>Uploading securely… {progress}%</span>
+              <span>Uploading… {progress}%</span>
             </div>
           )}
 
-          <button type="submit" className="odp-submit-btn" disabled={submitting}>
-            {submitting ? (
-              <><span className="odp-spinner" />Uploading Documents…</>
-            ) : (
-              <>📤 Submit All Documents</>
-            )}
+          {/* Submit */}
+          <button
+            type="submit"
+            className="odp-submit"
+            disabled={submitting || !file}
+          >
+            {submitting
+              ? <><span className="odp-spin" /> Uploading…</>
+              : <>📤&nbsp; Submit Document</>
+            }
           </button>
 
-          <p className="odp-required-note">* Required document</p>
+          <p className="odp-note">
+            🔒 All files are encrypted in transit and stored securely.
+          </p>
         </form>
 
         {/* Footer */}
-        <div className="odp-footer">
-          <p>Need help? Contact us at <a href="mailto:hr@indocreonix.com">hr@indocreonix.com</a></p>
-          <p>&copy; {new Date().getFullYear()} Indocreonix Infotech. All rights reserved.</p>
-        </div>
-
+        <p className="odp-footer">
+          Need help? &nbsp;<a href="mailto:hr@indocreonix.com">hr@indocreonix.com</a>
+          &nbsp;&nbsp;·&nbsp;&nbsp;
+          &copy; {new Date().getFullYear()} Indocreonix Infotech
+        </p>
       </div>
     </div>
   )

@@ -156,16 +156,16 @@ function AdminCareerApplicationsPage() {
                 <td>
                   {item.onboardingDocsUrl ? (
                     <a
-                      href={item.onboardingDocsUrl.split(',')[0]}
+                      href={item.onboardingDocsUrl}
                       target="_blank"
                       rel="noreferrer"
                       className="contact-link"
-                      style={{ color: '#34a853' }}
+                      style={{ color: '#34a853', fontWeight: 700 }}
                     >
-                      View Docs
+                      📄 View Docs
                     </a>
                   ) : (
-                    <span style={{ color: '#9aa0a6', fontSize: '0.78rem' }}>Pending</span>
+                    <span style={{ color: '#9aa0a6', fontSize: '0.78rem' }}>—</span>
                   )}
                 </td>
                 <td>
