@@ -103,6 +103,26 @@ export default function CareerOnboardingDocsPage() {
     )
   }
 
+  if (!appId) {
+    return (
+      <div className="odp-page">
+        <div className="odp-success-card" style={{ borderColor: 'rgba(248,113,113,0.35)', marginTop: '4rem' }}>
+          <div className="odp-success-icon">⚠️</div>
+          <h1 className="odp-success-title" style={{ fontSize: '1.5rem' }}>Invalid Link</h1>
+          <p className="odp-success-body">
+            This link is invalid or has expired.<br />
+            Please use the <strong style={{ color: '#7dd3fc' }}>Upload Documents</strong> button from
+            the email sent to you by Indocreonix HR.
+          </p>
+          <div className="odp-success-footer">
+            <span>Need help?</span>
+            <a href="mailto:hr@indocreonix.com">hr@indocreonix.com</a>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const uploadedCount = Object.keys(files).length
   const totalDocs = DOCS.length
 
