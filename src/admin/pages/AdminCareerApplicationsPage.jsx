@@ -6,6 +6,7 @@ function AdminCareerApplicationsPage() {
   const [filterType, setFilterType] = useState('all')
   const [error, setError] = useState('')
   const [draftNotes, setDraftNotes] = useState({})
+  const [isSendingRequest, setIsSendingRequest] = useState({})
 
   async function loadItems() {
     try {
@@ -42,6 +43,22 @@ function AdminCareerApplicationsPage() {
       loadItems()
     } catch (err) {
       setError(err.message)
+    }
+  }
+
+  async function sendOnboardingDocsRequest(id) {
+    try {
+      setError('')
+      setIsSendingRequest((prev) => ({ ...prev, [id]: true }))
+      await apiRequest(`/careers/applications/${id}/request-onboarding-docs`, {
+        method: 'POST',
+      })
+      window.alert('Onboarding documents request email sent to the candidate.')
+      loadItems()
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setIsSendingRequest((prev) => ({ ...prev, [id]: false }))
     }
   }
 
@@ -157,9 +174,19 @@ function AdminCareerApplicationsPage() {
                   </div>
                 </td>
                 <td>
-                  <button type="button" className="btn btn-secondary" onClick={() => removeApplication(item._id)}>
-                    Delete
-                  </button>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={() => sendOnboardingDocsRequest(item._id)}
+                      disabled={isSendingRequest[item._id]}
+                    >
+                      {isSendingRequest[item._id] ? 'Sending...' : 'Request Docs'}
+                    </button>
+                    <button type="button" className="btn btn-secondary" onClick={() => removeApplication(item._id)}>
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
