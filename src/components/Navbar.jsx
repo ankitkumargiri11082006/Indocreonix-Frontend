@@ -402,6 +402,14 @@ function Navbar() {
                 <p className="nav-mobile-tag">Build. Scale. Lead.</p>
               </div>
             </div>
+            <button
+              type="button"
+              className="nav-close-btn"
+              aria-label="Close navigation menu"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
 
           <div className="nav-mobile-scroll">
