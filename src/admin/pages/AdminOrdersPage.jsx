@@ -3,6 +3,13 @@ import { apiRequest } from '../../lib/apiClient'
 
 const statusOptions = ['new', 'qualified', 'proposal_shared', 'in_discussion', 'won', 'lost']
 
+function formatFileSize(bytes) {
+  if (!bytes || Number.isNaN(bytes)) return ''
+  if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`
+  if (bytes >= 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${bytes} B`
+}
+
 function AdminOrdersPage() {
   const [orders, setOrders] = useState([])
   const [error, setError] = useState('')
@@ -182,21 +189,55 @@ function AdminOrdersPage() {
                       <span>{order.targetTimeline || '-'}</span>
                     </td>
                     <td>
-                      <div className="admin-inline-stack">
-                        {order.prdUrl ? (
-                          <a href={order.prdUrl} target="_blank" rel="noreferrer" className="admin-doc-link">
-                            PRD PDF
-                          </a>
-                        ) : (
-                          <span>-</span>
-                        )}
+                      {order.prdUrl || (order.supportingDocuments || []).length ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          {order.prdUrl ? (
+                            <div className="admin-doc-card" style={{ border: '1px solid #e5e7eb', borderRadius: '8px', padding: '8px 10px' }}>
+                              <div className="admin-doc-label" style={{ fontSize: '12px', textTransform: 'uppercase', color: '#6b7280', marginBottom: '4px' }}>PRD</div>
+                              <a
+                                href={order.prdUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="admin-doc-link"
+                                title={order.prdOriginalName || 'Project requirements PDF'}
+                                style={{ fontWeight: 600 }}
+                              >
+                                {order.prdOriginalName || 'Project Requirements'}
+                              </a>
+                              <div className="admin-doc-meta" style={{ fontSize: '12px', color: '#9ca3af' }}>
+                                {formatFileSize(order.prdBytes)}
+                              </div>
+                            </div>
+                          ) : null}
 
-                        {(order.supportingDocuments || []).map((document) => (
-                          <a key={document.publicId || document.url} href={document.url} target="_blank" rel="noreferrer" className="admin-doc-link">
-                            {document.name || 'Supporting Document'}
-                          </a>
-                        ))}
-                      </div>
+                          {(order.supportingDocuments || []).map((document, index) => (
+                            <div
+                              key={document.publicId || document.url || index}
+                              className="admin-doc-card"
+                              style={{ border: '1px dashed #e5e7eb', borderRadius: '8px', padding: '8px 10px' }}
+                            >
+                              <div className="admin-doc-label" style={{ fontSize: '12px', textTransform: 'uppercase', color: '#6b7280', marginBottom: '4px' }}>
+                                Supporting {index + 1}
+                              </div>
+                              <a
+                                href={document.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="admin-doc-link"
+                                title={document.name || 'Supporting document'}
+                                style={{ fontWeight: 600 }}
+                              >
+                                {document.name || 'Supporting Document'}
+                              </a>
+                              <div className="admin-doc-meta" style={{ fontSize: '12px', color: '#9ca3af' }}>
+                                {formatFileSize(document.bytes)}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="admin-meta" style={{ color: '#9ca3af' }}>No files uploaded</span>
+                      )}
                     </td>
                     <td>
                       <select
