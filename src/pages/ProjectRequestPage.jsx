@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import PageHero from "../components/PageHero";
 import { apiRequest } from "../lib/apiClient";
@@ -109,6 +109,8 @@ function ProjectRequestPage() {
   );
   const [prdFile, setPrdFile] = useState(null);
   const [supportingDocs, setSupportingDocs] = useState([]);
+  const prdInputRef = useRef(null);
+  const supportingDocsRef = useRef(null);
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: "",
@@ -219,6 +221,7 @@ function ProjectRequestPage() {
       await apiRequest("/orders", {
         method: "POST",
         body,
+        timeoutMs: 60000,
       });
 
       setModalState({
@@ -239,6 +242,12 @@ function ProjectRequestPage() {
       }));
       setPrdFile(null);
       setSupportingDocs([]);
+      if (prdInputRef.current) {
+        prdInputRef.current.value = "";
+      }
+      if (supportingDocsRef.current) {
+        supportingDocsRef.current.value = "";
+      }
     } catch (error) {
       setModalState({
         isOpen: true,
@@ -480,6 +489,7 @@ function ProjectRequestPage() {
                 onChange={(event) =>
                   setPrdFile(event.target.files?.[0] || null)
                 }
+                ref={prdInputRef}
               />
               <small>
                 Upload your Product Requirement Document with project idea and
@@ -501,6 +511,7 @@ function ProjectRequestPage() {
                     Array.from(event.target.files || []).slice(0, 3),
                   )
                 }
+                ref={supportingDocsRef}
               />
               <small>
                 Attach additional reference files such as wireframes, design

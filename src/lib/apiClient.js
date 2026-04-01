@@ -30,35 +30,47 @@ function buildRequestUrl(path) {
 export async function apiRequest(path, options = {}) {
   const token = localStorage.getItem('indocx_token')
   const isFormData = options?.body instanceof FormData
+  const { timeoutMs = 30000, headers = {}, ...restOptions } = options
   const normalizedPath = normalizePath(path)
   const requestUrl = buildRequestUrl(normalizedPath)
 
-  return fetch(requestUrl, {
-    headers: {
-      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(options.headers || {}),
-    },
-    ...options,
-  })
-    .then(async (response) => {
-      const contentType = response.headers.get('content-type') || ''
-      const data = contentType.includes('application/json') ? await response.json() : {}
+  const controller = new AbortController()
+  const timeoutId = typeof window !== 'undefined' ? window.setTimeout(() => controller.abort(), timeoutMs) : null
 
-      if (!response.ok) {
-        const error = new Error(data.message || `Request failed with status ${response.status}`)
-        error.status = response.status
-        throw error
-      }
-
-      return data
+  try {
+    const response = await fetch(requestUrl, {
+      ...restOptions,
+      headers: {
+        ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...headers,
+      },
+      signal: controller.signal,
     })
-    .catch((error) => {
-      if (error instanceof TypeError) {
-        throw new Error(`Network/CORS error while calling ${requestUrl}. Check VITE_API_BASE_URL and backend CORS_ORIGIN.`)
-      }
+
+    const contentType = response.headers.get('content-type') || ''
+    const data = contentType.includes('application/json') ? await response.json() : {}
+
+    if (!response.ok) {
+      const error = new Error(data.message || `Request failed with status ${response.status}`)
+      error.status = response.status
       throw error
-    })
+    }
+
+    return data
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      throw new Error('Request timed out. Please check your connection and try again.')
+    }
+    if (error instanceof TypeError) {
+      throw new Error(`Network/CORS error while calling ${requestUrl}. Check VITE_API_BASE_URL and backend CORS_ORIGIN.`)
+    }
+    throw error
+  } finally {
+    if (timeoutId) {
+      window.clearTimeout(timeoutId)
+    }
+  }
 }
 
 export function apiBaseUrl() {

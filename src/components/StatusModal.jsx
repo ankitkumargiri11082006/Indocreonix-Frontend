@@ -24,7 +24,7 @@ const StatusModal = ({ isOpen, onClose, title, message, type = 'success' }) => {
         <h3>{title}</h3>
         <p className="modal-message">{message}</p>
         <div className="modal-actions">
-          <button className="btn btn-primary" onClick={onClose}>
+          <button type="button" className="btn btn-primary" onClick={onClose}>
             Close
           </button>
         </div>
