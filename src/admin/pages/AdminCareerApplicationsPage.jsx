@@ -9,6 +9,13 @@ function AdminCareerApplicationsPage() {
   const [isSendingRequest, setIsSendingRequest] = useState({})
   const [isRemovingDocs, setIsRemovingDocs] = useState({})
 
+  function formatDocSize(bytes) {
+    if (!bytes || Number.isNaN(bytes)) return ''
+    if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`
+    if (bytes >= 1024) return `${(bytes / 1024).toFixed(1)} KB`
+    return `${bytes} B`
+  }
+
   async function loadItems() {
     try {
       const query = filterType === 'all' ? '' : `?roleType=${filterType}`
@@ -95,6 +102,8 @@ function AdminCareerApplicationsPage() {
                 onboardingDocsUrl: '',
                 onboardingDocsSubmittedAt: null,
                 onboardingDocsPublicId: '',
+                onboardingDocsOriginalName: '',
+                onboardingDocsBytes: 0,
               }
             : item
         )
@@ -179,6 +188,8 @@ function AdminCareerApplicationsPage() {
               const docsUploadedAt = item.onboardingDocsSubmittedAt
                 ? new Date(item.onboardingDocsSubmittedAt).toLocaleString()
                 : ''
+              const docsName = item.onboardingDocsOriginalName || 'Onboarding document'
+              const docsSizeLabel = formatDocSize(item.onboardingDocsBytes)
 
               return (
                 <tr key={item._id}>
@@ -200,6 +211,10 @@ function AdminCareerApplicationsPage() {
                         >
                           View Docs
                         </a>
+                        <small className="admin-meta">
+                          {docsName}
+                          {docsSizeLabel ? ` · ${docsSizeLabel}` : ''}
+                        </small>
                         <button
                           type="button"
                           className="btn btn-secondary"
