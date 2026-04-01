@@ -7,6 +7,7 @@ function AdminCareerApplicationsPage() {
   const [error, setError] = useState('')
   const [draftNotes, setDraftNotes] = useState({})
   const [isSendingRequest, setIsSendingRequest] = useState({})
+  const [isRemovingDocs, setIsRemovingDocs] = useState({})
 
   async function loadItems() {
     try {
@@ -76,6 +77,36 @@ function AdminCareerApplicationsPage() {
     }
   }
 
+  async function removeOnboardingDocs(id) {
+    const confirmed = window.confirm('Delete the onboarding PDF for this applicant? They will need to re-upload it.')
+    if (!confirmed) return
+
+    try {
+      setError('')
+      setIsRemovingDocs((prev) => ({ ...prev, [id]: true }))
+      await apiRequest(`/careers/applications/${id}/onboarding-docs`, {
+        method: 'DELETE',
+      })
+      setItems((prev) =>
+        prev.map((item) =>
+          item._id === id
+            ? {
+                ...item,
+                onboardingDocsUrl: '',
+                onboardingDocsSubmittedAt: null,
+                onboardingDocsPublicId: '',
+              }
+            : item
+        )
+      )
+      loadItems()
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setIsRemovingDocs((prev) => ({ ...prev, [id]: false }))
+    }
+  }
+
   async function exportCsv() {
     try {
       setError('')
@@ -137,75 +168,93 @@ function AdminCareerApplicationsPage() {
               <th>Opening</th>
               <th>Email</th>
               <th>CV</th>
-              <th>Docs</th>
+              <th>Onboarding Docs</th>
               <th>Status</th>
               <th>Admin Notes</th>
-              <th style={{ minWidth: '130px' }}>Actions</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
-              <tr key={item._id}>
-                <td>{item.fullName}</td>
-                <td>{item.roleType}</td>
-                <td>{item.opportunity?.title || 'General'}</td>
-                <td>{item.email}</td>
-                <td>
-                  <a href={item.cvUrl} target="_blank" rel="noreferrer" className="contact-link">View CV</a>
-                </td>
-                <td>
-                  {item.onboardingDocsUrl ? (
-                    <a
-                      href={item.onboardingDocsUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="contact-link"
-                      style={{ color: '#34a853', fontWeight: 700 }}
-                    >
-                      📄 View Docs
-                    </a>
-                  ) : (
-                    <span style={{ color: '#9aa0a6', fontSize: '0.78rem' }}>—</span>
-                  )}
-                </td>
-                <td>
-                  <select className="admin-select" value={item.status} onChange={(e) => updateStatus(item._id, e.target.value)}>
-                    <option value="new">new</option>
-                    <option value="reviewing">reviewing</option>
-                    <option value="shortlisted">shortlisted</option>
-                    <option value="rejected">rejected</option>
-                    <option value="hired">hired</option>
-                  </select>
-                </td>
-                <td>
-                  <div className="admin-inline-stack">
-                    <textarea
-                      rows="2"
-                      value={draftNotes[item._id] ?? item.adminNotes ?? ''}
-                      onChange={(e) => setDraftNotes((prev) => ({ ...prev, [item._id]: e.target.value }))}
-                    />
-                    <button type="button" className="btn btn-secondary" onClick={() => saveNotes(item._id)}>
-                      Save Note
-                    </button>
-                  </div>
-                </td>
-                <td>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-                      onClick={() => sendOnboardingDocsRequest(item._id)}
-                      disabled={isSendingRequest[item._id]}
-                    >
-                      {isSendingRequest[item._id] ? 'Sending...' : 'Request Docs'}
-                    </button>
-                    <button type="button" className="btn btn-secondary" onClick={() => removeApplication(item._id)}>
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+            {items.map((item) => {
+              const docsUploadedAt = item.onboardingDocsSubmittedAt
+                ? new Date(item.onboardingDocsSubmittedAt).toLocaleString()
+                : ''
+
+              return (
+                <tr key={item._id}>
+                  <td>{item.fullName}</td>
+                  <td>{item.roleType}</td>
+                  <td>{item.opportunity?.title || 'General'}</td>
+                  <td>{item.email}</td>
+                  <td>
+                    <a href={item.cvUrl} target="_blank" rel="noreferrer" className="contact-link">View CV</a>
+                  </td>
+                  <td>
+                    {item.onboardingDocsUrl ? (
+                      <div className="admin-inline-stack" style={{ gap: '6px', alignItems: 'flex-start' }}>
+                        <a
+                          href={item.onboardingDocsUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="contact-link"
+                        >
+                          View Docs
+                        </a>
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          onClick={() => removeOnboardingDocs(item._id)}
+                          disabled={isRemovingDocs[item._id]}
+                        >
+                          {isRemovingDocs[item._id] ? 'Deleting...' : 'Delete PDF'}
+                        </button>
+                        {docsUploadedAt ? (
+                          <small className="admin-meta">Uploaded {docsUploadedAt}</small>
+                        ) : null}
+                      </div>
+                    ) : (
+                      <span className="admin-meta" style={{ color: '#9ca3af' }}>Pending upload</span>
+                    )}
+                  </td>
+                  <td>
+                    <select className="admin-select" value={item.status} onChange={(e) => updateStatus(item._id, e.target.value)}>
+                      <option value="new">new</option>
+                      <option value="reviewing">reviewing</option>
+                      <option value="shortlisted">shortlisted</option>
+                      <option value="rejected">rejected</option>
+                      <option value="hired">hired</option>
+                    </select>
+                  </td>
+                  <td>
+                    <div className="admin-inline-stack">
+                      <textarea
+                        rows="2"
+                        value={draftNotes[item._id] ?? item.adminNotes ?? ''}
+                        onChange={(e) => setDraftNotes((prev) => ({ ...prev, [item._id]: e.target.value }))}
+                      />
+                      <button type="button" className="btn btn-secondary" onClick={() => saveNotes(item._id)}>
+                        Save Note
+                      </button>
+                    </div>
+                  </td>
+                  <td>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => sendOnboardingDocsRequest(item._id)}
+                        disabled={isSendingRequest[item._id]}
+                      >
+                        {isSendingRequest[item._id] ? 'Sending...' : 'Request Docs'}
+                      </button>
+                      <button type="button" className="btn btn-secondary" onClick={() => removeApplication(item._id)}>
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>
