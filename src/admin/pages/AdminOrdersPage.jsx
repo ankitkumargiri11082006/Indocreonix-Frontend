@@ -1,21 +1,35 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { apiRequest } from '../../lib/apiClient'
+import {
+  orderStatusOptions,
+  formatOrderDateLabel,
+  getOrderStatusLabel,
+} from '../lib/orderHelpers'
 
-const statusOptions = ['new', 'qualified', 'proposal_shared', 'in_discussion', 'won', 'lost']
+function summarizeText(text = '', limit = 140) {
+  if (!text) return ''
+  const trimmed = text.trim()
+  if (trimmed.length <= limit) return trimmed
+  return `${trimmed.slice(0, limit).trim()}...`
+}
 
-function formatFileSize(bytes) {
-  if (!bytes || Number.isNaN(bytes)) return ''
-  if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`
-  if (bytes >= 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${bytes} B`
+function getPreviewChips(order) {
+  return [
+    { label: 'Category', value: order.projectCategory || '—' },
+    { label: 'Service', value: order.requestedService || 'Not specified' },
+    { label: 'Budget', value: order.targetBudget || 'Not shared' },
+    { label: 'Timeline', value: order.targetTimeline || 'Not shared' },
+  ]
 }
 
 function AdminOrdersPage() {
+  const navigate = useNavigate()
   const [orders, setOrders] = useState([])
   const [error, setError] = useState('')
   const [savingOrderId, setSavingOrderId] = useState('')
-  const [deletingAttachmentKey, setDeletingAttachmentKey] = useState('')
   const [drafts, setDrafts] = useState({})
+  const [statusFilter, setStatusFilter] = useState('all')
 
   async function loadOrders() {
     try {
@@ -28,7 +42,6 @@ function AdminOrdersPage() {
         items.reduce((accumulator, item) => {
           accumulator[item._id] = {
             status: item.status,
-            adminNotes: item.adminNotes || '',
           }
           return accumulator
         }, {}),
@@ -46,18 +59,26 @@ function AdminOrdersPage() {
     const next = {
       total: orders.length,
       new: 0,
-      inDiscussion: 0,
+      qualified: 0,
+      proposal_shared: 0,
+      in_discussion: 0,
       won: 0,
+      lost: 0,
     }
 
     orders.forEach((order) => {
-      if (order.status === 'new') next.new += 1
-      if (order.status === 'in_discussion') next.inDiscussion += 1
-      if (order.status === 'won') next.won += 1
+      if (order.status && typeof next[order.status] === 'number') {
+        next[order.status] += 1
+      }
     })
 
     return next
   }, [orders])
+
+  const filteredOrders = useMemo(() => {
+    if (statusFilter === 'all') return orders
+    return orders.filter((order) => order.status === statusFilter)
+  }, [orders, statusFilter])
 
   async function saveOrder(orderId) {
     const draft = drafts[orderId]
@@ -71,7 +92,6 @@ function AdminOrdersPage() {
         method: 'PATCH',
         body: JSON.stringify({
           status: draft.status,
-          adminNotes: draft.adminNotes,
         }),
       })
 
@@ -83,69 +103,11 @@ function AdminOrdersPage() {
     }
   }
 
-  async function deleteOrder(orderId, clientName) {
-    if (!window.confirm(`Are you sure you want to permanently delete the project request from ${clientName}? This will also remove any uploaded documents from Cloudinary.`)) {
-      return
-    }
-
-    try {
-      setError('')
-      await apiRequest(`/orders/${orderId}`, {
-        method: 'DELETE',
-      })
-      await loadOrders()
-    } catch (err) {
-      setError(err.message)
-    }
-  }
-
-  async function deletePrd(orderId, clientName) {
-    if (!window.confirm(`Remove the PRD uploaded by ${clientName}? This frees Cloudinary storage but keeps the order.`)) {
-      return
-    }
-
-    const stateKey = `prd-${orderId}`
-
-    try {
-      setDeletingAttachmentKey(stateKey)
-      setError('')
-      await apiRequest(`/orders/${orderId}/prd`, {
-        method: 'DELETE',
-      })
-      await loadOrders()
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setDeletingAttachmentKey('')
-    }
-  }
-
-  async function deleteSupportingDocument(orderId, documentId, documentName) {
-    if (!window.confirm(`Remove supporting document "${documentName || 'File'}"? This keeps the request but deletes the file.`)) {
-      return
-    }
-
-    const stateKey = `supporting-${orderId}-${documentId}`
-
-    try {
-      setDeletingAttachmentKey(stateKey)
-      setError('')
-      await apiRequest(`/orders/${orderId}/supporting/${documentId}`, {
-        method: 'DELETE',
-      })
-      await loadOrders()
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setDeletingAttachmentKey('')
-    }
-  }
-
   return (
     <section className="admin-page-stack">
       <article className="admin-card wide">
         <h3>Project Orders</h3>
-        <p className="admin-muted">Manage incoming project requests from products, services, and client-facing quote pages.</p>
+        <p className="admin-muted">Track new requests, stay on top of conversations, and nudge high-intent leads.</p>
         <div className="admin-mini-metrics">
           <div>
             <span>Total Requests</span>
@@ -156,212 +118,129 @@ function AdminOrdersPage() {
             <strong>{summary.new}</strong>
           </div>
           <div>
-            <span>In Discussion / Won</span>
-            <strong>
-              {summary.inDiscussion} / {summary.won}
-            </strong>
+            <span>In Pipeline</span>
+            <strong>{summary.qualified + summary.proposal_shared + summary.in_discussion}</strong>
           </div>
         </div>
       </article>
 
       <article className="admin-card wide">
-        <h3>Order Request Inbox</h3>
+        <div className="admin-orders-toolbar">
+          <div>
+            <h3>Order Request Inbox</h3>
+            <p className="admin-muted">Preview essentials at a glance, then drill into a dedicated workspace per request.</p>
+          </div>
+          <div className="admin-orders-toolbar-meta">
+            <span>
+              Showing {filteredOrders.length} of {orders.length}
+            </span>
+            <span>Last sync {formatOrderDateLabel(new Date())}</span>
+          </div>
+        </div>
+
         {error ? <p className="admin-error">{error}</p> : null}
 
-        <div className="admin-table-wrap">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Client</th>
-                <th>Project</th>
-                <th>Budget & Timeline</th>
-                <th>Documents</th>
-                <th>Status</th>
-                <th>Admin Notes</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order) => {
-                const draft = drafts[order._id] || { status: order.status, adminNotes: order.adminNotes || '' }
-                return (
-                  <tr key={order._id}>
-                    <td>
-                      <strong>{order.fullName}</strong>
-                      <br />
-                      <span>{order.email}</span>
-                      <br />
-                      <span>{order.phone}</span>
-                      {order.company ? (
-                        <>
-                          <br />
-                          <span>{order.company}</span>
-                        </>
-                      ) : null}
-                    </td>
-                    <td>
-                      <strong>{order.projectCategory}</strong>
-                      {order.projectSubtype ? (
-                        <>
-                          <br />
-                          <span>{order.projectSubtype}</span>
-                        </>
-                      ) : null}
-                      {order.requestedService ? (
-                        <>
-                          <br />
-                          <span>Service: {order.requestedService}</span>
-                        </>
-                      ) : null}
-                      {order.requestedProduct ? (
-                        <>
-                          <br />
-                          <span>Product: {order.requestedProduct}</span>
-                        </>
-                      ) : null}
-                      {order.projectReference ? (
-                        <>
-                          <br />
-                          <span>Reference: {order.projectReference}</span>
-                        </>
-                      ) : null}
-                    </td>
-                    <td>
-                      <span>{order.targetBudget || '-'}</span>
-                      <br />
-                      <span>{order.targetTimeline || '-'}</span>
-                    </td>
-                    <td>
-                      {order.prdUrl || (order.supportingDocuments || []).length ? (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                          {order.prdUrl ? (
-                            <div className="admin-doc-card" style={{ border: '1px solid #e5e7eb', borderRadius: '8px', padding: '8px 10px' }}>
-                              <div className="admin-doc-label" style={{ fontSize: '12px', textTransform: 'uppercase', color: '#6b7280', marginBottom: '4px' }}>PRD</div>
-                              <a
-                                href={order.prdUrl || order.prdDownloadUrl || '#'}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="admin-doc-link"
-                                title={order.prdOriginalName || 'Project requirements PDF'}
-                                style={{ fontWeight: 600 }}
-                              >
-                                {order.prdOriginalName || 'Project Requirements'}
-                              </a>
-                              <div className="admin-doc-meta" style={{ fontSize: '12px', color: '#9ca3af' }}>
-                                {formatFileSize(order.prdBytes)}
-                              </div>
-                              <button
-                                type="button"
-                                className="btn btn-secondary"
-                                style={{ marginTop: '6px' }}
-                                onClick={() => deletePrd(order._id, order.fullName)}
-                                disabled={deletingAttachmentKey === `prd-${order._id}`}
-                              >
-                                {deletingAttachmentKey === `prd-${order._id}` ? 'Removing...' : 'Remove PRD'}
-                              </button>
-                            </div>
-                          ) : null}
+        <div className="admin-status-chip-row" role="tablist">
+          {['all', ...orderStatusOptions].map((statusKey) => {
+            const label = statusKey === 'all' ? 'All' : getOrderStatusLabel(statusKey)
+            const count = statusKey === 'all' ? summary.total : summary[statusKey] || 0
+            return (
+              <button
+                key={statusKey}
+                type="button"
+                className={statusFilter === statusKey ? 'admin-status-chip active' : 'admin-status-chip'}
+                onClick={() => setStatusFilter(statusKey)}
+              >
+                <span>{label}</span>
+                <strong>{count}</strong>
+              </button>
+            )
+          })}
+        </div>
 
-                          {(order.supportingDocuments || []).map((document, index) => (
-                            <div
-                              key={document.publicId || document.url || index}
-                              className="admin-doc-card"
-                              style={{ border: '1px dashed #e5e7eb', borderRadius: '8px', padding: '8px 10px' }}
-                            >
-                              <div className="admin-doc-label" style={{ fontSize: '12px', textTransform: 'uppercase', color: '#6b7280', marginBottom: '4px' }}>
-                                Supporting {index + 1}
-                              </div>
-                              <a
-                                href={document.url || document.downloadUrl || '#'}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="admin-doc-link"
-                                title={document.name || 'Supporting document'}
-                                style={{ fontWeight: 600 }}
-                              >
-                                {document.name || 'Supporting Document'}
-                              </a>
-                              <div className="admin-doc-meta" style={{ fontSize: '12px', color: '#9ca3af' }}>
-                                {formatFileSize(document.bytes)}
-                              </div>
-                              {document._id ? (
-                                <button
-                                  type="button"
-                                  className="btn btn-secondary"
-                                  style={{ marginTop: '6px' }}
-                                  onClick={() => deleteSupportingDocument(order._id, document._id, document.name)}
-                                  disabled={deletingAttachmentKey === `supporting-${order._id}-${document._id}`}
-                                >
-                                  {deletingAttachmentKey === `supporting-${order._id}-${document._id}` ? 'Removing...' : 'Remove File'}
-                                </button>
-                              ) : null}
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="admin-meta" style={{ color: '#9ca3af' }}>No files uploaded</span>
-                      )}
-                    </td>
-                    <td>
-                      <select
-                        className="admin-select"
-                        value={draft.status}
-                        onChange={(event) =>
-                          setDrafts((previous) => ({
-                            ...previous,
-                            [order._id]: {
-                              ...draft,
-                              status: event.target.value,
-                            },
-                          }))
-                        }
-                      >
-                        {statusOptions.map((status) => (
-                          <option key={status} value={status}>
-                            {status}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td>
-                      <textarea
-                        value={draft.adminNotes}
-                        onChange={(event) =>
-                          setDrafts((previous) => ({
-                            ...previous,
-                            [order._id]: {
-                              ...draft,
-                              adminNotes: event.target.value,
-                            },
-                          }))
-                        }
-                        placeholder="Qualification notes, scope comments, follow-up details"
-                      />
-                    </td>
-                    <td>
-                      <div className="admin-action-group">
-                        <button
-                          type="button"
-                          className="btn btn-primary"
-                          onClick={() => saveOrder(order._id)}
-                          disabled={savingOrderId === order._id}
-                        >
-                          {savingOrderId === order._id ? 'Saving...' : 'Save'}
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-secondary"
-                          onClick={() => deleteOrder(order._id, order.fullName)}
-                        >
-                          Delete
-                        </button>
+        <div className="admin-order-row-list">
+          {filteredOrders.length ? (
+            filteredOrders.map((order) => {
+              const draft = drafts[order._id] || { status: order.status }
+              const chips = getPreviewChips(order)
+              const notesPreview = summarizeText(order.adminNotes, 120)
+              const summaryPreview = summarizeText(order.projectSummary, 160)
+
+              return (
+                <article key={order._id} className="admin-order-inline-row">
+                  <div className="admin-order-inline-col">
+                    <p className="admin-order-client">{order.fullName}</p>
+                    <p className="admin-order-meta">
+                      {order.email}
+                      {order.phone ? ` • ${order.phone}` : ''}
+                    </p>
+                    {order.company ? <p className="admin-order-meta">{order.company}</p> : null}
+                  </div>
+
+                  <div className="admin-order-inline-col chips">
+                    {chips.map((chip) => (
+                      <div key={chip.label} className="admin-order-inline-chip">
+                        <span>{chip.label}</span>
+                        <strong>{chip.value}</strong>
                       </div>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+                    ))}
+                  </div>
+
+                  <div className="admin-order-inline-col summary">
+                    <p>
+                      {summaryPreview || notesPreview || 'No summary provided'}
+                    </p>
+                    <span>Created {formatOrderDateLabel(order.createdAt)}</span>
+                  </div>
+
+                  <div className="admin-order-inline-col actions">
+                    <span className={`admin-status-badge status-${order.status}`}>{getOrderStatusLabel(order.status)}</span>
+                    <select
+                      className="admin-select compact"
+                      value={draft.status}
+                      onChange={(event) =>
+                        setDrafts((previous) => ({
+                          ...previous,
+                          [order._id]: {
+                            ...draft,
+                            status: event.target.value,
+                          },
+                        }))
+                      }
+                    >
+                      {orderStatusOptions.map((status) => (
+                        <option key={status} value={status}>
+                          {getOrderStatusLabel(status)}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="admin-order-inline-actions">
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => saveOrder(order._id)}
+                        disabled={savingOrderId === order._id}
+                      >
+                        {savingOrderId === order._id ? 'Saving...' : 'Save'}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => navigate(`/admin/orders/${order._id}`, { state: { order } })}
+                      >
+                        View details
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              )
+            })
+          ) : (
+            <div className="admin-empty-state">
+              <h4>No orders match this filter</h4>
+              <p className="admin-muted">Switch to a different status or check back after the web leads sync.</p>
+            </div>
+          )}
         </div>
       </article>
     </section>

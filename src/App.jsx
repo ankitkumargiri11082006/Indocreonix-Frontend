@@ -45,6 +45,7 @@ import AdminOpportunitiesPage from "./admin/pages/AdminOpportunitiesPage";
 import AdminCareerApplicationsPage from "./admin/pages/AdminCareerApplicationsPage";
 import AdminAuditLogsPage from "./admin/pages/AdminAuditLogsPage";
 import AdminOrdersPage from "./admin/pages/AdminOrdersPage";
+import AdminOrderDetailPage from "./admin/pages/AdminOrderDetailPage";
 import AdminPortalControlPage from "./admin/pages/AdminPortalControlPage";
 // import PwaInstallPrompt from "./components/PwaInstallPrompt";
 import "./App.css";
@@ -124,6 +125,14 @@ function App() {
             element={
               <ProtectedRoute permission="orders">
                 <AdminOrdersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="orders/:orderId"
+            element={
+              <ProtectedRoute permission="orders">
+                <AdminOrderDetailPage />
               </ProtectedRoute>
             }
           />
