@@ -238,7 +238,7 @@ function AdminOrdersPage() {
                             <div className="admin-doc-card" style={{ border: '1px solid #e5e7eb', borderRadius: '8px', padding: '8px 10px' }}>
                               <div className="admin-doc-label" style={{ fontSize: '12px', textTransform: 'uppercase', color: '#6b7280', marginBottom: '4px' }}>PRD</div>
                               <a
-                                href={order.prdUrl}
+                                href={order.prdUrl || order.prdDownloadUrl || '#'}
                                 target="_blank"
                                 rel="noreferrer"
                                 className="admin-doc-link"
@@ -272,7 +272,7 @@ function AdminOrdersPage() {
                                 Supporting {index + 1}
                               </div>
                               <a
-                                href={document.url}
+                                href={document.url || document.downloadUrl || '#'}
                                 target="_blank"
                                 rel="noreferrer"
                                 className="admin-doc-link"
