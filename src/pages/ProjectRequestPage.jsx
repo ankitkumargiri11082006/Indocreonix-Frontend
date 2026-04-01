@@ -143,23 +143,33 @@ function ProjectRequestPage() {
   useEffect(() => {
     const syncPortalProfile = () => {
       const user = getPortalUser();
+      if (!user) return;
+
       setFormData((previous) => ({
         ...previous,
-        fullName: user?.name || previous.fullName,
-        email: user?.email || previous.email,
-        phone: user?.phone || previous.phone,
-        company: previous.company || user?.organization || "",
+        ...(user.name && user.name !== previous.fullName
+          ? { fullName: user.name }
+          : {}),
+        ...(user.email && user.email !== previous.email
+          ? { email: user.email }
+          : {}),
+        ...(user.phone && user.phone !== previous.phone
+          ? { phone: user.phone }
+          : {}),
+        ...(user.organization && !previous.company
+          ? { company: user.organization }
+          : {}),
       }));
     };
 
+    syncPortalProfile();
+
     window.addEventListener("portal-session-updated", syncPortalProfile);
     window.addEventListener("storage", syncPortalProfile);
-    window.addEventListener("focus", syncPortalProfile);
 
     return () => {
       window.removeEventListener("portal-session-updated", syncPortalProfile);
       window.removeEventListener("storage", syncPortalProfile);
-      window.removeEventListener("focus", syncPortalProfile);
     };
   }, []);
 
