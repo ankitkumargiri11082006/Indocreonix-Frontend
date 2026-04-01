@@ -31,9 +31,13 @@ const API_BASE_URL = normalizeApiBaseUrl(import.meta.env.VITE_API_BASE_URL);
 
 export function getPortalUser() {
   const expiresAtRaw = localStorage.getItem(PORTAL_SESSION_EXPIRES_AT_KEY);
-  const expiresAt = Number(expiresAtRaw || 0);
+  if (!expiresAtRaw) {
+    return null;
+  }
 
-  if (!expiresAt || Number.isNaN(expiresAt) || Date.now() >= expiresAt) {
+  const expiresAt = Number(expiresAtRaw);
+
+  if (Number.isNaN(expiresAt) || Date.now() >= expiresAt) {
     clearPortalSession();
     return null;
   }

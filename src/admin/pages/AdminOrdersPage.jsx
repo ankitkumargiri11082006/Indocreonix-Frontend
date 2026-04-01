@@ -14,6 +14,7 @@ function AdminOrdersPage() {
   const [orders, setOrders] = useState([])
   const [error, setError] = useState('')
   const [savingOrderId, setSavingOrderId] = useState('')
+  const [deletingAttachmentKey, setDeletingAttachmentKey] = useState('')
   const [drafts, setDrafts] = useState({})
 
   async function loadOrders() {
@@ -95,6 +96,48 @@ function AdminOrdersPage() {
       await loadOrders()
     } catch (err) {
       setError(err.message)
+    }
+  }
+
+  async function deletePrd(orderId, clientName) {
+    if (!window.confirm(`Remove the PRD uploaded by ${clientName}? This frees Cloudinary storage but keeps the order.`)) {
+      return
+    }
+
+    const stateKey = `prd-${orderId}`
+
+    try {
+      setDeletingAttachmentKey(stateKey)
+      setError('')
+      await apiRequest(`/orders/${orderId}/prd`, {
+        method: 'DELETE',
+      })
+      await loadOrders()
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setDeletingAttachmentKey('')
+    }
+  }
+
+  async function deleteSupportingDocument(orderId, documentId, documentName) {
+    if (!window.confirm(`Remove supporting document "${documentName || 'File'}"? This keeps the request but deletes the file.`)) {
+      return
+    }
+
+    const stateKey = `supporting-${orderId}-${documentId}`
+
+    try {
+      setDeletingAttachmentKey(stateKey)
+      setError('')
+      await apiRequest(`/orders/${orderId}/supporting/${documentId}`, {
+        method: 'DELETE',
+      })
+      await loadOrders()
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setDeletingAttachmentKey('')
     }
   }
 
@@ -207,6 +250,15 @@ function AdminOrdersPage() {
                               <div className="admin-doc-meta" style={{ fontSize: '12px', color: '#9ca3af' }}>
                                 {formatFileSize(order.prdBytes)}
                               </div>
+                              <button
+                                type="button"
+                                className="btn btn-secondary"
+                                style={{ marginTop: '6px' }}
+                                onClick={() => deletePrd(order._id, order.fullName)}
+                                disabled={deletingAttachmentKey === `prd-${order._id}`}
+                              >
+                                {deletingAttachmentKey === `prd-${order._id}` ? 'Removing...' : 'Remove PRD'}
+                              </button>
                             </div>
                           ) : null}
 
@@ -232,6 +284,17 @@ function AdminOrdersPage() {
                               <div className="admin-doc-meta" style={{ fontSize: '12px', color: '#9ca3af' }}>
                                 {formatFileSize(document.bytes)}
                               </div>
+                              {document._id ? (
+                                <button
+                                  type="button"
+                                  className="btn btn-secondary"
+                                  style={{ marginTop: '6px' }}
+                                  onClick={() => deleteSupportingDocument(order._id, document._id, document.name)}
+                                  disabled={deletingAttachmentKey === `supporting-${order._id}-${document._id}`}
+                                >
+                                  {deletingAttachmentKey === `supporting-${order._id}-${document._id}` ? 'Removing...' : 'Remove File'}
+                                </button>
+                              ) : null}
                             </div>
                           ))}
                         </div>
