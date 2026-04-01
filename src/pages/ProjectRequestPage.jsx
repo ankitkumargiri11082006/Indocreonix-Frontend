@@ -73,6 +73,9 @@ const categorySubtypeOptions = {
 };
 
 const OTHER_OPTION_VALUE = "__other__";
+const MAX_PRD_BYTES = 8 * 1024 * 1024; // 8 MB (matches backend Multer limit)
+const MAX_SUPPORTING_BYTES = 5 * 1024 * 1024; // 5 MB cap per supporting document
+const MAX_SUPPORTING_FILES = 3;
 
 function ProjectRequestPage() {
   const [searchParams] = useSearchParams();
@@ -119,6 +122,12 @@ function ProjectRequestPage() {
   });
   const [submitting, setSubmitting] = useState(false);
   const activeSubtypeConfig = categorySubtypeOptions[formData.projectCategory];
+  const openModal = (payload) =>
+    setModalState((previous) => ({
+      ...previous,
+      ...payload,
+      isOpen: true,
+    }));
 
   const sourceContext = useMemo(() => {
     const source = searchParams.get("source");
@@ -175,6 +184,59 @@ function ProjectRequestPage() {
     }));
   }
 
+  function handlePrdInputChange(event) {
+    const file = event.target.files?.[0] || null;
+    if (file && file.size > MAX_PRD_BYTES) {
+      openModal({
+        title: "PRD is too large",
+        message: "Please upload a PDF up to 8 MB so our system can accept it.",
+        type: "error",
+      });
+      event.target.value = "";
+      setPrdFile(null);
+      return;
+    }
+    setPrdFile(file);
+  }
+
+  function handleSupportingDocsChange(event) {
+    const files = Array.from(event.target.files || []);
+    if (!files.length) {
+      setSupportingDocs([]);
+      return;
+    }
+
+    const accepted = [];
+    const rejected = [];
+
+    files.slice(0, MAX_SUPPORTING_FILES).forEach((file) => {
+      if (file.size > MAX_SUPPORTING_BYTES) {
+        rejected.push(file.name);
+      } else {
+        accepted.push(file);
+      }
+    });
+
+    if (rejected.length) {
+      openModal({
+        title: "Supporting file too large",
+        message: `The following files exceed ${(
+          MAX_SUPPORTING_BYTES /
+          (1024 * 1024)
+        ).toFixed(1)} MB and were skipped: ${rejected.join(", ")}`,
+        type: "error",
+      });
+    }
+
+    if (!accepted.length) {
+      event.target.value = "";
+      setSupportingDocs([]);
+      return;
+    }
+
+    setSupportingDocs(accepted);
+  }
+
   async function onSubmit(event) {
     event.preventDefault();
     if (submitting) return;
@@ -224,8 +286,7 @@ function ProjectRequestPage() {
         timeoutMs: 60000,
       });
 
-      setModalState({
-        isOpen: true,
+      openModal({
         title: "Project Request Received",
         message:
           "Thank you for choosing Indocreonix. Your project brief has been successfully submitted to our solutions architecture team. We will review your requirements and a technical consultant will contact you shortly to discuss the next steps and provide a formal proposal.",
@@ -249,8 +310,7 @@ function ProjectRequestPage() {
         supportingDocsRef.current.value = "";
       }
     } catch (error) {
-      setModalState({
-        isOpen: true,
+      openModal({
         title: "Submission Error",
         message:
           error.message ||
@@ -486,9 +546,7 @@ function ProjectRequestPage() {
               <input
                 type="file"
                 accept=".pdf,application/pdf"
-                onChange={(event) =>
-                  setPrdFile(event.target.files?.[0] || null)
-                }
+                onChange={handlePrdInputChange}
                 ref={prdInputRef}
               />
               <small>
@@ -506,11 +564,7 @@ function ProjectRequestPage() {
                 type="file"
                 accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
                 multiple
-                onChange={(event) =>
-                  setSupportingDocs(
-                    Array.from(event.target.files || []).slice(0, 3),
-                  )
-                }
+                onChange={handleSupportingDocsChange}
                 ref={supportingDocsRef}
               />
               <small>
