@@ -138,10 +138,6 @@ function AdminCareerApplicationsPage() {
     if (duration === null) return null
     const stipend = window.prompt('Stipend (example: $1500 / month)', existing.stipend || '')
     if (stipend === null) return null
-    const managerName = window.prompt('Manager name', existing.managerName || 'Indocreonix HR')
-    if (managerName === null) return null
-    const managerTitle = window.prompt('Manager title', existing.managerTitle || 'Human Resources')
-    if (managerTitle === null) return null
 
     return {
       candidateName,
@@ -150,8 +146,6 @@ function AdminCareerApplicationsPage() {
       startDate,
       duration,
       stipend,
-      managerName,
-      managerTitle,
     }
   }
 
@@ -163,14 +157,11 @@ function AdminCareerApplicationsPage() {
     if (courseTitle === null) return null
     const completionDate = window.prompt('Completion date (example: April 4, 2026)', existing.completionDate || '')
     if (completionDate === null) return null
-    const certificateId = window.prompt('Certificate ID', existing.certificateId || '')
-    if (certificateId === null) return null
 
     return {
       fullName,
       courseTitle,
       completionDate,
-      certificateId,
     }
   }
 

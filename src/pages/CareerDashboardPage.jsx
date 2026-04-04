@@ -325,6 +325,7 @@ function CareerDashboardPage() {
                     href={item.offerLetter.downloadUrl}
                     target="_blank"
                     rel="noreferrer"
+                    download={`offer-letter-${item.id || "application"}.pdf`}
                     className="btn btn-secondary"
                   >
                     Download Offer Letter
@@ -338,6 +339,7 @@ function CareerDashboardPage() {
                     href={item.certificate.downloadUrl}
                     target="_blank"
                     rel="noreferrer"
+                    download={`certificate-${item.id || "application"}.pdf`}
                     className="btn btn-secondary"
                   >
                     Download Certificate
