@@ -1,6 +1,14 @@
 function normalizeApiBaseUrl(rawBaseUrl) {
   const fallback = 'http://localhost:5000/api'
-  const candidate = (rawBaseUrl || fallback).trim()
+  const fromEnv = (rawBaseUrl || '').trim()
+
+  const useLocalDevApi =
+    typeof window !== 'undefined' &&
+    import.meta.env.DEV &&
+    /^(localhost|127\.0\.0\.1)$/i.test(window.location.hostname) &&
+    /onrender\.com/i.test(fromEnv)
+
+  const candidate = useLocalDevApi ? fallback : (fromEnv || fallback)
 
   try {
     const url = new URL(candidate)

@@ -1,13 +1,21 @@
 import { useEffect, useState } from 'react'
 import { apiBaseUrl, apiRequest } from '../../lib/apiClient'
+import AdminDocumentCenter from '../components/AdminDocumentCenter'
 
 function AdminCareerApplicationsPage() {
+  const activeApiBase = apiBaseUrl()
   const [items, setItems] = useState([])
   const [filterType, setFilterType] = useState('all')
   const [error, setError] = useState('')
   const [draftNotes, setDraftNotes] = useState({})
   const [isSendingRequest, setIsSendingRequest] = useState({})
   const [isRemovingDocs, setIsRemovingDocs] = useState({})
+  const [isSendingOffer, setIsSendingOffer] = useState({})
+  const [isSendingCertificate, setIsSendingCertificate] = useState({})
+  const [isUpdatingOfferApproval, setIsUpdatingOfferApproval] = useState({})
+  const [isUpdatingCertificateApproval, setIsUpdatingCertificateApproval] = useState({})
+  const [isDeletingOffer, setIsDeletingOffer] = useState({})
+  const [isDeletingCertificate, setIsDeletingCertificate] = useState({})
 
   function formatDocSize(bytes) {
     if (!bytes || Number.isNaN(bytes)) return ''
@@ -116,6 +124,172 @@ function AdminCareerApplicationsPage() {
     }
   }
 
+  function askOfferLetterPayload(item) {
+    const existing = item.offerLetter || {}
+    const candidateName = window.prompt('Candidate name', existing.candidateName || item.fullName || '')
+    if (candidateName === null) return null
+    const candidateAddress = window.prompt('Candidate address', existing.candidateAddress || item.city || '')
+    if (candidateAddress === null) return null
+    const role = window.prompt('Role', existing.role || item.opportunity?.title || item.roleType || '')
+    if (role === null) return null
+    const startDate = window.prompt('Start date (example: May 1, 2026)', existing.startDate || '')
+    if (startDate === null) return null
+    const duration = window.prompt('Duration (example: 3 Months)', existing.duration || '')
+    if (duration === null) return null
+    const stipend = window.prompt('Stipend (example: $1500 / month)', existing.stipend || '')
+    if (stipend === null) return null
+    const managerName = window.prompt('Manager name', existing.managerName || 'Indocreonix HR')
+    if (managerName === null) return null
+    const managerTitle = window.prompt('Manager title', existing.managerTitle || 'Human Resources')
+    if (managerTitle === null) return null
+
+    return {
+      candidateName,
+      candidateAddress,
+      role,
+      startDate,
+      duration,
+      stipend,
+      managerName,
+      managerTitle,
+    }
+  }
+
+  function askCertificatePayload(item) {
+    const existing = item.certificate || {}
+    const fullName = window.prompt('Candidate full name', existing.fullName || item.fullName || '')
+    if (fullName === null) return null
+    const courseTitle = window.prompt('Course title', existing.courseTitle || item.opportunity?.title || '')
+    if (courseTitle === null) return null
+    const completionDate = window.prompt('Completion date (example: April 4, 2026)', existing.completionDate || '')
+    if (completionDate === null) return null
+    const certificateId = window.prompt('Certificate ID', existing.certificateId || '')
+    if (certificateId === null) return null
+
+    return {
+      fullName,
+      courseTitle,
+      completionDate,
+      certificateId,
+    }
+  }
+
+  async function sendOfferLetter(item) {
+    const payload = askOfferLetterPayload(item)
+    if (!payload) return
+
+    try {
+      setError('')
+      setIsSendingOffer((prev) => ({ ...prev, [item._id]: true }))
+      await apiRequest(`/careers/applications/${item._id}/offer-letter/send`, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      })
+      window.alert('Offer letter generated and marked as awaiting admin approval.')
+      loadItems()
+    } catch (err) {
+      if (Number(err?.status) === 404) {
+        setError('Offer-letter API route is not available on current backend deployment. Redeploy backend with latest code and retry.')
+      } else {
+        setError(err.message)
+      }
+    } finally {
+      setIsSendingOffer((prev) => ({ ...prev, [item._id]: false }))
+    }
+  }
+
+  async function sendCertificate(item) {
+    const payload = askCertificatePayload(item)
+    if (!payload) return
+
+    try {
+      setError('')
+      setIsSendingCertificate((prev) => ({ ...prev, [item._id]: true }))
+      await apiRequest(`/careers/applications/${item._id}/certificate/send`, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      })
+      window.alert('Certificate generated and marked as awaiting admin approval.')
+      loadItems()
+    } catch (err) {
+      if (Number(err?.status) === 404) {
+        setError('Certificate API route is not available on current backend deployment. Redeploy backend with latest code and retry.')
+      } else {
+        setError(err.message)
+      }
+    } finally {
+      setIsSendingCertificate((prev) => ({ ...prev, [item._id]: false }))
+    }
+  }
+
+  async function setOfferApproval(item, approved) {
+    try {
+      setError('')
+      setIsUpdatingOfferApproval((prev) => ({ ...prev, [item._id]: true }))
+      await apiRequest(`/careers/applications/${item._id}/offer-letter/approval`, {
+        method: 'PATCH',
+        body: JSON.stringify({ approved }),
+      })
+      loadItems()
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setIsUpdatingOfferApproval((prev) => ({ ...prev, [item._id]: false }))
+    }
+  }
+
+  async function setCertificateApproval(item, approved) {
+    try {
+      setError('')
+      setIsUpdatingCertificateApproval((prev) => ({ ...prev, [item._id]: true }))
+      await apiRequest(`/careers/applications/${item._id}/certificate/approval`, {
+        method: 'PATCH',
+        body: JSON.stringify({ approved }),
+      })
+      loadItems()
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setIsUpdatingCertificateApproval((prev) => ({ ...prev, [item._id]: false }))
+    }
+  }
+
+  async function deleteOfferLetter(item) {
+    const confirmed = window.confirm('Delete generated offer letter for this applicant?')
+    if (!confirmed) return
+
+    try {
+      setError('')
+      setIsDeletingOffer((prev) => ({ ...prev, [item._id]: true }))
+      await apiRequest(`/careers/applications/${item._id}/offer-letter`, {
+        method: 'DELETE',
+      })
+      loadItems()
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setIsDeletingOffer((prev) => ({ ...prev, [item._id]: false }))
+    }
+  }
+
+  async function deleteCertificate(item) {
+    const confirmed = window.confirm('Delete generated certificate for this applicant?')
+    if (!confirmed) return
+
+    try {
+      setError('')
+      setIsDeletingCertificate((prev) => ({ ...prev, [item._id]: true }))
+      await apiRequest(`/careers/applications/${item._id}/certificate`, {
+        method: 'DELETE',
+      })
+      loadItems()
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setIsDeletingCertificate((prev) => ({ ...prev, [item._id]: false }))
+    }
+  }
+
   async function exportCsv() {
     try {
       setError('')
@@ -152,6 +326,9 @@ function AdminCareerApplicationsPage() {
   return (
     <article className="admin-card wide">
       <h3>Career Applications (CV in Cloudinary)</h3>
+      <p className="admin-meta" style={{ marginTop: '-4px' }}>
+        API base: {activeApiBase}
+      </p>
       <div className="admin-toolbar">
         <label>
           Filter by Type
@@ -178,6 +355,7 @@ function AdminCareerApplicationsPage() {
               <th>Email</th>
               <th>CV</th>
               <th>Onboarding Docs</th>
+              <th>Document Center</th>
               <th>Status</th>
               <th>Admin Notes</th>
               <th>Actions</th>
@@ -190,6 +368,8 @@ function AdminCareerApplicationsPage() {
                 : ''
               const docsName = item.onboardingDocsOriginalName || 'Onboarding document'
               const docsSizeLabel = formatDocSize(item.onboardingDocsBytes)
+              const offerSentAt = item.offerLetter?.sentAt ? new Date(item.offerLetter.sentAt).toLocaleString() : 'Not sent'
+              const certificateSentAt = item.certificate?.sentAt ? new Date(item.certificate.sentAt).toLocaleString() : 'Not sent'
 
               return (
                 <tr key={item._id}>
@@ -232,6 +412,26 @@ function AdminCareerApplicationsPage() {
                     )}
                   </td>
                   <td>
+                    <AdminDocumentCenter
+                      item={item}
+                      manage={true}
+                      offerMetaText={offerSentAt}
+                      certificateMetaText={certificateSentAt}
+                      onSendOffer={() => sendOfferLetter(item)}
+                      onSendCertificate={() => sendCertificate(item)}
+                      onToggleOfferApproval={() => setOfferApproval(item, !item.offerLetter?.isApproved)}
+                      onToggleCertificateApproval={() => setCertificateApproval(item, !item.certificate?.isApproved)}
+                      onDeleteOffer={() => deleteOfferLetter(item)}
+                      onDeleteCertificate={() => deleteCertificate(item)}
+                      isSendingOffer={Boolean(isSendingOffer[item._id])}
+                      isSendingCertificate={Boolean(isSendingCertificate[item._id])}
+                      isUpdatingOfferApproval={Boolean(isUpdatingOfferApproval[item._id])}
+                      isUpdatingCertificateApproval={Boolean(isUpdatingCertificateApproval[item._id])}
+                      isDeletingOffer={Boolean(isDeletingOffer[item._id])}
+                      isDeletingCertificate={Boolean(isDeletingCertificate[item._id])}
+                    />
+                  </td>
+                  <td>
                     <select className="admin-select" value={item.status} onChange={(e) => updateStatus(item._id, e.target.value)}>
                       <option value="new">new</option>
                       <option value="reviewing">reviewing</option>
@@ -253,7 +453,7 @@ function AdminCareerApplicationsPage() {
                     </div>
                   </td>
                   <td>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div className="admin-action-group" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
                       <button
                         type="button"
                         className="btn btn-primary"

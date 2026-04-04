@@ -319,6 +319,33 @@ function CareerDashboardPage() {
               <p className="portal-status-note">
                 {item.notes || "Status update will appear here."}
               </p>
+              <div className="portal-inline-actions" style={{ marginTop: "0.6rem", flexWrap: "wrap" }}>
+                {item.offerLetter?.downloadUrl ? (
+                  <a
+                    href={item.offerLetter.downloadUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn btn-secondary"
+                  >
+                    Download Offer Letter
+                  </a>
+                ) : item.offerLetter?.isSent ? (
+                  <span className="portal-inline-note">Offer letter awaiting admin approval</span>
+                ) : null}
+
+                {item.certificate?.downloadUrl ? (
+                  <a
+                    href={item.certificate.downloadUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn btn-secondary"
+                  >
+                    Download Certificate
+                  </a>
+                ) : item.certificate?.isSent ? (
+                  <span className="portal-inline-note">Certificate awaiting admin approval</span>
+                ) : null}
+              </div>
             </article>
           ))
         ) : (

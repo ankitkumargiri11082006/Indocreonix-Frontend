@@ -10,6 +10,7 @@ import {
   updatePortalUser,
 } from "./portalAuthShared";
 import { prepareAvatarDataUrl } from "../lib/avatarImage";
+import { initializeGoogleIdentity } from "../lib/googleIdentity";
 import "./PortalPages.css";
 
 const INITIAL_SIGNIN = { email: "", password: "" };
@@ -256,40 +257,39 @@ function PortalAccessPage({
       if (!mounted || !window.google?.accounts?.id || !googleButtonRef.current)
         return;
 
-      window.google.accounts.id.initialize({
-        client_id: googleClientId,
-        callback: async (response) => {
-          if (!response?.credential) {
-            setError("Google authentication failed. Please try again.");
-            return;
+      initializeGoogleIdentity(googleClientId, async (response) => {
+        if (!response?.credential) {
+          setError("Google authentication failed. Please try again.");
+          return;
+        }
+
+        setError("");
+        setMessage("");
+        setGoogleLoading(true);
+
+        try {
+          const googlePayload = {
+            credential: response.credential,
+            flow: mode,
+          };
+
+          if (mode === "signup") {
+            googlePayload.track = signupForm.track;
           }
 
-          setError("");
-          setMessage("");
-          setGoogleLoading(true);
-
-          try {
-            const googlePayload = {
-              credential: response.credential,
-              flow: mode,
-            };
-
-            if (mode === "signup") {
-              googlePayload.track = signupForm.track;
-            }
-
-            const result = await portalRequest("/portal/auth/google", {
-              method: "POST",
-              body: JSON.stringify(googlePayload),
-            });
-            setPortalSession({ token: result.token, user: result.user });
-            goToPostAuthDestination(result.user);
-          } catch (err) {
-            setError(err.message);
-          } finally {
-            setGoogleLoading(false);
-          }
-        },
+          const result = await portalRequest("/portal/auth/google", {
+            method: "POST",
+            body: JSON.stringify(googlePayload),
+          });
+          setPortalSession({ token: result.token, user: result.user });
+          goToPostAuthDestination(result.user);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setGoogleLoading(false);
+        }
+      }).catch((err) => {
+        setError(err.message);
       });
 
       googleButtonRef.current.innerHTML = "";
@@ -312,35 +312,10 @@ function PortalAccessPage({
       setGoogleReady(true);
     };
 
-    if (window.google?.accounts?.id) {
-      initializeGoogle();
-      return () => {
-        mounted = false;
-      };
-    }
-
-    const scriptId = "google-identity-services-script";
-    const existingScript = document.getElementById(scriptId);
-
-    if (existingScript) {
-      existingScript.addEventListener("load", initializeGoogle);
-      return () => {
-        mounted = false;
-        existingScript.removeEventListener("load", initializeGoogle);
-      };
-    }
-
-    const script = document.createElement("script");
-    script.id = scriptId;
-    script.src = "https://accounts.google.com/gsi/client";
-    script.async = true;
-    script.defer = true;
-    script.addEventListener("load", initializeGoogle);
-    document.body.appendChild(script);
+    initializeGoogle();
 
     return () => {
       mounted = false;
-      script.removeEventListener("load", initializeGoogle);
     };
   }, [googleClientId, mode, signupForm.track]);
 

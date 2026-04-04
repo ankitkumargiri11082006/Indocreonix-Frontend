@@ -274,6 +274,25 @@
   font-size: 0.8rem;
 }
 
+.admin-doc-center-grid {
+  gap: 10px;
+  align-items: stretch;
+  min-width: 320px;
+}
+
+.admin-doc-center-section {
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.admin-doc-center-title {
+  font-size: 12px;
+}
+
+.admin-doc-center-actions {
+  flex-wrap: wrap;
+}
+
 .admin-order-status-grid {
   display: grid;
   grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
@@ -418,6 +437,16 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .admin-doc-center-grid {
+    min-width: 260px;
+  }
+
+
+@media (max-width: 640px) {
+  .admin-doc-center-grid {
+    min-width: 0;
+  }
+}
   .admin-order-inline-col.actions {
     align-items: flex-start;
   }

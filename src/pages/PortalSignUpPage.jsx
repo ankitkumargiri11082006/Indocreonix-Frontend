@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SEO from "../components/SEO";
 import { portalRequest, setPortalSession } from "./portalAuthShared";
+import { initializeGoogleIdentity } from "../lib/googleIdentity";
 import "./PortalPages.css";
 
 const INITIAL_FORM = {
@@ -38,39 +39,38 @@ function PortalSignUpPage() {
       if (!mounted || !window.google?.accounts?.id || !googleButtonRef.current)
         return;
 
-      window.google.accounts.id.initialize({
-        client_id: googleClientId,
-        callback: async (response) => {
-          if (!response?.credential) {
-            setError("Google sign-up failed. Please try again.");
-            return;
-          }
+      initializeGoogleIdentity(googleClientId, async (response) => {
+        if (!response?.credential) {
+          setError("Google sign-up failed. Please try again.");
+          return;
+        }
 
-          setError("");
-          setMessage("");
-          setGoogleLoading(true);
+        setError("");
+        setMessage("");
+        setGoogleLoading(true);
 
-          try {
-            const result = await portalRequest("/portal/auth/google", {
-              method: "POST",
-              body: JSON.stringify({
-                credential: response.credential,
-                flow: "signup",
-                track: formData.track,
-              }),
-            });
-            setPortalSession({ token: result.token, user: result.user });
-            navigate(
-              result?.user?.defaultDashboard === "project"
-                ? "/project/dashboard"
-                : "/career/dashboard",
-            );
-          } catch (err) {
-            setError(err.message);
-          } finally {
-            setGoogleLoading(false);
-          }
-        },
+        try {
+          const result = await portalRequest("/portal/auth/google", {
+            method: "POST",
+            body: JSON.stringify({
+              credential: response.credential,
+              flow: "signup",
+              track: formData.track,
+            }),
+          });
+          setPortalSession({ token: result.token, user: result.user });
+          navigate(
+            result?.user?.defaultDashboard === "project"
+              ? "/project/dashboard"
+              : "/career/dashboard",
+          );
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setGoogleLoading(false);
+        }
+      }).catch((err) => {
+        setError(err.message);
       });
 
       googleButtonRef.current.innerHTML = "";
@@ -93,35 +93,10 @@ function PortalSignUpPage() {
       setGoogleReady(true);
     };
 
-    if (window.google?.accounts?.id) {
-      initializeGoogleSignIn();
-      return () => {
-        mounted = false;
-      };
-    }
-
-    const scriptId = "google-identity-services-script";
-    const existingScript = document.getElementById(scriptId);
-
-    if (existingScript) {
-      existingScript.addEventListener("load", initializeGoogleSignIn);
-      return () => {
-        mounted = false;
-        existingScript.removeEventListener("load", initializeGoogleSignIn);
-      };
-    }
-
-    const script = document.createElement("script");
-    script.id = scriptId;
-    script.src = "https://accounts.google.com/gsi/client";
-    script.async = true;
-    script.defer = true;
-    script.addEventListener("load", initializeGoogleSignIn);
-    document.body.appendChild(script);
+    initializeGoogleSignIn();
 
     return () => {
       mounted = false;
-      script.removeEventListener("load", initializeGoogleSignIn);
     };
   }, [formData.track, googleClientId, navigate]);
 

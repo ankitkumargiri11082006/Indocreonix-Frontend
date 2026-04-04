@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { apiRequest } from "../../lib/apiClient";
+import { apiBaseUrl, apiRequest } from "../../lib/apiClient";
+import AdminDocumentCenter from "../components/AdminDocumentCenter";
 
 const careerStatusOptions = [
   "new",
@@ -27,6 +28,7 @@ const projectCategoryOptions = [
 ];
 
 function AdminPortalControlPage() {
+  const activeApiBase = apiBaseUrl();
   const [portalUsers, setPortalUsers] = useState([]);
   const [careerItems, setCareerItems] = useState([]);
   const [projectItems, setProjectItems] = useState([]);
@@ -350,6 +352,9 @@ function AdminPortalControlPage() {
   return (
     <article className="admin-card wide">
       <h3>Portal Control Center</h3>
+      <p className="admin-meta" style={{ marginTop: "-4px" }}>
+        API base: {activeApiBase}
+      </p>
       <p>
         Manage career and project portal users, control access, and update
         progress for candidates and client projects.
@@ -503,6 +508,7 @@ function AdminPortalControlPage() {
                   <th>Candidate</th>
                   <th>Email</th>
                   <th>Role Type</th>
+                  <th>Document Center</th>
                   <th>Status</th>
                   <th>Admin Notes</th>
                   <th>Update</th>
@@ -515,6 +521,21 @@ function AdminPortalControlPage() {
                       <td>{item.fullName}</td>
                       <td>{item.email}</td>
                       <td>{item.opportunity?.title || item.roleType}</td>
+                      <td>
+                        <AdminDocumentCenter
+                          item={item}
+                          offerMetaText={
+                            item.offerLetter?.isApproved
+                              ? "Approved"
+                              : "Awaiting approval"
+                          }
+                          certificateMetaText={
+                            item.certificate?.isApproved
+                              ? "Approved"
+                              : "Awaiting approval"
+                          }
+                        />
+                      </td>
                       <td>
                         <select
                           className="admin-select"
@@ -559,7 +580,7 @@ function AdminPortalControlPage() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={6}>No career applications found.</td>
+                    <td colSpan={7}>No career applications found.</td>
                   </tr>
                 )}
               </tbody>

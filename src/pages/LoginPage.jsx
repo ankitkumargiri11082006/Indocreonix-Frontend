@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import SEO from "../components/SEO";
+import { initializeGoogleIdentity } from "../lib/googleIdentity";
 
 function LoginPage() {
   const { login, loginWithGoogle } = useAuth();
@@ -50,32 +51,31 @@ function LoginPage() {
       if (!mounted || !window.google?.accounts?.id || !googleButtonRef.current)
         return;
 
-      window.google.accounts.id.initialize({
-        client_id: googleClientId,
-        callback: async (response) => {
-          if (!response?.credential) {
-            setError("Google sign-in failed. Please try again.");
-            return;
-          }
+      initializeGoogleIdentity(googleClientId, async (response) => {
+        if (!response?.credential) {
+          setError("Google sign-in failed. Please try again.");
+          return;
+        }
 
-          setError("");
-          setGoogleLoading(true);
+        setError("");
+        setGoogleLoading(true);
 
-          try {
-            await loginWithGoogle(response.credential);
-            navigate("/admin");
-          } catch (err) {
-            if (err?.status === 404) {
-              setError(
-                "Google login endpoint is not configured on backend yet. Please use email/password login for now.",
-              );
-            } else {
-              setError(err.message);
-            }
-          } finally {
-            setGoogleLoading(false);
+        try {
+          await loginWithGoogle(response.credential);
+          navigate("/admin");
+        } catch (err) {
+          if (err?.status === 404) {
+            setError(
+              "Google login endpoint is not configured on backend yet. Please use email/password login for now.",
+            );
+          } else {
+            setError(err.message);
           }
-        },
+        } finally {
+          setGoogleLoading(false);
+        }
+      }).catch((err) => {
+        setError(err.message);
       });
 
       renderGoogleButton();
@@ -90,41 +90,10 @@ function LoginPage() {
       setGoogleReady(true);
     };
 
-    if (window.google?.accounts?.id) {
-      initializeGoogleSignIn();
-      return () => {
-        mounted = false;
-        if (resizeObserver) {
-          resizeObserver.disconnect();
-        }
-      };
-    }
-
-    const scriptId = "google-identity-services-script";
-    const existingScript = document.getElementById(scriptId);
-
-    if (existingScript) {
-      existingScript.addEventListener("load", initializeGoogleSignIn);
-      return () => {
-        mounted = false;
-        existingScript.removeEventListener("load", initializeGoogleSignIn);
-        if (resizeObserver) {
-          resizeObserver.disconnect();
-        }
-      };
-    }
-
-    const script = document.createElement("script");
-    script.id = scriptId;
-    script.src = "https://accounts.google.com/gsi/client";
-    script.async = true;
-    script.defer = true;
-    script.addEventListener("load", initializeGoogleSignIn);
-    document.body.appendChild(script);
+    initializeGoogleSignIn();
 
     return () => {
       mounted = false;
-      script.removeEventListener("load", initializeGoogleSignIn);
       if (resizeObserver) {
         resizeObserver.disconnect();
       }
