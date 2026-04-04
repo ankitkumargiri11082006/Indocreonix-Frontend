@@ -217,7 +217,7 @@ function AdminCareerApplicationsPage() {
                         </small>
                         <button
                           type="button"
-                          className="btn btn-secondary"
+                          className="btn btn-danger"
                           onClick={() => removeOnboardingDocs(item._id)}
                           disabled={isRemovingDocs[item._id]}
                         >
@@ -262,7 +262,7 @@ function AdminCareerApplicationsPage() {
                       >
                         {isSendingRequest[item._id] ? 'Sending...' : 'Request Docs'}
                       </button>
-                      <button type="button" className="btn btn-secondary" onClick={() => removeApplication(item._id)}>
+                      <button type="button" className="btn btn-danger" onClick={() => removeApplication(item._id)}>
                         Delete
                       </button>
                     </div>

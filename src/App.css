@@ -2013,6 +2013,7 @@ canvas {
   line-height: 1.4;
   max-width: 36ch;
   min-height: 2.8em;
+  line-clamp: 2;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;

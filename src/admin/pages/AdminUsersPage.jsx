@@ -434,7 +434,7 @@ function AdminUsersPage() {
                   <div className="admin-action-group">
                     <button
                       type="button"
-                      className="btn btn-secondary"
+                      className="btn btn-danger"
                       onClick={() => deleteUserRole(user)}
                       disabled={!canEditUser || deletingUserId === user._id}
                     >
