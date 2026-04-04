@@ -42,6 +42,13 @@ function AdminLayout() {
     orders: 0,
   });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDesktopSidebarPinned, setIsDesktopSidebarPinned] = useState(false);
+  const [isDesktopSidebarHoverOpen, setIsDesktopSidebarHoverOpen] = useState(false);
+  const [isMobileView, setIsMobileView] = useState(
+    typeof window !== "undefined"
+      ? window.matchMedia("(max-width: 768px)").matches
+      : false,
+  );
   const [menuFilter, setMenuFilter] = useState("");
   const menuSections = getAllowedMenuSections(user);
   const allRoutes = getAllowedAdminRoutes(user);
@@ -58,6 +65,9 @@ function AdminLayout() {
   const jumpValue = allRoutes.some((route) => route.to === location.pathname)
     ? location.pathname
     : allRoutes[0]?.to || "";
+  const isSidebarOpen = isMobileView
+    ? isMobileMenuOpen
+    : isDesktopSidebarPinned || isDesktopSidebarHoverOpen;
 
   const filteredSections = useMemo(() => {
     const query = menuFilter.trim().toLowerCase();
@@ -139,7 +149,32 @@ function AdminLayout() {
   }, [location.pathname]);
 
   useEffect(() => {
-    if (!isMobileMenuOpen) return undefined;
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
+
+    const syncMode = (event) => {
+      const matches = Boolean(event?.matches ?? mediaQuery.matches);
+      setIsMobileView(matches);
+      if (matches) {
+        setIsDesktopSidebarHoverOpen(false);
+        setIsDesktopSidebarPinned(false);
+      } else {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    syncMode();
+
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", syncMode);
+      return () => mediaQuery.removeEventListener("change", syncMode);
+    }
+
+    mediaQuery.addListener(syncMode);
+    return () => mediaQuery.removeListener(syncMode);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobileView || !isMobileMenuOpen) return undefined;
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -147,7 +182,7 @@ function AdminLayout() {
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [isMobileMenuOpen]);
+  }, [isMobileMenuOpen, isMobileView]);
 
   function getBadgeCount(routePath) {
     if (routePath === "/admin/leads") return visibleIndicators.leads;
@@ -158,22 +193,66 @@ function AdminLayout() {
   }
 
   function handleMobileMenuToggle() {
-    setIsMobileMenuOpen((previous) => !previous);
+    if (isMobileView) {
+      setIsMobileMenuOpen((previous) => !previous);
+      return;
+    }
+
+    setIsDesktopSidebarPinned((previous) => {
+      const next = !previous;
+      setIsDesktopSidebarHoverOpen(next);
+      return next;
+    });
   }
 
   function handleMobileMenuClose() {
-    setIsMobileMenuOpen(false);
+    if (isMobileView) {
+      setIsMobileMenuOpen(false);
+      return;
+    }
+
+    setIsDesktopSidebarPinned(false);
+    setIsDesktopSidebarHoverOpen(false);
   }
 
   return (
-    <div className="admin-shell">
+    <div
+      className={`admin-shell${
+        !isMobileView
+          ? isSidebarOpen
+            ? " desktop-sidebar-open"
+            : " desktop-sidebar-collapsed"
+          : ""
+      }`}
+    >
       <SEO
         title={pageTitle}
         description="Indocreonix Admin Panel"
         noindex={true}
       />
+
+      {!isMobileView ? (
+        <button
+          type="button"
+          className="admin-sidebar-edge-trigger"
+          onMouseEnter={() => setIsDesktopSidebarHoverOpen(true)}
+          onFocus={() => setIsDesktopSidebarHoverOpen(true)}
+          aria-label="Reveal admin menu"
+        />
+      ) : null}
+
       <aside
-        className={`admin-sidebar${isMobileMenuOpen ? " mobile-open" : ""}`}
+        className={`admin-sidebar${isMobileMenuOpen ? " mobile-open" : ""}${
+          !isMobileView && isSidebarOpen ? " desktop-open" : ""
+        }`}
+        onMouseEnter={() => {
+          if (!isMobileView) setIsDesktopSidebarHoverOpen(true);
+        }}
+        onMouseLeave={() => {
+          if (!isMobileView && !isDesktopSidebarPinned) {
+            setIsDesktopSidebarHoverOpen(false);
+          }
+        }}
       >
         <div className="admin-brand">
           <img src="/logo.png" alt="Indocreonix" />
@@ -240,7 +319,7 @@ function AdminLayout() {
         </button>
       </aside>
 
-      {isMobileMenuOpen ? (
+      {isMobileView && isMobileMenuOpen ? (
         <button
           type="button"
           className="admin-mobile-overlay"
@@ -254,12 +333,18 @@ function AdminLayout() {
           <div className="admin-topbar-title-area">
             <button
               type="button"
-              className={`admin-mobile-menu-btn${isMobileMenuOpen ? " open" : ""}`}
+              className={`admin-mobile-menu-btn${isSidebarOpen ? " open" : ""}`}
               onClick={handleMobileMenuToggle}
+              onMouseEnter={() => {
+                if (!isMobileView) setIsDesktopSidebarHoverOpen(true);
+              }}
+              onFocus={() => {
+                if (!isMobileView) setIsDesktopSidebarHoverOpen(true);
+              }}
               aria-label={
-                isMobileMenuOpen ? "Close admin menu" : "Open admin menu"
+                isSidebarOpen ? "Close admin menu" : "Open admin menu"
               }
-              aria-expanded={isMobileMenuOpen}
+              aria-expanded={isSidebarOpen}
             >
               <span />
               <span />
