@@ -265,11 +265,17 @@ function AdminLayout() {
         <div className="admin-sidebar-tools">
           <input
             className="admin-sidebar-search"
-            type="search"
+            type="text"
             placeholder="Search menu"
             value={menuFilter}
             onChange={(event) => setMenuFilter(event.target.value)}
             aria-label="Search admin menu"
+            autoComplete="off"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
+            inputMode="search"
+            enterKeyHint="search"
           />
         </div>
 
