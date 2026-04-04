@@ -47,50 +47,48 @@ function LoginPage() {
       });
     };
 
-    const initializeGoogleSignIn = () => {
-      if (!mounted || !window.google?.accounts?.id || !googleButtonRef.current)
+    initializeGoogleIdentity(googleClientId, async (response) => {
+      if (!response?.credential) {
+        setError("Google sign-in failed. Please try again.");
         return;
-
-      initializeGoogleIdentity(googleClientId, async (response) => {
-        if (!response?.credential) {
-          setError("Google sign-in failed. Please try again.");
-          return;
-        }
-
-        setError("");
-        setGoogleLoading(true);
-
-        try {
-          await loginWithGoogle(response.credential);
-          navigate("/admin");
-        } catch (err) {
-          if (err?.status === 404) {
-            setError(
-              "Google login endpoint is not configured on backend yet. Please use email/password login for now.",
-            );
-          } else {
-            setError(err.message);
-          }
-        } finally {
-          setGoogleLoading(false);
-        }
-      }).catch((err) => {
-        setError(err.message);
-      });
-
-      renderGoogleButton();
-
-      if (typeof window.ResizeObserver === "function") {
-        resizeObserver = new window.ResizeObserver(() => {
-          renderGoogleButton();
-        });
-        resizeObserver.observe(googleButtonRef.current);
       }
 
-      setGoogleReady(true);
-    };
+      setError("");
+      setGoogleLoading(true);
 
-    initializeGoogleSignIn();
+      try {
+        await loginWithGoogle(response.credential);
+        navigate("/admin");
+      } catch (err) {
+        if (err?.status === 404) {
+          setError(
+            "Google login endpoint is not configured on backend yet. Please use email/password login for now.",
+          );
+        } else {
+          setError(err.message);
+        }
+      } finally {
+        setGoogleLoading(false);
+      }
+    })
+      .then(() => {
+        if (!mounted || !googleButtonRef.current) return;
+
+        renderGoogleButton();
+
+        if (typeof window.ResizeObserver === "function") {
+          resizeObserver = new window.ResizeObserver(() => {
+            renderGoogleButton();
+          });
+          resizeObserver.observe(googleButtonRef.current);
+        }
+
+        setGoogleReady(true);
+      })
+      .catch((err) => {
+        if (!mounted) return;
+        setError(err.message);
+      });
 
     return () => {
       mounted = false;

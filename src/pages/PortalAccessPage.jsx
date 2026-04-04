@@ -253,66 +253,64 @@ function PortalAccessPage({
 
     let mounted = true;
 
-    const initializeGoogle = () => {
-      if (!mounted || !window.google?.accounts?.id || !googleButtonRef.current)
+    initializeGoogleIdentity(googleClientId, async (response) => {
+      if (!response?.credential) {
+        setError("Google authentication failed. Please try again.");
         return;
+      }
 
-      initializeGoogleIdentity(googleClientId, async (response) => {
-        if (!response?.credential) {
-          setError("Google authentication failed. Please try again.");
-          return;
+      setError("");
+      setMessage("");
+      setGoogleLoading(true);
+
+      try {
+        const googlePayload = {
+          credential: response.credential,
+          flow: mode,
+        };
+
+        if (mode === "signup") {
+          googlePayload.track = signupForm.track;
         }
 
-        setError("");
-        setMessage("");
-        setGoogleLoading(true);
+        const result = await portalRequest("/portal/auth/google", {
+          method: "POST",
+          body: JSON.stringify(googlePayload),
+        });
+        setPortalSession({ token: result.token, user: result.user });
+        goToPostAuthDestination(result.user);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setGoogleLoading(false);
+      }
+    })
+      .then(() => {
+        if (!mounted || !googleButtonRef.current) return;
 
-        try {
-          const googlePayload = {
-            credential: response.credential,
-            flow: mode,
-          };
+        googleButtonRef.current.innerHTML = "";
+        const containerWidth = Math.floor(
+          googleButtonRef.current.getBoundingClientRect().width ||
+            googleButtonRef.current.clientWidth ||
+            360,
+        );
+        const width = Math.max(220, containerWidth - 2);
+        window.google.accounts.id.renderButton(googleButtonRef.current, {
+          type: "standard",
+          theme: "filled_blue",
+          size: "large",
+          text: mode === "signup" ? "signup_with" : "signin_with",
+          shape: "pill",
+          width,
+          logo_alignment: "left",
+        });
 
-          if (mode === "signup") {
-            googlePayload.track = signupForm.track;
-          }
-
-          const result = await portalRequest("/portal/auth/google", {
-            method: "POST",
-            body: JSON.stringify(googlePayload),
-          });
-          setPortalSession({ token: result.token, user: result.user });
-          goToPostAuthDestination(result.user);
-        } catch (err) {
-          setError(err.message);
-        } finally {
-          setGoogleLoading(false);
-        }
-      }).catch((err) => {
+        setGoogleReady(true);
+      })
+      .catch((err) => {
+        if (!mounted) return;
         setError(err.message);
       });
-
-      googleButtonRef.current.innerHTML = "";
-      const containerWidth = Math.floor(
-        googleButtonRef.current.getBoundingClientRect().width ||
-          googleButtonRef.current.clientWidth ||
-          360,
-      );
-      const width = Math.max(220, containerWidth - 2);
-      window.google.accounts.id.renderButton(googleButtonRef.current, {
-        type: "standard",
-        theme: "filled_blue",
-        size: "large",
-        text: mode === "signup" ? "signup_with" : "signin_with",
-        shape: "pill",
-        width,
-        logo_alignment: "left",
-      });
-
-      setGoogleReady(true);
-    };
-
-    initializeGoogle();
 
     return () => {
       mounted = false;

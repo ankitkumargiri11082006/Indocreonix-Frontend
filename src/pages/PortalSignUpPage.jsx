@@ -35,65 +35,63 @@ function PortalSignUpPage() {
 
     let mounted = true;
 
-    const initializeGoogleSignIn = () => {
-      if (!mounted || !window.google?.accounts?.id || !googleButtonRef.current)
+    initializeGoogleIdentity(googleClientId, async (response) => {
+      if (!response?.credential) {
+        setError("Google sign-up failed. Please try again.");
         return;
+      }
 
-      initializeGoogleIdentity(googleClientId, async (response) => {
-        if (!response?.credential) {
-          setError("Google sign-up failed. Please try again.");
-          return;
-        }
+      setError("");
+      setMessage("");
+      setGoogleLoading(true);
 
-        setError("");
-        setMessage("");
-        setGoogleLoading(true);
+      try {
+        const result = await portalRequest("/portal/auth/google", {
+          method: "POST",
+          body: JSON.stringify({
+            credential: response.credential,
+            flow: "signup",
+            track: formData.track,
+          }),
+        });
+        setPortalSession({ token: result.token, user: result.user });
+        navigate(
+          result?.user?.defaultDashboard === "project"
+            ? "/project/dashboard"
+            : "/career/dashboard",
+        );
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setGoogleLoading(false);
+      }
+    })
+      .then(() => {
+        if (!mounted || !googleButtonRef.current) return;
 
-        try {
-          const result = await portalRequest("/portal/auth/google", {
-            method: "POST",
-            body: JSON.stringify({
-              credential: response.credential,
-              flow: "signup",
-              track: formData.track,
-            }),
-          });
-          setPortalSession({ token: result.token, user: result.user });
-          navigate(
-            result?.user?.defaultDashboard === "project"
-              ? "/project/dashboard"
-              : "/career/dashboard",
-          );
-        } catch (err) {
-          setError(err.message);
-        } finally {
-          setGoogleLoading(false);
-        }
-      }).catch((err) => {
+        googleButtonRef.current.innerHTML = "";
+        const containerWidth = Math.floor(
+          googleButtonRef.current.getBoundingClientRect().width ||
+            googleButtonRef.current.clientWidth ||
+            360,
+        );
+        const width = Math.max(220, containerWidth - 2);
+        window.google.accounts.id.renderButton(googleButtonRef.current, {
+          type: "standard",
+          theme: "filled_blue",
+          size: "large",
+          text: "signup_with",
+          shape: "pill",
+          width,
+          logo_alignment: "left",
+        });
+
+        setGoogleReady(true);
+      })
+      .catch((err) => {
+        if (!mounted) return;
         setError(err.message);
       });
-
-      googleButtonRef.current.innerHTML = "";
-      const containerWidth = Math.floor(
-        googleButtonRef.current.getBoundingClientRect().width ||
-          googleButtonRef.current.clientWidth ||
-          360,
-      );
-      const width = Math.max(220, containerWidth - 2);
-      window.google.accounts.id.renderButton(googleButtonRef.current, {
-        type: "standard",
-        theme: "filled_blue",
-        size: "large",
-        text: "signup_with",
-        shape: "pill",
-        width,
-        logo_alignment: "left",
-      });
-
-      setGoogleReady(true);
-    };
-
-    initializeGoogleSignIn();
 
     return () => {
       mounted = false;
