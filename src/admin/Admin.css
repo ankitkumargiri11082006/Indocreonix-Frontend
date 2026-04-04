@@ -1388,16 +1388,6 @@
 .admin-sidebar-tools {
   display: grid;
   gap: 0.5rem;
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  padding: 0.1rem 0 0.45rem;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, #ffffff 92%, transparent),
-    color-mix(in srgb, #ffffff 72%, transparent)
-  );
-  backdrop-filter: blur(8px);
 }
 
 .admin-sidebar-search {
