@@ -1394,13 +1394,16 @@
   display: block;
   width: 100%;
   box-sizing: border-box;
+  height: 2.5rem;
   min-height: 2.5rem;
+  max-height: 2.5rem;
   line-height: 1.2;
   font-size: 16px;
   -webkit-appearance: none;
   appearance: none;
+  field-sizing: fixed;
   border: 1px solid color-mix(in srgb, var(--brand-primary) 18%, #dfe5f0);
-  border-radius: 999px;
+  border-radius: 14px;
   padding: 0.5rem 0.75rem;
   font-family: inherit;
   font-weight: 500;
@@ -3188,12 +3191,12 @@
   .admin-sidebar {
     position: fixed;
     top: 0;
-    left: 0;
+    left: -105%;
     width: min(84vw, 320px);
     height: 100vh;
     z-index: 90;
-    transform: translateX(-105%);
-    transition: transform 0.22s ease;
+    transform: none;
+    transition: left 0.22s ease;
     box-shadow: 8px 0 28px rgba(6, 24, 56, 0.14);
     overflow-y: auto;
     pointer-events: auto;
@@ -3201,7 +3204,7 @@
   }
 
   .admin-sidebar.mobile-open {
-    transform: translateX(0);
+    left: 0;
   }
 
   .admin-mobile-overlay {
