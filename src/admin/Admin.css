@@ -2025,14 +2025,31 @@
 }
 
 .admin-card .btn.btn-danger {
-  border: 1px solid #dc2626;
-  background: #dc2626;
-  color: #fff;
+  border: 1px solid #dc2626 !important;
+  background: #dc2626 !important;
+  color: #fff !important;
 }
 
 .admin-card .btn.btn-danger:hover {
-  border-color: #b91c1c;
-  background: #b91c1c;
+  border-color: #b91c1c !important;
+  background: #b91c1c !important;
+}
+
+.admin-table .btn.btn-danger,
+.admin-action-group .btn.btn-danger,
+.admin-inline-stack .btn.btn-danger,
+.admin-form-actions .btn.btn-danger {
+  border: 1px solid #dc2626 !important;
+  background: #dc2626 !important;
+  color: #fff !important;
+}
+
+.admin-table .btn.btn-danger:hover,
+.admin-action-group .btn.btn-danger:hover,
+.admin-inline-stack .btn.btn-danger:hover,
+.admin-form-actions .btn.btn-danger:hover {
+  border-color: #b91c1c !important;
+  background: #b91c1c !important;
 }
 
 .admin-table td .btn {
