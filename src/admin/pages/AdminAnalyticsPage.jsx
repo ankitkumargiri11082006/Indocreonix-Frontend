@@ -11,39 +11,21 @@ function AdminAnalyticsPage() {
       .catch((err) => setError(err.message))
   }, [])
 
-  const breakdowns = analytics?.breakdowns || {}
-  const totals = analytics?.totals || {}
   const ga4 = analytics?.ga4 || null
-
-  const cards = useMemo(
-    () => [
-      { label: 'Total Leads', value: totals.leads ?? '--' },
-      { label: 'Total Applications', value: totals.applications ?? '--' },
-      { label: 'Total Orders', value: totals.orders ?? '--' },
-      { label: 'Active Services', value: totals.services ?? '--' },
-      { label: 'Active Clients', value: totals.clients ?? '--' },
-      { label: 'Active Projects', value: totals.projects ?? '--' },
-      { label: 'Open Opportunities', value: totals.opportunities ?? '--' },
-    ],
-    [totals],
+  const ga4Charts = useMemo(
+    () =>
+      ga4?.enabled
+        ? [
+            { title: 'Traffic Sources', items: ga4.trafficSources || [] },
+            { title: 'Top Pages', items: ga4.topPages || [] },
+            { title: 'Top Countries', items: ga4.topCountries || [] },
+            { title: 'Devices', items: ga4.deviceCategories || [] },
+            { title: 'Realtime by Page', items: ga4.realtimeByPage || [] },
+            { title: 'Realtime by Country', items: ga4.realtimeByCountry || [] },
+          ]
+        : [],
+    [ga4],
   )
-
-  const charts = [
-    { title: 'Leads by Status', items: breakdowns.leadsByStatus || [] },
-    { title: 'Orders by Status', items: breakdowns.ordersByStatus || [] },
-    { title: 'Orders by Category', items: breakdowns.ordersByCategory || [] },
-    { title: 'Applications by Status', items: breakdowns.applicationsByStatus || [] },
-    { title: 'Applications by Type', items: breakdowns.applicationsByType || [] },
-  ]
-
-  const ga4Charts = ga4?.enabled
-    ? [
-        { title: 'Traffic Sources (GA4)', items: ga4.trafficSources || [] },
-        { title: 'Top Pages (GA4)', items: ga4.topPages || [] },
-        { title: 'Top Countries (GA4)', items: ga4.topCountries || [] },
-        { title: 'Devices (GA4)', items: ga4.deviceCategories || [] },
-      ]
-    : []
 
   if (error) {
     return <p className="admin-error">{error}</p>
@@ -51,45 +33,33 @@ function AdminAnalyticsPage() {
 
   return (
     <div className="admin-page-grid">
-      {cards.map((card) => (
-        <article className="admin-card metric" key={card.label}>
-          <p>{card.label}</p>
-          <h3>{card.value}</h3>
-        </article>
-      ))}
-
       {ga4?.enabled ? (
-        <article className="admin-card metric" key="ga4-realtime">
-          <p>Realtime Active Users (GA4)</p>
-          <h3>{ga4.realtimeUsers ?? 0}</h3>
-        </article>
-      ) : null}
+        <>
+          <article className="admin-card metric" key="ga4-realtime">
+            <p>Realtime Active Users</p>
+            <h3>{ga4.realtimeUsers ?? 0}</h3>
+            <small>Last {ga4.dateRangeDays ?? 7} days</small>
+          </article>
 
-      {charts.map((chart) => (
-        <article className="admin-card" key={chart.title}>
-          <h3>{chart.title}</h3>
-          <ul className="admin-list">
-            {chart.items.map((item) => (
-              <li key={item.key}>
-                {item.key.replace(/_/g, ' ')}: {item.count}
-              </li>
-            ))}
-          </ul>
+          {ga4Charts.map((chart) => (
+            <article className="admin-card" key={chart.title}>
+              <h3>{chart.title}</h3>
+              <ul className="admin-list">
+                {chart.items.map((item) => (
+                  <li key={item.label}>
+                    {item.label}: {item.value}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </>
+      ) : (
+        <article className="admin-card">
+          <h3>Google Analytics not connected</h3>
+          <p>Please configure GA4 env vars on the backend to see live traffic data.</p>
         </article>
-      ))}
-
-      {ga4Charts.map((chart) => (
-        <article className="admin-card" key={chart.title}>
-          <h3>{chart.title}</h3>
-          <ul className="admin-list">
-            {chart.items.map((item) => (
-              <li key={item.label}>
-                {item.label}: {item.value}
-              </li>
-            ))}
-          </ul>
-        </article>
-      ))}
+      )}
     </div>
   )
 }
