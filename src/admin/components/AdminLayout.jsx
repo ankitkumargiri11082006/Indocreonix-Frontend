@@ -42,6 +42,7 @@ function AdminLayout() {
     orders: 0,
   });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [menuFilter, setMenuFilter] = useState("");
   const menuSections = getAllowedMenuSections(user);
   const allRoutes = getAllowedAdminRoutes(user);
   const pageTitle = routeTitleMap[location.pathname] || "Admin Panel";
@@ -57,6 +58,20 @@ function AdminLayout() {
   const jumpValue = allRoutes.some((route) => route.to === location.pathname)
     ? location.pathname
     : allRoutes[0]?.to || "";
+
+  const filteredSections = useMemo(() => {
+    const query = menuFilter.trim().toLowerCase();
+    if (!query) return menuSections;
+
+    return menuSections
+      .map((section) => ({
+        ...section,
+        items: section.items.filter((item) =>
+          item.label.toLowerCase().includes(query),
+        ),
+      }))
+      .filter((section) => section.items.length > 0);
+  }, [menuFilter, menuSections]);
 
   const visibleIndicators = useMemo(
     () => ({
@@ -168,9 +183,20 @@ function AdminLayout() {
           </div>
         </div>
 
+        <div className="admin-sidebar-tools">
+          <input
+            className="admin-sidebar-search"
+            type="search"
+            placeholder="Search menu"
+            value={menuFilter}
+            onChange={(event) => setMenuFilter(event.target.value)}
+            aria-label="Search admin menu"
+          />
+        </div>
+
         <nav className="admin-menu">
-          {menuSections.length ? (
-            menuSections.map((section) => (
+          {filteredSections.length ? (
+            filteredSections.map((section) => (
               <div className="admin-menu-section" key={section.title}>
                 <p className="admin-menu-section-title">{section.title}</p>
                 {section.items.map((item) => (
@@ -197,7 +223,7 @@ function AdminLayout() {
             ))
           ) : (
             <p className="admin-muted">
-              No modules are enabled for your account.
+              No matching modules found.
             </p>
           )}
         </nav>
