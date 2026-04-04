@@ -47,6 +47,7 @@ import AdminAuditLogsPage from "./admin/pages/AdminAuditLogsPage";
 import AdminOrdersPage from "./admin/pages/AdminOrdersPage";
 import AdminOrderDetailPage from "./admin/pages/AdminOrderDetailPage";
 import AdminPortalControlPage from "./admin/pages/AdminPortalControlPage";
+import RouteSEO from "./components/RouteSEO";
 // import PwaInstallPrompt from "./components/PwaInstallPrompt";
 import "./App.css";
 import "./admin/Admin.css";
@@ -65,6 +66,7 @@ function App() {
   return (
     <>
       <ScrollToTopOnRouteChange />
+      <RouteSEO />
       {/* <PwaInstallPrompt /> */}
 
       <Routes>
