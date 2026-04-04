@@ -592,14 +592,14 @@
   background: linear-gradient(135deg, #fff6f6, #ffffff);
 }
 
-.admin-order-danger-zone .btn.btn-secondary.danger {
-  border-color: #fca5a5;
-  color: #b91c1c;
-  background: #fff;
+.admin-order-danger-zone .btn.btn-danger {
+  border-color: #b91c1c;
+  background: #dc2626;
+  color: #ffffff;
 }
 
-.admin-order-danger-zone .btn.btn-secondary.danger:hover {
-  background: #fee2e2;
+.admin-order-danger-zone .btn.btn-danger:hover {
+  background: #b91c1c;
 }
 
 @media (max-width: 768px) {

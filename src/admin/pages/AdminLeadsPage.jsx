@@ -85,7 +85,7 @@ function AdminLeadsPage() {
                 <td>
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-danger"
                     onClick={() => deleteLead(lead._id, lead.name)}
                     disabled={deletingLeadId === lead._id}
                   >

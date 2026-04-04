@@ -235,7 +235,7 @@ function AdminAuditLogsPage() {
         {isSuperadmin ? (
           <button
             type="button"
-            className="btn btn-secondary"
+            className="btn btn-danger"
             onClick={handleDeleteFiltered}
             disabled={bulkDeleting}
           >
@@ -246,7 +246,7 @@ function AdminAuditLogsPage() {
           <>
             <button
               type="button"
-              className="btn btn-secondary"
+              className="btn btn-danger"
               onClick={() => handleDeleteOlderThan(30)}
               disabled={bulkDeleting}
             >
@@ -254,7 +254,7 @@ function AdminAuditLogsPage() {
             </button>
             <button
               type="button"
-              className="btn btn-secondary"
+              className="btn btn-danger"
               onClick={() => handleDeleteOlderThan(90)}
               disabled={bulkDeleting}
             >
@@ -262,7 +262,7 @@ function AdminAuditLogsPage() {
             </button>
             <button
               type="button"
-              className="btn btn-secondary"
+              className="btn btn-danger"
               onClick={() => handleDeleteOlderThan(180)}
               disabled={bulkDeleting}
             >
@@ -315,7 +315,7 @@ function AdminAuditLogsPage() {
                       <td>
                         <button
                           type="button"
-                          className="btn btn-secondary"
+                          className="btn btn-danger"
                           onClick={() => handleDelete(item._id)}
                           disabled={deletingId === item._id}
                         >

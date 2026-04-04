@@ -140,7 +140,7 @@ function AdminServicesPage() {
                   <td>
                     <div className="admin-action-group">
                       <button type="button" className="btn btn-secondary" onClick={() => { setEditingId(item._id); setImageFile(null); setForm({ title: item.title, description: item.description, image: item.image || '', order: item.order || 0, isActive: item.isActive }) }}>Edit</button>
-                      <button type="button" className="btn btn-secondary" onClick={() => removeItem(item._id)}>Delete</button>
+                      <button type="button" className="btn btn-danger" onClick={() => removeItem(item._id)}>Delete</button>
                     </div>
                   </td>
                 </tr>

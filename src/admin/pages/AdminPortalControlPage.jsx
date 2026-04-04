@@ -464,7 +464,7 @@ function AdminPortalControlPage() {
                             </button>
                             <button
                               type="button"
-                              className="btn btn-secondary admin-btn-danger"
+                              className="btn btn-danger"
                               onClick={() => deletePortalUser(user)}
                               disabled={deletingUserId === user.id}
                             >

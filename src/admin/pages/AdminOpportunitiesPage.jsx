@@ -265,7 +265,7 @@ function AdminOpportunitiesPage() {
                       >
                         Edit
                       </button>
-                      <button type="button" className="btn btn-secondary" onClick={() => removeItem(item._id)}>Delete</button>
+                      <button type="button" className="btn btn-danger" onClick={() => removeItem(item._id)}>Delete</button>
                     </div>
                   </td>
                 </tr>

@@ -113,7 +113,7 @@ function AdminMediaPage() {
                 </button>
                 <button
                   type="button"
-                  className="btn btn-secondary admin-media-delete"
+                  className="btn btn-danger admin-media-delete"
                   onClick={() => deleteAsset(asset._id)}
                 >
                   Delete

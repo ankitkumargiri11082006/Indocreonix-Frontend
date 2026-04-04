@@ -1184,6 +1184,19 @@ canvas {
   border-radius: 4px;
 }
 
+.btn-danger {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: #ffffff;
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3);
+  border-radius: 4px;
+}
+
+.btn-danger:hover {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
 .page-hero .btn-secondary {
   background: transparent;
   border-color: #dadce0;

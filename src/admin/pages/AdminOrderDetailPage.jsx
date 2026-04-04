@@ -386,7 +386,7 @@ function AdminOrderDetailPage() {
               <p className="admin-order-meta">Deleting this request removes all uploaded files permanently.</p>
               <button
                 type="button"
-                className="btn btn-secondary danger"
+                className="btn btn-danger"
                 onClick={deleteOrder}
                 disabled={deletingOrder}
               >
