@@ -699,6 +699,20 @@
   box-sizing: border-box;
 }
 
+@media (min-width: 761px) {
+  .portal-user-sidebar,
+  .portal-user-shell-dashboard-visible .portal-user-sidebar {
+    top: 78px;
+    height: calc(100vh - 78px);
+  }
+
+  .portal-user-sidebar-edge-trigger {
+    top: 78px;
+    bottom: auto;
+    height: calc(100vh - 78px);
+  }
+}
+
 .portal-user-sidebar.desktop-open {
   transform: translateX(0);
   opacity: 1;

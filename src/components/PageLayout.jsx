@@ -17,7 +17,7 @@ function PageLayout() {
 
   return (
     <div className="site-shell">
-      {isPortalRoute ? null : <Navbar />}
+      <Navbar />
       <main className="site-main">
         <Outlet />
       </main>

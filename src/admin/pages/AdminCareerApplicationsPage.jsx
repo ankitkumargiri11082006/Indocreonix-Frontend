@@ -365,7 +365,7 @@ function AdminCareerApplicationsPage() {
 
               return (
                 <Fragment key={item._id}>
-                  <tr>
+                  <tr className={isExpanded ? 'admin-row-selected' : ''}>
                     <td>
                       <div className="admin-inline-stack" style={{ gap: '2px' }}>
                         <strong>{item.fullName}</strong>
@@ -409,7 +409,7 @@ function AdminCareerApplicationsPage() {
                   </tr>
 
                   {isExpanded ? (
-                    <tr className="admin-app-row-sub">
+                    <tr className="admin-app-row-sub admin-row-selected-sub">
                       <td colSpan={6}>
                         <div className="admin-app-details">
                           <div className="admin-inline-stack" style={{ gap: '12px' }}>

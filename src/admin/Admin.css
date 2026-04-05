@@ -336,6 +336,22 @@
   padding: 0;
 }
 
+.admin-table tbody tr.admin-row-selected > td {
+  background: linear-gradient(
+    120deg,
+    color-mix(in srgb, var(--brand-primary) 10%, #f6f9fd),
+    #ffffff
+  );
+}
+
+.admin-table tbody tr.admin-row-selected-sub > td {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--brand-primary) 12%, #f3f6fb),
+    #ffffff
+  );
+}
+
 .admin-app-details {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);

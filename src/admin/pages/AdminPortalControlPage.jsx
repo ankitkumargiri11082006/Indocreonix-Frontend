@@ -38,6 +38,7 @@ function AdminPortalControlPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [selectedDetails, setSelectedDetails] = useState(null);
+  const [highlightUserId, setHighlightUserId] = useState("");
   const [editPanel, setEditPanel] = useState({
     open: false,
     type: "",
@@ -140,6 +141,7 @@ function AdminPortalControlPage() {
 
   async function openUserDetails(userId) {
     setError("");
+    setHighlightUserId(userId);
     setSelectedDetails(null);
     setDetailsLoading(true);
 
@@ -165,6 +167,7 @@ function AdminPortalControlPage() {
   }
 
   function openUserEditForm(user) {
+    setHighlightUserId(user.id);
     setEditPanel({
       open: true,
       type: "user",
@@ -190,6 +193,10 @@ function AdminPortalControlPage() {
         String(user.email || "").toLowerCase() ===
         String(item.email || "").toLowerCase(),
     );
+
+    if (relatedUser?.id) {
+      setHighlightUserId(relatedUser.id);
+    }
     setEditPanel({
       open: true,
       type: "career",
@@ -220,6 +227,10 @@ function AdminPortalControlPage() {
         String(user.email || "").toLowerCase() ===
         String(item.email || "").toLowerCase(),
     );
+
+    if (relatedUser?.id) {
+      setHighlightUserId(relatedUser.id);
+    }
     setEditPanel({
       open: true,
       type: "project",
@@ -255,6 +266,15 @@ function AdminPortalControlPage() {
       submitting: false,
     });
   }
+
+  const highlightedEmail =
+    portalUsers.find((user) => user.id === highlightUserId)?.email ||
+    selectedDetails?.user?.email ||
+    "";
+
+  const isHighlightedEmail = (value) =>
+    highlightedEmail &&
+    String(value || "").toLowerCase() === String(highlightedEmail).toLowerCase();
 
   function onEditFieldChange(event) {
     const { name, value } = event.target;
@@ -386,8 +406,10 @@ function AdminPortalControlPage() {
                     const projectChecked = Boolean(user.access?.project);
                     const activeChecked = Boolean(user.isActive);
 
+                    const isSelected = user.id === highlightUserId;
+
                     return (
-                      <tr key={user.id}>
+                      <tr key={user.id} className={isSelected ? "admin-row-selected" : ""}>
                         <td>
                           <div className="admin-portal-user-cell">
                             {user.avatarUrl ? (
@@ -518,7 +540,7 @@ function AdminPortalControlPage() {
               <tbody>
                 {careerItems.length ? (
                   careerItems.map((item) => (
-                    <tr key={item._id}>
+                    <tr key={item._id} className={isHighlightedEmail(item.email) ? "admin-row-selected" : ""}>
                       <td>{item.fullName}</td>
                       <td>{item.email}</td>
                       <td>{item.opportunity?.title || item.roleType}</td>
@@ -606,7 +628,7 @@ function AdminPortalControlPage() {
               <tbody>
                 {projectItems.length ? (
                   projectItems.map((item) => (
-                    <tr key={item._id}>
+                    <tr key={item._id} className={isHighlightedEmail(item.email) ? "admin-row-selected" : ""}>
                       <td>{item.fullName}</td>
                       <td>{item.email}</td>
                       <td>
@@ -688,7 +710,10 @@ function AdminPortalControlPage() {
               <button
                 type="button"
                 className="btn btn-secondary"
-                onClick={() => setSelectedDetails(null)}
+                onClick={() => {
+                  setSelectedDetails(null);
+                  setHighlightUserId("");
+                }}
               >
                 Close
               </button>
