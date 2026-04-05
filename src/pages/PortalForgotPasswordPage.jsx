@@ -2,10 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SEO from "../components/SEO";
 import PasswordResetSuccessPopup from "../components/PasswordResetSuccessPopup";
+import { apiBaseUrl } from "../lib/apiClient";
 import "./PortalForgotPasswordPage.css";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+const API_BASE_URL = apiBaseUrl();
 
 function PortalForgotPasswordPage() {
   const navigate = useNavigate();

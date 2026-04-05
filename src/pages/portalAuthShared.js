@@ -1,41 +1,17 @@
+import { apiBaseUrl } from "../lib/apiClient";
+
 export const PORTAL_TOKEN_KEY = "indocx_portal_token";
 export const PORTAL_USER_KEY = "indocx_portal_user";
 export const PORTAL_SESSION_EXPIRES_AT_KEY = "indocx_portal_session_expires_at";
 export const PORTAL_SESSION_DURATION_MS = 30 * 60 * 1000;
+
+const API_BASE_URL = apiBaseUrl();
 
 function notifyPortalSessionUpdated() {
   if (typeof window !== "undefined") {
     window.dispatchEvent(new Event("portal-session-updated"));
   }
 }
-
-export function normalizeApiBaseUrl(rawBaseUrl) {
-  const fallback = "http://localhost:5000/api";
-  const fromEnv = (rawBaseUrl || "").trim();
-
-  const useLocalDevApi =
-    typeof window !== "undefined" &&
-    import.meta.env.DEV &&
-    /^(localhost|127\.0\.0\.1)$/i.test(window.location.hostname) &&
-    /onrender\.com/i.test(fromEnv);
-
-  const candidate = useLocalDevApi ? fallback : (fromEnv || fallback);
-
-  try {
-    const url = new URL(candidate);
-    const pathname = url.pathname.replace(/\/$/, "");
-    const normalizedPath = pathname && pathname !== "/" ? pathname : "/api";
-    return `${url.origin}${normalizedPath}`;
-  } catch {
-    const sanitized = candidate.replace(/\/$/, "");
-    if (/\/api$/i.test(sanitized)) {
-      return sanitized;
-    }
-    return `${sanitized}/api`;
-  }
-}
-
-const API_BASE_URL = normalizeApiBaseUrl(import.meta.env.VITE_API_BASE_URL);
 
 export function getPortalUser() {
   const expiresAtRaw = localStorage.getItem(PORTAL_SESSION_EXPIRES_AT_KEY);

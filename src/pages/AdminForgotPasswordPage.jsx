@@ -3,10 +3,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import SEO from "../components/SEO";
 import PasswordResetSuccessPopup from "../components/PasswordResetSuccessPopup";
 import { ADMIN_BASE_PATH, adminPath } from "../admin/adminPath";
+import { apiBaseUrl } from "../lib/apiClient";
 import "./AdminForgotPasswordPage.css";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+const API_BASE_URL = apiBaseUrl();
 
 function AdminForgotPasswordPage() {
   const navigate = useNavigate();

@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { apiBaseUrl } from '../lib/apiClient'
 
-const API_BASE = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api').replace(/\/$/, '')
+const API_BASE = apiBaseUrl()
 const MAX_MB = 5
 const MAX_BYTES = MAX_MB * 1024 * 1024
 
