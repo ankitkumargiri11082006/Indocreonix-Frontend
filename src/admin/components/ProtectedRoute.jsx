@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { getFirstAllowedAdminRoute, hasAdminPermission } from "../permissions";
+import { ADMIN_BASE_PATH } from "../adminPath";
 
 function ProtectedRoute({ children, roles = [], permission }) {
   const { user, loading, isAuthenticated, refreshUser } = useAuth();
@@ -56,7 +57,7 @@ function ProtectedRoute({ children, roles = [], permission }) {
   }
 
   if (roles.length && !roles.includes(user?.role)) {
-    return <Navigate to="/admin" replace />;
+    return <Navigate to={ADMIN_BASE_PATH} replace />;
   }
 
   if (missingPermission) {

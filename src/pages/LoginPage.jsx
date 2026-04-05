@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import SEO from "../components/SEO";
 import { initializeGoogleIdentity } from "../lib/googleIdentity";
+import { ADMIN_BASE_PATH } from "../admin/adminPath";
 
 function LoginPage() {
   const { login, loginWithGoogle } = useAuth();
@@ -58,7 +59,7 @@ function LoginPage() {
 
       try {
         await loginWithGoogle(response.credential);
-        navigate("/admin");
+        navigate(ADMIN_BASE_PATH);
       } catch (err) {
         if (err?.status === 404) {
           setError(
@@ -105,7 +106,7 @@ function LoginPage() {
 
     try {
       await login(formData.email, formData.password);
-      navigate("/admin");
+      navigate(ADMIN_BASE_PATH);
     } catch (err) {
       setError(err.message);
     } finally {

@@ -10,26 +10,27 @@ import { useAuth } from "../../context/AuthContext";
 import { apiRequest } from "../../lib/apiClient";
 import { getAllowedAdminRoutes, getAllowedMenuSections } from "../permissions";
 import SEO from "../../components/SEO";
+import { ADMIN_BASE_PATH, adminPath } from "../adminPath";
 
 const routeTitleMap = {
-  "/admin": "Dashboard",
-  "/admin/analytics": "Analytics",
-  "/admin/projects": "Projects",
-  "/admin/clients": "Clients",
-  "/admin/services": "Services",
-  "/admin/orders": "Orders",
-  "/admin/openings": "Openings",
-  "/admin/applications": "Applications",
-  "/admin/audit-logs": "Audit Logs",
-  "/admin/users": "Users",
-  "/admin/portal-control": "Portal Control",
-  "/admin/leads": "Leads",
-  "/admin/content": "Content",
-  "/admin/media": "Media",
-  "/admin/integrations": "Integrations",
-  "/admin/settings": "Settings",
-  "/admin/profile": "Profile",
-  "/admin/change-password": "Change Password",
+  [ADMIN_BASE_PATH]: "Dashboard",
+  [adminPath("analytics")]: "Analytics",
+  [adminPath("projects")]: "Projects",
+  [adminPath("clients")]: "Clients",
+  [adminPath("services")]: "Services",
+  [adminPath("orders")]: "Orders",
+  [adminPath("openings")]: "Openings",
+  [adminPath("applications")]: "Applications",
+  [adminPath("audit-logs")]: "Audit Logs",
+  [adminPath("users")]: "Users",
+  [adminPath("portal-control")]: "Portal Control",
+  [adminPath("leads")]: "Leads",
+  [adminPath("content")]: "Content",
+  [adminPath("media")]: "Media",
+  [adminPath("integrations")]: "Integrations",
+  [adminPath("settings")]: "Settings",
+  [adminPath("profile")]: "Profile",
+  [adminPath("change-password")]: "Change Password",
 };
 
 function AdminLayout() {
@@ -57,8 +58,8 @@ function AdminLayout() {
   const activeSection =
     menuSections.find((section) =>
       section.items.some((item) =>
-        item.to === "/admin"
-          ? location.pathname === "/admin"
+        item.to === ADMIN_BASE_PATH
+          ? location.pathname === ADMIN_BASE_PATH
           : location.pathname.startsWith(item.to),
       ),
     ) || menuSections[0];
@@ -85,13 +86,13 @@ function AdminLayout() {
 
   const visibleIndicators = useMemo(
     () => ({
-      leads: location.pathname.startsWith("/admin/leads")
+      leads: location.pathname.startsWith(adminPath("leads"))
         ? 0
         : Number(indicators.leads || 0),
-      applications: location.pathname.startsWith("/admin/applications")
+      applications: location.pathname.startsWith(adminPath("applications"))
         ? 0
         : Number(indicators.applications || 0),
-      orders: location.pathname.startsWith("/admin/orders")
+      orders: location.pathname.startsWith(adminPath("orders"))
         ? 0
         : Number(indicators.orders || 0),
     }),
@@ -185,10 +186,10 @@ function AdminLayout() {
   }, [isMobileMenuOpen, isMobileView]);
 
   function getBadgeCount(routePath) {
-    if (routePath === "/admin/leads") return visibleIndicators.leads;
-    if (routePath === "/admin/applications")
+    if (routePath === adminPath("leads")) return visibleIndicators.leads;
+    if (routePath === adminPath("applications"))
       return visibleIndicators.applications;
-    if (routePath === "/admin/orders") return visibleIndicators.orders;
+    if (routePath === adminPath("orders")) return visibleIndicators.orders;
     return 0;
   }
 
@@ -288,7 +289,7 @@ function AdminLayout() {
                   <NavLink
                     key={item.to}
                     to={item.to}
-                    end={item.to === "/admin"}
+                    end={item.to === ADMIN_BASE_PATH}
                     className={({ isActive }) =>
                       isActive ? "admin-menu-link active" : "admin-menu-link"
                     }

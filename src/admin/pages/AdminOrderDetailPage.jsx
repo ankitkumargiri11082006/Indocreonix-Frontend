@@ -7,6 +7,7 @@ import {
   formatOrderFileSize,
   getOrderStatusLabel,
 } from '../lib/orderHelpers'
+import { adminPath } from '../adminPath'
 
 function AdminOrderDetailPage() {
   const { orderId } = useParams()
@@ -108,7 +109,7 @@ function AdminOrderDetailPage() {
       setDeletingOrder(true)
       setError('')
       await apiRequest(`/orders/${order._id}`, { method: 'DELETE' })
-      navigate('/admin/orders')
+      navigate(adminPath('orders'))
     } catch (err) {
       setError(err.message)
       setDeletingOrder(false)
@@ -169,7 +170,7 @@ function AdminOrderDetailPage() {
         <article className="admin-card wide">
           <h3>Order not found</h3>
           <p className="admin-muted">Return to the inbox to select a different request.</p>
-          <button type="button" className="btn btn-secondary" onClick={() => navigate('/admin/orders')}>
+          <button type="button" className="btn btn-secondary" onClick={() => navigate(adminPath('orders'))}>
             Back to Orders
           </button>
         </article>
@@ -220,7 +221,7 @@ function AdminOrderDetailPage() {
     <section className="admin-page-stack">
       <article className="admin-card wide admin-order-detail-headline">
         <div>
-          <button type="button" className="admin-link-btn" onClick={() => navigate('/admin/orders')}>
+          <button type="button" className="admin-link-btn" onClick={() => navigate(adminPath('orders'))}>
             Back to inbox
           </button>
           <h3>{order.fullName}</h3>
@@ -375,7 +376,7 @@ function AdminOrderDetailPage() {
                 <button type="button" className="btn btn-primary" onClick={saveOrder} disabled={saving}>
                   {saving ? 'Saving...' : 'Save changes'}
                 </button>
-                <button type="button" className="btn btn-secondary" onClick={() => navigate('/admin/orders')}>
+                <button type="button" className="btn btn-secondary" onClick={() => navigate(adminPath('orders'))}>
                   Back to inbox
                 </button>
               </div>

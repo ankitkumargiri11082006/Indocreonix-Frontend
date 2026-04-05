@@ -82,6 +82,7 @@ Copy `.env.example` to `.env` and configure:
 - `VITE_GOOGLE_CLIENT_ID`: Google OAuth Web Client ID for admin SSO.
 - `VITE_CHAT_PROVIDER`: Choose between `openai` or `gemini`.
 - `VITE_OPENAI_API_KEY`: Required if using OpenAI as the AI provider.
+- `VITE_ADMIN_PATH`: Optional secret admin base route (default: `/admin`).
 
 ### **2. Google Sign-In (Admin Login)**
 

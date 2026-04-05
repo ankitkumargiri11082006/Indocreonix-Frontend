@@ -10,6 +10,16 @@ const publicDir = path.join(rootDir, 'public');
 const BASE_URL = 'https://indocreonix.com';
 const TODAY = new Date().toISOString().slice(0, 10);
 
+function normalizePath(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '/admin';
+  const withLeadingSlash = raw.startsWith('/') ? raw : `/${raw}`;
+  const withoutTrailingSlash = withLeadingSlash.length > 1 ? withLeadingSlash.replace(/\/+$/g, '') : withLeadingSlash;
+  return withoutTrailingSlash || '/admin';
+}
+
+const ADMIN_BASE_PATH = normalizePath(process.env.VITE_ADMIN_PATH || process.env.ADMIN_PATH || '/admin');
+
 const staticRoutes = [
   { path: '/', priority: '1.0', changefreq: 'weekly' },
   { path: '/about', priority: '0.8', changefreq: 'monthly' },
@@ -59,11 +69,19 @@ async function generateSitemap() {
 }
 
 async function generateRobots() {
+  const adminDisallow = ADMIN_BASE_PATH.endsWith('/') ? ADMIN_BASE_PATH : `${ADMIN_BASE_PATH}/`;
+  const disallows = Array.from(
+    new Set([
+      '/admin/',
+      adminDisallow,
+      '/api/',
+    ]),
+  );
+
   const content = [
     'User-agent: *',
     'Allow: /',
-    'Disallow: /admin/',
-    'Disallow: /api/',
+    ...disallows.map((entry) => `Disallow: ${entry}`),
     '',
     `Sitemap: ${BASE_URL}/sitemap.xml`,
     '',

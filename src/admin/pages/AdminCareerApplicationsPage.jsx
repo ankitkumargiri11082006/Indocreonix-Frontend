@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { apiBaseUrl, apiRequest } from '../../lib/apiClient'
 import AdminDocumentCenter from '../components/AdminDocumentCenter'
 
@@ -16,6 +16,11 @@ function AdminCareerApplicationsPage() {
   const [isUpdatingCertificateApproval, setIsUpdatingCertificateApproval] = useState({})
   const [isDeletingOffer, setIsDeletingOffer] = useState({})
   const [isDeletingCertificate, setIsDeletingCertificate] = useState({})
+  const [expandedRows, setExpandedRows] = useState({})
+
+  function toggleExpandedRow(id) {
+    setExpandedRows((prev) => ({ ...prev, [id]: !prev[id] }))
+  }
 
   function formatDocSize(bytes) {
     if (!bytes || Number.isNaN(bytes)) return ''
@@ -337,21 +342,14 @@ function AdminCareerApplicationsPage() {
       </div>
       {error ? <p className="admin-error">{error}</p> : null}
       <div className="admin-table-wrap">
-        <table className="admin-table">
+        <table className="admin-table admin-table-applications">
           <thead>
             <tr>
-              <th>Name</th>
+              <th>Candidate</th>
               <th>Type</th>
               <th>Opening</th>
-              <th>Email</th>
-              <th>Created</th>
-              <th>IP</th>
-              <th>User Agent</th>
               <th>CV</th>
-              <th>Onboarding Docs</th>
-              <th>Document Center</th>
               <th>Status</th>
-              <th>Admin Notes</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -366,108 +364,156 @@ function AdminCareerApplicationsPage() {
               const certificateSentAt = item.certificate?.sentAt ? new Date(item.certificate.sentAt).toLocaleString() : 'Not sent'
               const createdAtLabel = item.createdAt ? new Date(item.createdAt).toLocaleString() : '-'
               const uaRaw = String(item.userAgent || '').trim()
-              const uaShort = uaRaw ? (uaRaw.length > 48 ? `${uaRaw.slice(0, 48)}…` : uaRaw) : '-'
+              const isExpanded = Boolean(expandedRows[item._id])
 
               return (
-                <tr key={item._id}>
-                  <td>{item.fullName}</td>
-                  <td>{item.roleType}</td>
-                  <td>{item.opportunity?.title || 'General'}</td>
-                  <td>{item.email}</td>
-                  <td>{createdAtLabel}</td>
-                  <td>{item.ip || '-'}</td>
-                  <td title={uaRaw}>{uaShort}</td>
-                  <td>
-                    <a href={item.cvUrl} target="_blank" rel="noreferrer" className="contact-link">View CV</a>
-                  </td>
-                  <td>
-                    {item.onboardingDocsUrl ? (
-                      <div className="admin-inline-stack" style={{ gap: '6px', alignItems: 'flex-start' }}>
-                        <a
-                          href={item.onboardingDocsUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="contact-link"
-                        >
-                          View Docs
-                        </a>
-                        <small className="admin-meta">
-                          {docsName}
-                          {docsSizeLabel ? ` · ${docsSizeLabel}` : ''}
-                        </small>
+                <Fragment key={item._id}>
+                  <tr>
+                    <td>
+                      <div className="admin-inline-stack" style={{ gap: '2px' }}>
+                        <strong>{item.fullName}</strong>
+                        <small className="admin-meta">{item.email}</small>
+                      </div>
+                    </td>
+                    <td>{item.roleType}</td>
+                    <td>{item.opportunity?.title || 'General'}</td>
+                    <td>
+                      <a href={item.cvUrl} target="_blank" rel="noreferrer" className="contact-link">
+                        View CV
+                      </a>
+                    </td>
+                    <td>
+                      <select
+                        className="admin-select"
+                        value={item.status}
+                        onChange={(e) => updateStatus(item._id, e.target.value)}
+                      >
+                        <option value="new">new</option>
+                        <option value="reviewing">reviewing</option>
+                        <option value="shortlisted">shortlisted</option>
+                        <option value="rejected">rejected</option>
+                        <option value="hired">hired</option>
+                      </select>
+                    </td>
+                    <td>
+                      <div className="admin-action-group admin-app-actions">
                         <button
                           type="button"
-                          className="btn btn-danger"
-                          onClick={() => removeOnboardingDocs(item._id)}
-                          disabled={isRemovingDocs[item._id]}
+                          className="btn btn-secondary"
+                          onClick={() => toggleExpandedRow(item._id)}
                         >
-                          {isRemovingDocs[item._id] ? 'Deleting...' : 'Delete PDF'}
+                          {isExpanded ? 'Hide' : 'View more'}
                         </button>
-                        {docsUploadedAt ? (
-                          <small className="admin-meta">Uploaded {docsUploadedAt}</small>
-                        ) : null}
+                        <button type="button" className="btn btn-danger" onClick={() => removeApplication(item._id)}>
+                          Delete
+                        </button>
                       </div>
-                    ) : (
-                      <span className="admin-meta" style={{ color: '#9ca3af' }}>Pending upload</span>
-                    )}
-                  </td>
-                  <td>
-                    <AdminDocumentCenter
-                      item={item}
-                      manage={true}
-                      offerMetaText={offerSentAt}
-                      certificateMetaText={certificateSentAt}
-                      onSendOffer={() => sendOfferLetter(item)}
-                      onSendCertificate={() => sendCertificate(item)}
-                      onToggleOfferApproval={() => setOfferApproval(item, !item.offerLetter?.isApproved)}
-                      onToggleCertificateApproval={() => setCertificateApproval(item, !item.certificate?.isApproved)}
-                      onDeleteOffer={() => deleteOfferLetter(item)}
-                      onDeleteCertificate={() => deleteCertificate(item)}
-                      isSendingOffer={Boolean(isSendingOffer[item._id])}
-                      isSendingCertificate={Boolean(isSendingCertificate[item._id])}
-                      isUpdatingOfferApproval={Boolean(isUpdatingOfferApproval[item._id])}
-                      isUpdatingCertificateApproval={Boolean(isUpdatingCertificateApproval[item._id])}
-                      isDeletingOffer={Boolean(isDeletingOffer[item._id])}
-                      isDeletingCertificate={Boolean(isDeletingCertificate[item._id])}
-                    />
-                  </td>
-                  <td>
-                    <select className="admin-select" value={item.status} onChange={(e) => updateStatus(item._id, e.target.value)}>
-                      <option value="new">new</option>
-                      <option value="reviewing">reviewing</option>
-                      <option value="shortlisted">shortlisted</option>
-                      <option value="rejected">rejected</option>
-                      <option value="hired">hired</option>
-                    </select>
-                  </td>
-                  <td>
-                    <div className="admin-inline-stack">
-                      <textarea
-                        rows="2"
-                        value={draftNotes[item._id] ?? item.adminNotes ?? ''}
-                        onChange={(e) => setDraftNotes((prev) => ({ ...prev, [item._id]: e.target.value }))}
-                      />
-                      <button type="button" className="btn btn-secondary" onClick={() => saveNotes(item._id)}>
-                        Save Note
-                      </button>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="admin-action-group" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
-                      <button
-                        type="button"
-                        className="btn btn-primary"
-                        onClick={() => sendOnboardingDocsRequest(item._id)}
-                        disabled={isSendingRequest[item._id]}
-                      >
-                        {isSendingRequest[item._id] ? 'Sending...' : 'Request Docs'}
-                      </button>
-                      <button type="button" className="btn btn-danger" onClick={() => removeApplication(item._id)}>
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                    </td>
+                  </tr>
+
+                  {isExpanded ? (
+                    <tr className="admin-app-row-sub">
+                      <td colSpan={6}>
+                        <div className="admin-app-details">
+                          <div className="admin-inline-stack" style={{ gap: '12px' }}>
+                            <div className="admin-inline-stack" style={{ gap: '6px' }}>
+                              <strong>Onboarding Docs</strong>
+                              {item.onboardingDocsUrl ? (
+                                <div className="admin-inline-stack" style={{ gap: '6px', alignItems: 'flex-start' }}>
+                                  <div className="admin-action-group admin-app-actions">
+                                    <a
+                                      href={item.onboardingDocsUrl}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="btn btn-secondary"
+                                    >
+                                      View
+                                    </a>
+                                    <button
+                                      type="button"
+                                      className="btn btn-danger"
+                                      onClick={() => removeOnboardingDocs(item._id)}
+                                      disabled={isRemovingDocs[item._id]}
+                                    >
+                                      {isRemovingDocs[item._id] ? 'Deleting...' : 'Delete PDF'}
+                                    </button>
+                                  </div>
+                                  <small className="admin-meta">
+                                    {docsName}
+                                    {docsSizeLabel ? ` · ${docsSizeLabel}` : ''}
+                                    {docsUploadedAt ? ` · Uploaded ${docsUploadedAt}` : ''}
+                                  </small>
+                                </div>
+                              ) : (
+                                <div className="admin-inline-stack" style={{ gap: '6px', alignItems: 'flex-start' }}>
+                                  <small className="admin-meta">Pending upload</small>
+                                  <button
+                                    type="button"
+                                    className="btn btn-primary"
+                                    onClick={() => sendOnboardingDocsRequest(item._id)}
+                                    disabled={isSendingRequest[item._id]}
+                                  >
+                                    {isSendingRequest[item._id] ? 'Sending...' : 'Request Docs'}
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="admin-inline-stack" style={{ gap: '6px' }}>
+                              <strong>Document Center</strong>
+                              <AdminDocumentCenter
+                                item={item}
+                                manage={true}
+                                offerMetaText={offerSentAt}
+                                certificateMetaText={certificateSentAt}
+                                onSendOffer={() => sendOfferLetter(item)}
+                                onSendCertificate={() => sendCertificate(item)}
+                                onToggleOfferApproval={() => setOfferApproval(item, !item.offerLetter?.isApproved)}
+                                onToggleCertificateApproval={() => setCertificateApproval(item, !item.certificate?.isApproved)}
+                                onDeleteOffer={() => deleteOfferLetter(item)}
+                                onDeleteCertificate={() => deleteCertificate(item)}
+                                isSendingOffer={Boolean(isSendingOffer[item._id])}
+                                isSendingCertificate={Boolean(isSendingCertificate[item._id])}
+                                isUpdatingOfferApproval={Boolean(isUpdatingOfferApproval[item._id])}
+                                isUpdatingCertificateApproval={Boolean(isUpdatingCertificateApproval[item._id])}
+                                isDeletingOffer={Boolean(isDeletingOffer[item._id])}
+                                isDeletingCertificate={Boolean(isDeletingCertificate[item._id])}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="admin-inline-stack" style={{ gap: '10px' }}>
+                            <div className="admin-inline-stack" style={{ gap: '6px' }}>
+                              <strong>Admin Notes</strong>
+                              <textarea
+                                className="admin-app-notes"
+                                rows="3"
+                                value={draftNotes[item._id] ?? item.adminNotes ?? ''}
+                                onChange={(e) =>
+                                  setDraftNotes((prev) => ({ ...prev, [item._id]: e.target.value }))
+                                }
+                              />
+                              <div className="admin-action-group admin-app-actions">
+                                <button type="button" className="btn btn-secondary" onClick={() => saveNotes(item._id)}>
+                                  Save Note
+                                </button>
+                              </div>
+                            </div>
+
+                            <div className="admin-inline-stack" style={{ gap: '4px' }}>
+                              <strong>Details</strong>
+                              <small className="admin-meta">Created: {createdAtLabel}</small>
+                              <small className="admin-meta">IP: {item.ip || '-'}</small>
+                              <small className="admin-meta" title={uaRaw}>
+                                User Agent: {uaRaw || '-'}
+                              </small>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : null}
+                </Fragment>
               )
             })}
           </tbody>

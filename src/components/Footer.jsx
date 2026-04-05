@@ -9,6 +9,7 @@ import {
   FiFileText,
   FiSend,
   FiBook,
+  FiHelpCircle,
   FiMail,
   FiPhone,
   FiMapPin,
@@ -85,6 +86,10 @@ function Footer() {
     { label: 'Request Quote', to: '/request-quote', icon: FiFileText },
     { label: 'Contact', to: '/contact', icon: FiSend },
     { label: 'Careers', to: '/careers', icon: FiBriefcase },
+    { label: 'Insights', to: '/insights', icon: FiBook },
+    { label: 'FAQ', to: '/faq', icon: FiHelpCircle },
+    { label: 'Terms & Conditions', to: '/terms-and-conditions', icon: FiFileText },
+    { label: 'Privacy Policy', to: '/privacy-policy', icon: FiFileText },
     { label: 'Internship Apply', to: '/careers/internship', icon: FiBook },
     { label: 'Job Apply', to: '/careers/job', icon: FiCode },
   ]

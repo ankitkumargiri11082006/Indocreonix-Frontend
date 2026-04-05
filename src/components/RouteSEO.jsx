@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import SEO from './SEO';
+import { ADMIN_BASE_PATH } from '../admin/adminPath';
 
 const ROUTE_META = {
   '/': {
@@ -80,7 +81,7 @@ function getRoleTypeTitle(pathname) {
 }
 
 function shouldNoindex(pathname) {
-  if (pathname.startsWith('/admin')) return true;
+  if (pathname.startsWith(ADMIN_BASE_PATH)) return true;
   const privateRoutes = [
     '/login',
     '/forgot-password',
@@ -97,6 +98,10 @@ function shouldNoindex(pathname) {
 
 export default function RouteSEO() {
   const { pathname } = useLocation();
+
+  if (pathname.startsWith(ADMIN_BASE_PATH)) {
+    return null;
+  }
 
   const meta = useMemo(() => {
     return (

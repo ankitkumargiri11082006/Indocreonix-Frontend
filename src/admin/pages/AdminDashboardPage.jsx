@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { apiRequest } from '../../lib/apiClient'
+import { adminPath } from '../adminPath'
 
 function AdminDashboardPage() {
   const [stats, setStats] = useState(null)
@@ -27,12 +28,12 @@ function AdminDashboardPage() {
   ]
 
   const quickActions = [
-    { label: 'Manage Projects', to: '/admin/projects' },
-    { label: 'Manage Clients', to: '/admin/clients' },
-    { label: 'Manage Services', to: '/admin/services' },
-    { label: 'Manage Openings', to: '/admin/openings' },
-    { label: 'Review Applications', to: '/admin/applications' },
-    { label: 'Brand Settings', to: '/admin/settings' },
+    { label: 'Manage Projects', to: adminPath('projects') },
+    { label: 'Manage Clients', to: adminPath('clients') },
+    { label: 'Manage Services', to: adminPath('services') },
+    { label: 'Manage Openings', to: adminPath('openings') },
+    { label: 'Review Applications', to: adminPath('applications') },
+    { label: 'Brand Settings', to: adminPath('settings') },
   ]
 
   return (

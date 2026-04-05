@@ -54,6 +54,7 @@ import AdminOrdersPage from "./admin/pages/AdminOrdersPage";
 import AdminOrderDetailPage from "./admin/pages/AdminOrderDetailPage";
 import AdminPortalControlPage from "./admin/pages/AdminPortalControlPage";
 import RouteSEO from "./components/RouteSEO";
+import { ADMIN_BASE_PATH } from "./admin/adminPath";
 // import PwaInstallPrompt from "./components/PwaInstallPrompt";
 import "./App.css";
 import "./admin/Admin.css";
@@ -80,8 +81,12 @@ function App() {
         <Route path="/forgot-password" element={<AdminForgotPasswordPage />} />
         <Route path="/career/onboarding-documents" element={<CareerOnboardingDocsPage />} />
 
+        {ADMIN_BASE_PATH !== "/admin" ? (
+          <Route path="/admin/*" element={<NotFoundPage />} />
+        ) : null}
+
         <Route
-          path="/admin"
+          path={ADMIN_BASE_PATH}
           element={
             <ProtectedRoute roles={["superadmin", "admin", "editor", "viewer"]}>
               <AdminLayout />
