@@ -9,7 +9,7 @@
   --accent: #ea4335;
   --line: #e8eaed;
   --radius: 8px;
-  --site-header-offset: 78px;
+  --site-header-offset: 72px;
   --glass: rgba(255, 255, 255, 0.95);
   --glass-soft: rgba(255, 255, 255, 0.6);
   --shadow-sm:
@@ -4006,7 +4006,7 @@ canvas {
   }
 
   .site-main {
-    padding-top: 84px;
+    padding-top: var(--site-header-offset, 72px);
   }
 
   .nav-wrap {
