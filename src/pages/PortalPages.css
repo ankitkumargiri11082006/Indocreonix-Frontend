@@ -1823,6 +1823,10 @@
 }
 
 @media (max-width: 760px) {
+  .portal-user-shell {
+    --portal-mobile-bar-height: 56px;
+  }
+
   .portal-user-shell-dashboard-visible {
     grid-template-columns: 1fr;
     padding: 0;
@@ -1898,9 +1902,11 @@
 
   .portal-user-mobile-bar {
     display: flex;
-    position: sticky;
+    position: fixed;
     top: var(--site-header-offset, 78px);
-    z-index: 35;
+    left: 0;
+    right: 0;
+    z-index: 55;
     padding: 0.6rem 0.85rem;
     background: rgba(255, 255, 255, 0.92);
     border-bottom: 1px solid color-mix(in srgb, var(--brand-primary) 12%, #e8eaed);
@@ -1964,6 +1970,8 @@
   .portal-user-main {
     gap: 0.85rem;
     padding-left: 0;
+    grid-template-rows: 1fr;
+    padding-top: calc(var(--site-header-offset, 78px) + var(--portal-mobile-bar-height, 56px));
   }
 
   .portal-shell,

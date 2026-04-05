@@ -15,8 +15,25 @@ function PageLayout() {
     location.pathname.startsWith('/project/dashboard') ||
     location.pathname.startsWith('/portal/project/request')
 
+  const isPortalDashboardRoute =
+    location.pathname.startsWith('/portal/home') ||
+    location.pathname.startsWith('/portal/profile') ||
+    location.pathname.startsWith('/career/dashboard') ||
+    location.pathname.startsWith('/career/applications') ||
+    location.pathname.startsWith('/career/documents') ||
+    location.pathname.startsWith('/career/openings') ||
+    location.pathname.startsWith('/career/onboarding-documents') ||
+    location.pathname.startsWith('/project/dashboard') ||
+    location.pathname.startsWith('/portal/project/request')
+
   return (
-    <div className="site-shell">
+    <div
+      className={
+        isPortalDashboardRoute
+          ? 'site-shell site-shell-portal-dashboard'
+          : 'site-shell'
+      }
+    >
       <Navbar />
       <main className="site-main">
         <Outlet />

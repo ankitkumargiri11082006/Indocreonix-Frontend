@@ -4009,6 +4009,10 @@ canvas {
     padding-top: var(--site-header-offset, 72px);
   }
 
+  .site-shell-portal-dashboard .site-main {
+    padding-top: 0;
+  }
+
   .nav-wrap {
     padding: 0.6rem 0;
     gap: 0.6rem;
