@@ -344,6 +344,9 @@ function AdminCareerApplicationsPage() {
               <th>Type</th>
               <th>Opening</th>
               <th>Email</th>
+              <th>Created</th>
+              <th>IP</th>
+              <th>User Agent</th>
               <th>CV</th>
               <th>Onboarding Docs</th>
               <th>Document Center</th>
@@ -361,6 +364,9 @@ function AdminCareerApplicationsPage() {
               const docsSizeLabel = formatDocSize(item.onboardingDocsBytes)
               const offerSentAt = item.offerLetter?.sentAt ? new Date(item.offerLetter.sentAt).toLocaleString() : 'Not sent'
               const certificateSentAt = item.certificate?.sentAt ? new Date(item.certificate.sentAt).toLocaleString() : 'Not sent'
+              const createdAtLabel = item.createdAt ? new Date(item.createdAt).toLocaleString() : '-'
+              const uaRaw = String(item.userAgent || '').trim()
+              const uaShort = uaRaw ? (uaRaw.length > 48 ? `${uaRaw.slice(0, 48)}…` : uaRaw) : '-'
 
               return (
                 <tr key={item._id}>
@@ -368,6 +374,9 @@ function AdminCareerApplicationsPage() {
                   <td>{item.roleType}</td>
                   <td>{item.opportunity?.title || 'General'}</td>
                   <td>{item.email}</td>
+                  <td>{createdAtLabel}</td>
+                  <td>{item.ip || '-'}</td>
+                  <td title={uaRaw}>{uaShort}</td>
                   <td>
                     <a href={item.cvUrl} target="_blank" rel="noreferrer" className="contact-link">View CV</a>
                   </td>

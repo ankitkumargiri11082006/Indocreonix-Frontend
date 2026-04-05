@@ -1,6 +1,20 @@
 import { useEffect, useState } from 'react'
 import { apiRequest } from '../../lib/apiClient'
 
+function formatDateTime(value) {
+  if (!value) return '-'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return '-'
+  return date.toLocaleString()
+}
+
+function formatUserAgent(value) {
+  const raw = String(value || '').trim()
+  if (!raw) return '-'
+  const max = 48
+  return raw.length > max ? `${raw.slice(0, max)}…` : raw
+}
+
 function AdminLeadsPage() {
   const [leads, setLeads] = useState([])
   const [error, setError] = useState('')
@@ -59,6 +73,9 @@ function AdminLeadsPage() {
               <th>Name</th>
               <th>Email</th>
               <th>Company</th>
+              <th>Created</th>
+              <th>IP</th>
+              <th>User Agent</th>
               <th>Status</th>
               <th>Update</th>
               <th>Delete</th>
@@ -70,6 +87,9 @@ function AdminLeadsPage() {
                 <td>{lead.name}</td>
                 <td>{lead.email}</td>
                 <td>{lead.company || '-'}</td>
+                <td>{formatDateTime(lead.createdAt)}</td>
+                <td>{lead.ip || '-'}</td>
+                <td title={lead.userAgent || ''}>{formatUserAgent(lead.userAgent)}</td>
                 <td>{lead.status}</td>
                 <td>
                   <select

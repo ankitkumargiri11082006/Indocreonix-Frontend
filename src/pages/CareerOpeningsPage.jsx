@@ -10,6 +10,13 @@ function CareerOpeningsPage() {
   const navigate = useNavigate();
   const [openings, setOpenings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [typeFilter, setTypeFilter] = useState("all");
+
+  const visibleOpenings = openings.filter((item) => {
+    if (typeFilter === "internship") return item.type === "internship";
+    if (typeFilter === "job") return item.type !== "internship";
+    return true;
+  });
 
   useEffect(() => {
     let mounted = true;
@@ -93,9 +100,43 @@ function CareerOpeningsPage() {
           </article>
         </div>
 
+        <div className="portal-dashboard-topbar" style={{ marginBottom: "0.9rem" }}>
+          <div>
+            <p className="portal-inline-note" style={{ margin: 0 }}>
+              Showing <strong>{visibleOpenings.length}</strong> of <strong>{openings.length}</strong>
+            </p>
+          </div>
+          <div className="portal-mode-switch" role="tablist" aria-label="Filter openings by role type">
+            <button
+              type="button"
+              className={`portal-mode-btn ${typeFilter === "all" ? "active" : ""}`}
+              onClick={() => setTypeFilter("all")}
+              aria-pressed={typeFilter === "all"}
+            >
+              All
+            </button>
+            <button
+              type="button"
+              className={`portal-mode-btn ${typeFilter === "job" ? "active" : ""}`}
+              onClick={() => setTypeFilter("job")}
+              aria-pressed={typeFilter === "job"}
+            >
+              Jobs
+            </button>
+            <button
+              type="button"
+              className={`portal-mode-btn ${typeFilter === "internship" ? "active" : ""}`}
+              onClick={() => setTypeFilter("internship")}
+              aria-pressed={typeFilter === "internship"}
+            >
+              Internships
+            </button>
+          </div>
+        </div>
+
         <div className="portal-dashboard-grid">
-          {openings.length ? (
-            openings.map((opening) => (
+          {visibleOpenings.length ? (
+            visibleOpenings.map((opening) => (
               <article key={opening._id} className="portal-status-card">
                 <div className="portal-status-head">
                   <p>{String(opening.type || "job").toUpperCase()}</p>
@@ -115,7 +156,11 @@ function CareerOpeningsPage() {
           ) : (
             <article className="portal-status-card">
               <h3>No openings published yet</h3>
-              <p className="portal-status-note">Check back later for updated roles.</p>
+              <p className="portal-status-note">
+                {openings.length
+                  ? "No roles match the selected filter."
+                  : "Check back later for updated roles."}
+              </p>
             </article>
           )}
         </div>

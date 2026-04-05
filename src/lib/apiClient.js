@@ -38,7 +38,7 @@ function buildRequestUrl(path) {
 export async function apiRequest(path, options = {}) {
   const token = localStorage.getItem('indocx_token')
   const isFormData = options?.body instanceof FormData
-  const { timeoutMs = 30000, headers = {}, ...restOptions } = options
+  const { timeoutMs = 30000, headers = {}, credentials, ...restOptions } = options
   const normalizedPath = normalizePath(path)
   const requestUrl = buildRequestUrl(normalizedPath)
 
@@ -48,6 +48,7 @@ export async function apiRequest(path, options = {}) {
   try {
     const response = await fetch(requestUrl, {
       ...restOptions,
+      credentials: credentials ?? 'include',
       headers: {
         ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),

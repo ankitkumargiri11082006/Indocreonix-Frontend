@@ -22,6 +22,7 @@ const sectionItems = [
 function CareersPage() {
   const [internships, setInternships] = useState([])
   const [jobs, setJobs] = useState([])
+  const [typeFilter, setTypeFilter] = useState('all')
 
   useEffect(() => {
     apiRequest('/careers/opportunities/public?type=internship')
@@ -51,55 +52,90 @@ function CareersPage() {
 
       <section className="content-section container">
         <h2>Current Openings</h2>
-        <div className="career-track-grid">
-          <article className="info-card">
-            <h3>Internship Program</h3>
-            <p>
-              {internships[0]?.summary ||
-                'For students and fresh graduates seeking practical industry experience and mentorship.'}
-            </p>
-            <Link className="btn btn-primary career-track-btn" to="/careers/apply/internship">
-              Apply for Internship
-            </Link>
-            {internships.length > 0 ? (
-              <div className="career-opening-list">
-                {internships.map((opening) => (
-                  <article className="career-opening-card" key={opening._id}>
-                    <p className="career-opening-type">Internship</p>
-                    <h4>{opening.title}</h4>
-                    <p>{opening.summary}</p>
-                    <p className="career-opening-meta">{opening.location} • {opening.mode} • {opening.experience}</p>
-                  </article>
-                ))}
-              </div>
-            ) : (
-              <p className="career-opening-empty">No internship openings published yet.</p>
-            )}
-          </article>
-          <article className="info-card">
-            <h3>Full-Time Opportunities</h3>
-            <p>
-              {jobs[0]?.summary ||
-                'For professionals who want to work on production systems and client delivery projects.'}
-            </p>
-            <Link className="btn btn-primary career-track-btn" to="/careers/apply/job">
-              Apply for Job
-            </Link>
-            {jobs.length > 0 ? (
-              <div className="career-opening-list">
-                {jobs.map((opening) => (
-                  <article className="career-opening-card" key={opening._id}>
-                    <p className="career-opening-type">Job</p>
-                    <h4>{opening.title}</h4>
-                    <p>{opening.summary}</p>
-                    <p className="career-opening-meta">{opening.location} • {opening.mode} • {opening.experience}</p>
-                  </article>
-                ))}
-              </div>
-            ) : (
-              <p className="career-opening-empty">No job openings published yet.</p>
-            )}
-          </article>
+
+        <div className="career-filter-row" aria-label="Filter openings">
+          <div className="career-filter-switch" role="tablist" aria-label="Filter openings by type">
+            <button
+              type="button"
+              className={`career-filter-btn ${typeFilter === 'all' ? 'active' : ''}`}
+              onClick={() => setTypeFilter('all')}
+              aria-pressed={typeFilter === 'all'}
+            >
+              All
+            </button>
+            <button
+              type="button"
+              className={`career-filter-btn ${typeFilter === 'internship' ? 'active' : ''}`}
+              onClick={() => setTypeFilter('internship')}
+              aria-pressed={typeFilter === 'internship'}
+            >
+              Internships
+            </button>
+            <button
+              type="button"
+              className={`career-filter-btn ${typeFilter === 'job' ? 'active' : ''}`}
+              onClick={() => setTypeFilter('job')}
+              aria-pressed={typeFilter === 'job'}
+            >
+              Jobs
+            </button>
+          </div>
+        </div>
+
+        <div className={`career-track-grid ${typeFilter !== 'all' ? 'career-track-grid-single' : ''}`}>
+          {(typeFilter === 'all' || typeFilter === 'internship') ? (
+            <article className="info-card">
+              <h3>Internship Program</h3>
+              <p>
+                {internships[0]?.summary ||
+                  'For students and fresh graduates seeking practical industry experience and mentorship.'}
+              </p>
+              <Link className="btn btn-primary career-track-btn" to="/careers/apply/internship">
+                Apply for Internship
+              </Link>
+              {internships.length > 0 ? (
+                <div className="career-opening-list">
+                  {internships.map((opening) => (
+                    <article className="career-opening-card" key={opening._id}>
+                      <p className="career-opening-type">Internship</p>
+                      <h4>{opening.title}</h4>
+                      <p>{opening.summary}</p>
+                      <p className="career-opening-meta">{opening.location} • {opening.mode} • {opening.experience}</p>
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <p className="career-opening-empty">No internship openings published yet.</p>
+              )}
+            </article>
+          ) : null}
+
+          {(typeFilter === 'all' || typeFilter === 'job') ? (
+            <article className="info-card">
+              <h3>Full-Time Opportunities</h3>
+              <p>
+                {jobs[0]?.summary ||
+                  'For professionals who want to work on production systems and client delivery projects.'}
+              </p>
+              <Link className="btn btn-primary career-track-btn" to="/careers/apply/job">
+                Apply for Job
+              </Link>
+              {jobs.length > 0 ? (
+                <div className="career-opening-list">
+                  {jobs.map((opening) => (
+                    <article className="career-opening-card" key={opening._id}>
+                      <p className="career-opening-type">Job</p>
+                      <h4>{opening.title}</h4>
+                      <p>{opening.summary}</p>
+                      <p className="career-opening-meta">{opening.location} • {opening.mode} • {opening.experience}</p>
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <p className="career-opening-empty">No job openings published yet.</p>
+              )}
+            </article>
+          ) : null}
         </div>
       </section>
     </>

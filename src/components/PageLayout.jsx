@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom'
 import Navbar from './Navbar'
 import Footer from './Footer'
+import CookieNotice from './CookieNotice'
 
 function PageLayout() {
   const location = useLocation()
@@ -21,6 +22,7 @@ function PageLayout() {
         <Outlet />
       </main>
       {isPortalRoute ? null : <Footer />}
+      {isPortalRoute ? null : <CookieNotice />}
     </div>
   )
 }

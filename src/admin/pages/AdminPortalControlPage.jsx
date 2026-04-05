@@ -373,6 +373,8 @@ function AdminPortalControlPage() {
                 <tr>
                   <th>Name</th>
                   <th>Email</th>
+                  <th>Reset Required</th>
+                  <th>Failed Attempts</th>
                   <th>Career Access</th>
                   <th>Project Access</th>
                   <th>Email Verified</th>
@@ -411,6 +413,8 @@ function AdminPortalControlPage() {
                           </div>
                         </td>
                         <td>{user.email}</td>
+                        <td>{user.passwordResetRequired ? "Yes" : "No"}</td>
+                        <td>{Number(user.failedLoginAttempts || 0)}</td>
                         <td>
                           <input
                             type="checkbox"
@@ -491,7 +495,7 @@ function AdminPortalControlPage() {
                   })
                 ) : (
                   <tr>
-                    <td colSpan={7}>No portal users found yet.</td>
+                    <td colSpan={9}>No portal users found yet.</td>
                   </tr>
                 )}
               </tbody>

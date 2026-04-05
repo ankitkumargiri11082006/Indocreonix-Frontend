@@ -428,6 +428,18 @@ function AdminUsersPage() {
                 </div>
               </div>
 
+              <div className="admin-user-row">
+                <p className="admin-user-label">Security</p>
+                <div className="admin-action-group" style={{ flexWrap: "wrap" }}>
+                  <span className="admin-meta">
+                    Failed attempts: {Number(user.failedLoginAttempts || 0)}
+                  </span>
+                  <span className="admin-meta">
+                    Reset required: {user.passwordResetRequired ? "Yes" : "No"}
+                  </span>
+                </div>
+              </div>
+
               {isSuperadmin ? (
                 <div className="admin-user-row">
                   <p className="admin-user-label">Superadmin Only</p>
