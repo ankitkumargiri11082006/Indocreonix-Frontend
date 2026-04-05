@@ -1394,6 +1394,13 @@
   letter-spacing: 0.01em;
 }
 
+.portal-session-timer-pill-fixed {
+  position: fixed;
+  top: 10px;
+  right: 12px;
+  z-index: 96;
+}
+
 .portal-dashboard-actions .btn {
   min-height: 42px;
   border-radius: 12px;

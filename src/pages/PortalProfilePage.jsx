@@ -235,7 +235,6 @@ function PortalProfilePage() {
             <p>Review your account details and update them when needed.</p>
           </div>
           <div className="portal-dashboard-actions">
-            <span className="portal-session-timer-pill">Session: {sessionLabel}</span>
             <button type="button" className="btn btn-primary" onClick={requestEdit}>
               Edit Profile
             </button>
