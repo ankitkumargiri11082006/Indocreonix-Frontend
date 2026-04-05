@@ -352,9 +352,6 @@ function AdminPortalControlPage() {
   return (
     <article className="admin-card wide">
       <h3>Portal Control Center</h3>
-      <p className="admin-meta" style={{ marginTop: "-4px" }}>
-        API base: {activeApiBase}
-      </p>
       <p>
         Manage career and project portal users, control access, and update
         progress for candidates and client projects.

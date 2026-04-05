@@ -322,9 +322,6 @@ function AdminCareerApplicationsPage() {
   return (
     <article className="admin-card wide">
       <h3>Career Applications (CV in Cloudinary)</h3>
-      <p className="admin-meta" style={{ marginTop: '-4px' }}>
-        API base: {activeApiBase}
-      </p>
       <div className="admin-toolbar">
         <label>
           Filter by Type
