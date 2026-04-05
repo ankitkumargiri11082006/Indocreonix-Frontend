@@ -61,6 +61,7 @@ export function hasAdminPermission(user, permissionKey) {
 
   if (user.role === "superadmin") return true;
   if (user.role === "editor") return true;
+  if (user.role === "admin" && permissionKey === "portalControl") return true;
   if (user.role !== "admin") return false;
 
   return Boolean(user.permissions?.[permissionKey]);

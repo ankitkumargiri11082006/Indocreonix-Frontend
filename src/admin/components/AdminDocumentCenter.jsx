@@ -10,7 +10,8 @@ function AdminDocumentBlock({
   isUpdatingApproval,
   isDeleting,
 }) {
-  const hasUrl = Boolean(document?.url)
+  const downloadUrl = document?.downloadUrl || document?.url || ''
+  const hasUrl = Boolean(downloadUrl)
   const hasDoc = Boolean(document?.publicId)
 
   return (
@@ -30,10 +31,10 @@ function AdminDocumentBlock({
 
         {hasUrl ? (
           <>
-            <a href={document.url} target="_blank" rel="noreferrer" className="btn btn-secondary">
+            <a href={downloadUrl} target="_blank" rel="noreferrer" className="btn btn-secondary">
               View
             </a>
-            <a href={document.url} download className="btn btn-secondary">
+            <a href={downloadUrl} download className="btn btn-secondary">
               Download
             </a>
           </>
