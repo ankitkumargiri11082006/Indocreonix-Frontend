@@ -1122,6 +1122,7 @@
   gap: 0.5rem;
   padding: 0;
   width: 100%;
+  grid-row: 1;
 }
 
 .portal-user-content {
@@ -1130,6 +1131,7 @@
   min-width: 0;
   width: 100%;
   max-width: 100%;
+  grid-row: 2;
 }
 
 .portal-user-mobile-bar {
@@ -1140,6 +1142,7 @@
   margin: 0;
   width: 100%;
   box-sizing: border-box;
+  grid-row: 1;
 }
 
 .portal-user-sidebar-toggle {
