@@ -277,20 +277,40 @@
 .admin-doc-center-grid {
   gap: 10px;
   align-items: stretch;
-  min-width: 320px;
+  min-width: 260px;
 }
 
 .admin-doc-center-section {
   gap: 6px;
   align-items: flex-start;
+  border: 1px solid #eceff3;
+  border-radius: 12px;
+  padding: 0.55rem;
+  background: #ffffff;
 }
 
 .admin-doc-center-title {
   font-size: 12px;
+  color: #374151;
 }
 
 .admin-doc-center-actions {
   flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+/* Compact Document Center controls inside admin tables. */
+.admin-doc-center-actions .btn {
+  width: auto;
+  min-width: 92px;
+}
+
+.admin-doc-center-actions .btn + .btn {
+  margin-top: 0;
+}
+
+.admin-doc-center-actions .admin-muted {
+  white-space: nowrap;
 }
 
 .admin-order-status-grid {
@@ -1980,6 +2000,10 @@
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #ffffff;
 }
 
 .admin-table tbody tr:hover {
