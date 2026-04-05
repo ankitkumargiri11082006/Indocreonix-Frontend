@@ -1,13 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import SEO from "../components/SEO";
 import { initializeGoogleIdentity } from "../lib/googleIdentity";
 import { ADMIN_BASE_PATH } from "../admin/adminPath";
+import { adminPath } from "../admin/adminPath";
 
 function LoginPage() {
   const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const googleButtonRef = useRef(null);
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
@@ -116,11 +118,13 @@ function LoginPage() {
 
   return (
     <>
-      <SEO
-        title="Login"
-        description="Login to Indocreonix Admin Panel"
-        noindex={true}
-      />
+      {!location.pathname.startsWith(ADMIN_BASE_PATH) ? (
+        <SEO
+          title="Login"
+          description="Login to Indocreonix Admin Panel"
+          noindex={true}
+        />
+      ) : null}
       <section className="auth-shell">
         <div className="auth-grid">
           <aside className="auth-showcase">
@@ -305,7 +309,7 @@ function LoginPage() {
               </button>
 
               <p className="auth-forgot-link">
-                <a href="/forgot-password">Forgot Password?</a>
+                <Link to={adminPath('forgot-password')}>Forgot Password?</Link>
               </p>
             </form>
 

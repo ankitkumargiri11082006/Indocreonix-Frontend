@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import SEO from "../components/SEO";
 import PasswordResetSuccessPopup from "../components/PasswordResetSuccessPopup";
+import { ADMIN_BASE_PATH, adminPath } from "../admin/adminPath";
 import "./AdminForgotPasswordPage.css";
 
 const API_BASE_URL =
@@ -9,6 +10,7 @@ const API_BASE_URL =
 
 function AdminForgotPasswordPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [step, setStep] = useState("email"); // "email", "otp", "password"
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
@@ -132,11 +134,13 @@ function AdminForgotPasswordPage() {
 
   return (
     <>
-      <SEO
-        title="Forgot Password"
-        description="Reset your Indocreonix Admin password"
-        noindex={true}
-      />
+      {!location.pathname.startsWith(ADMIN_BASE_PATH) ? (
+        <SEO
+          title="Forgot Password"
+          description="Reset your Indocreonix Admin password"
+          noindex={true}
+        />
+      ) : null}
       <section className="auth-shell">
         <div className="auth-grid">
           <aside className="auth-showcase">
@@ -170,7 +174,7 @@ function AdminForgotPasswordPage() {
               <button
                 type="button"
                 className="btn-back"
-                onClick={() => navigate("/login")}
+                onClick={() => navigate(adminPath('login'))}
               >
                 ← Back to Login
               </button>

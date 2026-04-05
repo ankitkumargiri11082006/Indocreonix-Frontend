@@ -99,9 +99,7 @@ function shouldNoindex(pathname) {
 export default function RouteSEO() {
   const { pathname } = useLocation();
 
-  if (pathname.startsWith(ADMIN_BASE_PATH)) {
-    return null;
-  }
+  const isAdminRoute = pathname.startsWith(ADMIN_BASE_PATH);
 
   const meta = useMemo(() => {
     return (
@@ -113,6 +111,10 @@ export default function RouteSEO() {
       }
     );
   }, [pathname]);
+
+  if (isAdminRoute) {
+    return null;
+  }
 
   const noindex = shouldNoindex(pathname) || pathname === '*';
 

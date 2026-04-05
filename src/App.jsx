@@ -54,7 +54,7 @@ import AdminOrdersPage from "./admin/pages/AdminOrdersPage";
 import AdminOrderDetailPage from "./admin/pages/AdminOrderDetailPage";
 import AdminPortalControlPage from "./admin/pages/AdminPortalControlPage";
 import RouteSEO from "./components/RouteSEO";
-import { ADMIN_BASE_PATH } from "./admin/adminPath";
+import { ADMIN_BASE_PATH, adminPath } from "./admin/adminPath";
 // import PwaInstallPrompt from "./components/PwaInstallPrompt";
 import "./App.css";
 import "./admin/Admin.css";
@@ -77,8 +77,12 @@ function App() {
       {/* <PwaInstallPrompt /> */}
 
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/forgot-password" element={<AdminForgotPasswordPage />} />
+        <Route path={adminPath("login")} element={<LoginPage />} />
+        <Route path={adminPath("signup")} element={<Navigate to={adminPath("login")} replace />} />
+        <Route path={adminPath("forgot-password")} element={<AdminForgotPasswordPage />} />
+
+        <Route path="/login" element={<NotFoundPage />} />
+        <Route path="/forgot-password" element={<NotFoundPage />} />
         <Route path="/career/onboarding-documents" element={<CareerOnboardingDocsPage />} />
 
         {ADMIN_BASE_PATH !== "/admin" ? (

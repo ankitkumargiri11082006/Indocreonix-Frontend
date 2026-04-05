@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import "./PasswordResetSuccessPopup.css";
+import { adminPath } from "../admin/adminPath";
 
 function PasswordResetSuccessPopup({ isOpen, isAdminPortal = false }) {
   const navigate = useNavigate();
@@ -8,7 +9,7 @@ function PasswordResetSuccessPopup({ isOpen, isAdminPortal = false }) {
 
   function handleLogin() {
     if (isAdminPortal) {
-      navigate("/login");
+      navigate(adminPath('login'));
     } else {
       navigate("/portal?mode=signin");
     }
