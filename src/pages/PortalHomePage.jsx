@@ -114,9 +114,11 @@ function PortalHomePage() {
             <Link className="btn btn-secondary" to="/career/dashboard">
               Career Dashboard
             </Link>
-            <Link className="btn btn-secondary" to="/project/dashboard">
-              Project Dashboard
-            </Link>
+            {user?.access?.project ? (
+              <Link className="btn btn-secondary" to="/project/dashboard">
+                Project Dashboard
+              </Link>
+            ) : null}
             <button
               type="button"
               className="btn btn-primary"
@@ -181,10 +183,12 @@ function PortalHomePage() {
             <h2>Delivery Center</h2>
             <p>Switch to project tracking or start a new request.</p>
             <div className="portal-quick-grid">
-              <Link to="/project/dashboard" className="portal-quick-card">
-                <h3>Project Dashboard</h3>
-                <p>See project progress at a glance.</p>
-              </Link>
+              {user?.access?.project ? (
+                <Link to="/project/dashboard" className="portal-quick-card">
+                  <h3>Project Dashboard</h3>
+                  <p>See project progress at a glance.</p>
+                </Link>
+              ) : null}
               <Link to="/portal/project/request" className="portal-quick-card">
                 <h3>New Project</h3>
                 <p>Start a fresh project request.</p>

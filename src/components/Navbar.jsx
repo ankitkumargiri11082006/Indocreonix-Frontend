@@ -4,6 +4,9 @@ import { NavLink, useLocation } from "react-router-dom";
 import {
   clearPortalSession,
   getPortalUser,
+  getPortalDashboardPath,
+  hasCareerAccess,
+  hasProjectAccess,
   portalRequest,
   updatePortalUser,
 } from "../pages/portalAuthShared";
@@ -190,17 +193,7 @@ function Navbar() {
   }
 
   function getDashboardPath(user) {
-    return user?.defaultDashboard === "project"
-      ? "/project/dashboard"
-      : "/career/dashboard";
-  }
-
-  function hasCareerAccess(user) {
-    return Boolean(user?.access?.career);
-  }
-
-  function hasProjectAccess(user) {
-    return Boolean(user?.access?.project);
+    return getPortalDashboardPath(user);
   }
 
   function getPortalContextFromPath(pathname) {

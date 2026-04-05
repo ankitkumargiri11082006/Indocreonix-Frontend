@@ -158,9 +158,11 @@ function CareerDashboardPage() {
             <p>Monitor your applications, open roles, and approved documents from one place.</p>
           </div>
           <div className="portal-dashboard-actions">
-            <Link className="btn btn-secondary" to="/project/dashboard">
-              Project Dashboard
-            </Link>
+            {user?.access?.project ? (
+              <Link className="btn btn-secondary" to="/project/dashboard">
+                Project Dashboard
+              </Link>
+            ) : null}
             <Link className="btn btn-secondary" to="/career/applications">
               Applications
             </Link>
@@ -270,10 +272,12 @@ function CareerDashboardPage() {
                 <h3>Openings</h3>
                 <p>See what is available now.</p>
               </Link>
-              <Link to="/project/dashboard" className="portal-quick-card">
-                <h3>Project Dashboard</h3>
-                <p>Check project activity.</p>
-              </Link>
+              {user?.access?.project ? (
+                <Link to="/project/dashboard" className="portal-quick-card">
+                  <h3>Project Dashboard</h3>
+                  <p>Check project activity.</p>
+                </Link>
+              ) : null}
             </div>
           </article>
         </div>

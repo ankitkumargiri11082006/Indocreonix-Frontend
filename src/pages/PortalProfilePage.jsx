@@ -376,14 +376,16 @@ function PortalProfilePage() {
                 <h3>Review Applications</h3>
                 <p>Track current statuses and download approved files.</p>
               </button>
-              <button
-                type="button"
-                className="portal-quick-card portal-quick-card-button"
-                onClick={() => navigate("/project/dashboard")}
-              >
-                <h3>Check Projects</h3>
-                <p>Monitor pending and delivered project updates.</p>
-              </button>
+              {user?.access?.project ? (
+                <button
+                  type="button"
+                  className="portal-quick-card portal-quick-card-button"
+                  onClick={() => navigate("/project/dashboard")}
+                >
+                  <h3>Check Projects</h3>
+                  <p>Monitor pending and delivered project updates.</p>
+                </button>
+              ) : null}
             </div>
           </article>
         </div>

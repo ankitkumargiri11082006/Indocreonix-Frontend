@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SEO from "../components/SEO";
-import { portalRequest, setPortalSession } from "./portalAuthShared";
+import { getPortalDashboardPath, portalRequest, setPortalSession } from "./portalAuthShared";
 import { initializeGoogleIdentity } from "../lib/googleIdentity";
 import "./PortalPages.css";
 
@@ -55,11 +55,7 @@ function PortalSignUpPage() {
           }),
         });
         setPortalSession({ token: result.token, user: result.user });
-        navigate(
-          result?.user?.defaultDashboard === "project"
-            ? "/project/dashboard"
-            : "/career/dashboard",
-        );
+        navigate(getPortalDashboardPath(result.user));
       } catch (err) {
         setError(err.message);
       } finally {
@@ -156,11 +152,7 @@ function PortalSignUpPage() {
       });
 
       setPortalSession({ token: result.token, user: result.user });
-      navigate(
-        result?.user?.defaultDashboard === "project"
-          ? "/project/dashboard"
-          : "/career/dashboard",
-      );
+      navigate(getPortalDashboardPath(result.user));
     } catch (err) {
       setError(err.message);
     } finally {

@@ -3,6 +3,7 @@ import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import SEO from "../components/SEO";
 import {
   clearPortalSession,
+  getPortalDashboardPath,
   getPortalUser,
   portalRequest,
   setPortalSession,
@@ -142,15 +143,11 @@ function PortalAccessPage({
 
     if (isSafeNextPath) {
       if (requestedNext.startsWith("/careers") && !user?.access?.career) {
-        return user?.defaultDashboard === "project"
-          ? "/project/dashboard"
-          : "/career/dashboard";
+        return getPortalDashboardPath(user);
       }
 
       if (requestedNext.startsWith("/project") && !user?.access?.project) {
-        return user?.defaultDashboard === "project"
-          ? "/project/dashboard"
-          : "/career/dashboard";
+        return getPortalDashboardPath(user);
       }
 
       return requestedNext;
@@ -164,7 +161,7 @@ function PortalAccessPage({
       return "/project/dashboard";
     }
 
-    return "/portal/home";
+    return getPortalDashboardPath(user);
   }
 
   function goToPostAuthDestination(user) {

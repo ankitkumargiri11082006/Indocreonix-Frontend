@@ -78,6 +78,10 @@ function ProjectDashboardPage() {
     return <Navigate to="/portal" replace />;
   }
 
+  if (!user?.access?.project) {
+    return <Navigate to="/portal/home" replace />;
+  }
+
   return (
     <PortalSidebarLayout
       user={user}

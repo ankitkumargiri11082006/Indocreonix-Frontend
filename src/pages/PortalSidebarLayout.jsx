@@ -320,6 +320,8 @@ export default function PortalSidebarLayout({
         )}s`
       : "";
 
+  const shouldShowSession = Boolean(user && sessionRemainingMs > 0);
+
   const handleSidebarToggle = () => {
     if (isMobileView) {
       setIsMobileMenuOpen((previous) => !previous);
@@ -441,7 +443,7 @@ export default function PortalSidebarLayout({
       </aside>
 
       <div className="portal-user-main">
-        {user && sessionRemainingMs > 0 ? (
+        {!isMobileView && shouldShowSession ? (
           <div
             className="portal-session-timer-pill portal-session-timer-pill-fixed"
             aria-label="Remaining session time"
@@ -450,7 +452,22 @@ export default function PortalSidebarLayout({
           </div>
         ) : null}
 
-        {!isSidebarOpen && (isMobileView || !shouldKeepSidebarVisible) ? (
+        {isMobileView ? (
+          <div className="portal-user-mobile-bar" aria-label="Portal quick bar">
+            <PortalMenuToggle
+              onClick={handleSidebarToggle}
+              className="portal-user-menu-toggle-inline"
+              label={isSidebarOpen ? "Close" : "Menu"}
+            />
+            {shouldShowSession ? (
+              <div className="portal-session-timer-pill" aria-label="Remaining session time">
+                Session: {sessionLabel}
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+
+        {!isMobileView && !isSidebarOpen && !shouldKeepSidebarVisible ? (
           <PortalMenuToggle onClick={handleSidebarToggle} />
         ) : null}
 

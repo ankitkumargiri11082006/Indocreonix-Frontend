@@ -1135,10 +1135,11 @@
 .portal-user-mobile-bar {
   display: none;
   align-items: center;
-  justify-content: flex-end;
-  gap: 0.5rem;
+  justify-content: space-between;
+  gap: 0.65rem;
   margin: 0;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .portal-user-sidebar-toggle {
@@ -1185,6 +1186,15 @@
   right: auto;
   top: calc(var(--site-header-offset, 78px) + 10px);
   z-index: 95;
+}
+
+.portal-user-menu-toggle.portal-user-menu-toggle-inline,
+.portal-user-menu-toggle-inline {
+  position: static;
+  left: auto;
+  right: auto;
+  top: auto;
+  z-index: auto;
 }
 
 .portal-user-shell-dashboard-visible .portal-user-menu-toggle {
@@ -1885,7 +1895,13 @@
 
   .portal-user-mobile-bar {
     display: flex;
-    justify-content: flex-end;
+    position: sticky;
+    top: var(--site-header-offset, 78px);
+    z-index: 35;
+    padding: 0.6rem 0.85rem;
+    background: rgba(255, 255, 255, 0.92);
+    border-bottom: 1px solid color-mix(in srgb, var(--brand-primary) 12%, #e8eaed);
+    backdrop-filter: blur(12px);
   }
 
   .portal-user-menu-toggle {
@@ -1894,6 +1910,21 @@
     left: 10px;
     right: auto;
     top: calc(var(--site-header-offset, 78px) + 8px);
+  }
+
+  .portal-user-mobile-bar .portal-user-menu-toggle {
+    order: 0;
+    margin: 0;
+    left: auto;
+    right: auto;
+    top: auto;
+  }
+
+  .portal-user-mobile-bar .portal-session-timer-pill {
+    margin-left: auto;
+    flex: 0 0 auto;
+    font-size: 0.78rem;
+    padding: 0.3rem 0.6rem;
   }
 
   .portal-user-sidebar {

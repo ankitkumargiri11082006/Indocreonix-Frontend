@@ -72,6 +72,34 @@ export function updatePortalUser(patch = {}) {
   return updatedUser;
 }
 
+export function hasCareerAccess(user) {
+  return Boolean(user?.access?.career);
+}
+
+export function hasProjectAccess(user) {
+  return Boolean(user?.access?.project);
+}
+
+export function getPortalDashboardPath(user) {
+  if (!user) return "/portal";
+
+  const careerAllowed = hasCareerAccess(user);
+  const projectAllowed = hasProjectAccess(user);
+
+  if (user?.defaultDashboard === "project" && projectAllowed) {
+    return "/project/dashboard";
+  }
+
+  if (user?.defaultDashboard === "career" && careerAllowed) {
+    return "/career/dashboard";
+  }
+
+  if (careerAllowed) return "/career/dashboard";
+  if (projectAllowed) return "/project/dashboard";
+
+  return "/portal/home";
+}
+
 export async function portalRequest(path, options = {}) {
   const expiresAt = Number(
     localStorage.getItem(PORTAL_SESSION_EXPIRES_AT_KEY) || 0,
