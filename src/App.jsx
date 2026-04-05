@@ -81,8 +81,8 @@ function App() {
         <Route path={adminPath("signup")} element={<Navigate to={adminPath("login")} replace />} />
         <Route path={adminPath("forgot-password")} element={<AdminForgotPasswordPage />} />
 
-        <Route path="/login" element={<NotFoundPage />} />
-        <Route path="/forgot-password" element={<NotFoundPage />} />
+        <Route path="/login" element={<Navigate to={adminPath("login")} replace />} />
+        <Route path="/forgot-password" element={<Navigate to={adminPath("forgot-password")} replace />} />
         <Route path="/career/onboarding-documents" element={<CareerOnboardingDocsPage />} />
 
         {ADMIN_BASE_PATH !== "/admin" ? (

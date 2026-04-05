@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import SEO from "../components/SEO";
 import {
   clearPortalSession,
@@ -690,7 +690,7 @@ function PortalAccessPage({
                       {loading ? "Signing in..." : "Sign In"}
                     </button>
                     <p className="portal-forgot-link">
-                      <a href="/portal-forgot-password">Forgot Password?</a>
+                      <Link to="/portal-forgot-password">Forgot Password?</Link>
                     </p>
                   </form>
                 ) : signupStep === 1 ? (
