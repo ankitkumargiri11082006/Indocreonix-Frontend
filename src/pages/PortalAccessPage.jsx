@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import SEO from "../components/SEO";
 import {
   clearPortalSession,
   getPortalUser,
   portalRequest,
-  PORTAL_SESSION_EXPIRES_AT_KEY,
   setPortalSession,
   updatePortalUser,
 } from "./portalAuthShared";
@@ -31,11 +30,9 @@ function PortalAccessPage({
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const googleButtonRef = useRef(null);
-  const hasAutoOpenedProfileEditorRef = useRef(false);
 
   const [mode, setMode] = useState("signin");
   const [currentUser, setCurrentUser] = useState(() => getPortalUser());
-  const [sessionRemainingMs, setSessionRemainingMs] = useState(0);
   const [isProfileEditorOpen, setIsProfileEditorOpen] = useState(false);
   const [profileDraft, setProfileDraft] = useState({
     name: "",
@@ -125,20 +122,50 @@ function PortalAccessPage({
     }
   }, [searchParams]);
 
-  useEffect(() => {
-    if (!currentUser) return;
-    const shouldOpenProfile =
+  function getPostAuthDestination(user) {
+    const shouldEditProfile =
       String(searchParams.get("profile") || "").toLowerCase() === "edit";
-    if (shouldOpenProfile && !hasAutoOpenedProfileEditorRef.current) {
-      hasAutoOpenedProfileEditorRef.current = true;
-      openProfileEditor();
-      return;
+    if (shouldEditProfile) {
+      return "/portal/profile?edit=1";
     }
 
-    if (!shouldOpenProfile) {
-      hasAutoOpenedProfileEditorRef.current = false;
+    const safeNextPath = String(nextPath || "").trim();
+    const safeNextFromProp =
+      safeNextPath.startsWith("/") && !safeNextPath.startsWith("//");
+    if (safeNextFromProp) {
+      return safeNextPath;
     }
-  }, [searchParams, currentUser]);
+
+    const requestedNext = String(searchParams.get("next") || "").trim();
+    const isSafeNextPath =
+      requestedNext.startsWith("/") && !requestedNext.startsWith("//");
+
+    if (isSafeNextPath) {
+      if (requestedNext.startsWith("/careers") && !user?.access?.career) {
+        return user?.defaultDashboard === "project"
+          ? "/project/dashboard"
+          : "/career/dashboard";
+      }
+
+      if (requestedNext.startsWith("/project") && !user?.access?.project) {
+        return user?.defaultDashboard === "project"
+          ? "/project/dashboard"
+          : "/career/dashboard";
+      }
+
+      return requestedNext;
+    }
+
+    if (portalIntent === "career" && user?.access?.career) {
+      return "/career/dashboard";
+    }
+
+    if (portalIntent === "project" && user?.access?.project) {
+      return "/project/dashboard";
+    }
+
+    return "/portal/home";
+  }
 
   function goToPostAuthDestination(user) {
     setCurrentUser(user);
@@ -150,76 +177,8 @@ function PortalAccessPage({
       return;
     }
 
-    const safeNextPath = String(nextPath || "").trim();
-    const safeNextFromProp =
-      safeNextPath.startsWith("/") && !safeNextPath.startsWith("//");
-    if (safeNextFromProp) {
-      navigate(safeNextPath);
-      return;
-    }
-
-    const requestedNext = String(searchParams.get("next") || "").trim();
-    const isSafeNextPath =
-      requestedNext.startsWith("/") && !requestedNext.startsWith("//");
-
-    if (isSafeNextPath) {
-      if (requestedNext.startsWith("/careers") && !user?.access?.career) {
-        navigate(
-          user?.defaultDashboard === "project"
-            ? "/project/dashboard"
-            : "/career/dashboard",
-        );
-        return;
-      }
-
-      if (requestedNext.startsWith("/project") && !user?.access?.project) {
-        navigate(
-          user?.defaultDashboard === "project"
-            ? "/project/dashboard"
-            : "/career/dashboard",
-        );
-        return;
-      }
-
-      navigate(requestedNext);
-      return;
-    }
-
-    if (portalIntent === "career" && user?.access?.career) {
-      navigate("/career/dashboard");
-      return;
-    }
-
-    if (portalIntent === "project" && user?.access?.project) {
-      navigate("/project/dashboard");
-      return;
-    }
-
-    navigate(
-      user?.defaultDashboard === "project"
-        ? "/project/dashboard"
-        : "/career/dashboard",
-    );
+    navigate(getPostAuthDestination(user));
   }
-
-  useEffect(() => {
-    if (!currentUser) return undefined;
-
-    const intervalId = window.setInterval(() => {
-      const expiresAt = Number(
-        localStorage.getItem(PORTAL_SESSION_EXPIRES_AT_KEY) || 0,
-      );
-      const remaining = Math.max(0, expiresAt - Date.now());
-      setSessionRemainingMs(remaining);
-
-      if (remaining <= 0) {
-        clearPortalSession();
-        setCurrentUser(null);
-      }
-    }, 1000);
-
-    return () => window.clearInterval(intervalId);
-  }, [currentUser]);
 
   function switchAuthMode(nextMode) {
     setMode(nextMode);
@@ -239,14 +198,9 @@ function PortalAccessPage({
     setSearchParams(nextParams, { replace: true });
   }
 
-  useEffect(() => {
-    if (!currentUser) return;
-
-    const expiresAt = Number(
-      localStorage.getItem(PORTAL_SESSION_EXPIRES_AT_KEY) || 0,
-    );
-    setSessionRemainingMs(Math.max(0, expiresAt - Date.now()));
-  }, [currentUser]);
+  if (currentUser && !embedded) {
+    return <Navigate to={getPostAuthDestination(currentUser)} replace />;
+  }
 
   useEffect(() => {
     if (!googleClientId) return;
@@ -549,18 +503,15 @@ function PortalAccessPage({
                       className="btn btn-secondary"
                       onClick={() => navigate("/project/dashboard")}
                     >
-                      Service Dashboard
+                      Project Dashboard
                     </button>
                   ) : null}
                   <button
                     type="button"
                     className="btn btn-primary"
-                    onClick={() => {
-                      clearPortalSession();
-                      setCurrentUser(null);
-                    }}
+                    onClick={() => navigate("/portal/home")}
                   >
-                    Logout
+                    Open Portal Home
                   </button>
                 </div>
 
@@ -593,11 +544,6 @@ function PortalAccessPage({
                 <p className="portal-session-user">
                   <strong>Email:</strong> {currentUser.email}
                 </p>
-                <p className="portal-session-user">
-                  <strong>Session Remaining:</strong>{" "}
-                  {Math.floor(sessionRemainingMs / 60000)}m{" "}
-                  {Math.floor((sessionRemainingMs % 60000) / 1000)}s
-                </p>
                 <div className="portal-session-tags" aria-hidden="true">
                   <span>
                     {currentUser?.access?.career
@@ -617,6 +563,16 @@ function PortalAccessPage({
                     onClick={openProfileEditor}
                   >
                     Edit Profile
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => {
+                      clearPortalSession();
+                      setCurrentUser(null);
+                    }}
+                  >
+                    Logout
                   </button>
                 </div>
               </div>

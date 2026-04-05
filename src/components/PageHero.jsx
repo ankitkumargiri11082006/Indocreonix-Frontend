@@ -21,6 +21,8 @@ const themePhotos = {
 
 function PageHero({ eyebrow, title, subtitle, actions, metrics = [], visual = null, theme = '' }) {
   const photoUrl = themePhotos[theme] || themePhotos['default'];
+  const resolvedActions = typeof actions === 'function' ? actions() : actions
+  const resolvedVisual = typeof visual === 'function' ? visual() : visual
 
   return (
     <section className={`clean-hero-section ${theme}`}>
@@ -31,7 +33,9 @@ function PageHero({ eyebrow, title, subtitle, actions, metrics = [], visual = nu
             {eyebrow && <p className="clean-hero-eyebrow">{eyebrow}</p>}
             <h1 className="clean-hero-title">{title}</h1>
             <p className="clean-hero-subtitle">{subtitle}</p>
-            {actions && <div className="clean-hero-actions">{actions}</div>}
+            {resolvedActions && (
+              <div className="clean-hero-actions">{resolvedActions}</div>
+            )}
             
             {metrics.length > 0 && (
               <div className="clean-hero-metrics">
@@ -45,9 +49,9 @@ function PageHero({ eyebrow, title, subtitle, actions, metrics = [], visual = nu
             )}
           </div>
           
-          {visual && (
+          {resolvedVisual && (
             <div className="clean-hero-visual">
-              {visual}
+              {resolvedVisual}
             </div>
           )}
         </div>

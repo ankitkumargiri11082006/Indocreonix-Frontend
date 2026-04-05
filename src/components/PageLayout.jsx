@@ -1,15 +1,26 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import Navbar from './Navbar'
 import Footer from './Footer'
 
 function PageLayout() {
+  const location = useLocation()
+  const isPortalRoute =
+    location.pathname.startsWith('/portal') ||
+    location.pathname.startsWith('/career/dashboard') ||
+    location.pathname.startsWith('/career/applications') ||
+    location.pathname.startsWith('/career/documents') ||
+    location.pathname.startsWith('/career/openings') ||
+    location.pathname.startsWith('/career/onboarding-documents') ||
+    location.pathname.startsWith('/project/dashboard') ||
+    location.pathname.startsWith('/portal/project/request')
+
   return (
     <div className="site-shell">
-      <Navbar />
+      {isPortalRoute ? null : <Navbar />}
       <main className="site-main">
         <Outlet />
       </main>
-      <Footer />
+      {isPortalRoute ? null : <Footer />}
     </div>
   )
 }

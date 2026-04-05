@@ -21,8 +21,14 @@ import PortalAccessPage from "./pages/PortalAccessPage";
 import PortalForgotPasswordPage from "./pages/PortalForgotPasswordPage";
 import PortalSignInPage from "./pages/PortalSignInPage";
 import PortalSignUpPage from "./pages/PortalSignUpPage";
+import PortalHomePage from "./pages/PortalHomePage";
+import PortalProfilePage from "./pages/PortalProfilePage";
 import CareerDashboardPage from "./pages/CareerDashboardPage";
+import CareerApplicationsPage from "./pages/CareerApplicationsPage";
+import CareerDocumentsPage from "./pages/CareerDocumentsPage";
+import CareerOpeningsPage from "./pages/CareerOpeningsPage";
 import ProjectDashboardPage from "./pages/ProjectDashboardPage";
+import PortalProjectRequestPage from "./pages/PortalProjectRequestPage";
 import TermsAndConditionsPage from "./pages/TermsAndConditionsPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import CareerOnboardingDocsPage from "./pages/CareerOnboardingDocsPage";
@@ -239,6 +245,8 @@ function App() {
         <Route element={<PageLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/portal" element={<PortalAccessPage />} />
+          <Route path="/portal/home" element={<PortalHomePage />} />
+          <Route path="/portal/profile" element={<PortalProfilePage />} />
           <Route path="/portal-forgot-password" element={<PortalForgotPasswordPage />} />
           <Route
             path="/portal/signin"
@@ -249,7 +257,11 @@ function App() {
             element={<Navigate to="/portal" replace />}
           />
           <Route path="/career/dashboard" element={<CareerDashboardPage />} />
+          <Route path="/career/applications" element={<CareerApplicationsPage />} />
+          <Route path="/career/documents" element={<CareerDocumentsPage />} />
+          <Route path="/career/openings" element={<CareerOpeningsPage />} />
           <Route path="/project/dashboard" element={<ProjectDashboardPage />} />
+          <Route path="/portal/project/request" element={<PortalProjectRequestPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route
