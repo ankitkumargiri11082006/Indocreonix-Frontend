@@ -83,6 +83,7 @@ Copy `.env.example` to `.env` and configure:
 - `VITE_CHAT_PROVIDER`: Choose between `openai` or `gemini`.
 - `VITE_OPENAI_API_KEY`: Required if using OpenAI as the AI provider.
 - `VITE_ADMIN_PATH`: Optional secret admin base route (default: `/admin`).
+- `VITE_SESSION_TIMEOUT_MINUTES`: Session timeout in minutes for both admin and portal users (default fallback: `30`).
 
 ### **2. Google Sign-In (Admin Login)**
 

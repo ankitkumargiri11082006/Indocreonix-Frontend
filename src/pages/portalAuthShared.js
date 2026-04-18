@@ -3,7 +3,15 @@ import { apiBaseUrl } from "../lib/apiClient";
 export const PORTAL_TOKEN_KEY = "indocx_portal_token";
 export const PORTAL_USER_KEY = "indocx_portal_user";
 export const PORTAL_SESSION_EXPIRES_AT_KEY = "indocx_portal_session_expires_at";
-export const PORTAL_SESSION_DURATION_MS = 30 * 60 * 1000;
+const SESSION_TIMEOUT_MINUTES = Number(
+  import.meta.env.VITE_SESSION_TIMEOUT_MINUTES || 30,
+);
+const NORMALIZED_SESSION_TIMEOUT_MINUTES =
+  Number.isFinite(SESSION_TIMEOUT_MINUTES) && SESSION_TIMEOUT_MINUTES > 0
+    ? SESSION_TIMEOUT_MINUTES
+    : 30;
+export const PORTAL_SESSION_DURATION_MS =
+  NORMALIZED_SESSION_TIMEOUT_MINUTES * 60 * 1000;
 
 const API_BASE_URL = apiBaseUrl();
 

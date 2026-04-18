@@ -5,7 +5,15 @@ const AuthContext = createContext(null);
 
 export const ADMIN_TOKEN_KEY = "indocx_token";
 export const ADMIN_SESSION_EXPIRES_AT_KEY = "indocx_admin_session_expires_at";
-export const ADMIN_SESSION_DURATION_MS = 30 * 60 * 1000;
+const SESSION_TIMEOUT_MINUTES = Number(
+  import.meta.env.VITE_SESSION_TIMEOUT_MINUTES || 30,
+);
+const NORMALIZED_SESSION_TIMEOUT_MINUTES =
+  Number.isFinite(SESSION_TIMEOUT_MINUTES) && SESSION_TIMEOUT_MINUTES > 0
+    ? SESSION_TIMEOUT_MINUTES
+    : 30;
+export const ADMIN_SESSION_DURATION_MS =
+  NORMALIZED_SESSION_TIMEOUT_MINUTES * 60 * 1000;
 
 export function setAdminSessionExpiry() {
   localStorage.setItem(
