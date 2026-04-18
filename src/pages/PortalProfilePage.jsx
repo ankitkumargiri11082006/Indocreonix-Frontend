@@ -4,7 +4,6 @@ import {
   clearPortalSession,
   getPortalUser,
   portalRequest,
-  PORTAL_SESSION_EXPIRES_AT_KEY,
   updatePortalUser,
 } from "./portalAuthShared";
 import SEO from "../components/SEO";
@@ -16,7 +15,6 @@ function PortalProfilePage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [sessionRemainingMs, setSessionRemainingMs] = useState(0);
   const [isProfileEditorOpen, setIsProfileEditorOpen] = useState(false);
   const [profileError, setProfileError] = useState("");
   const [profileMessage, setProfileMessage] = useState("");
@@ -191,30 +189,6 @@ function PortalProfilePage() {
       openProfileEditor();
     }
   }, [searchParams]);
-
-  useEffect(() => {
-    const intervalId = window.setInterval(() => {
-      const expiresAt = Number(
-        localStorage.getItem(PORTAL_SESSION_EXPIRES_AT_KEY) || 0,
-      );
-      const remaining = Math.max(0, expiresAt - Date.now());
-      setSessionRemainingMs(remaining);
-
-      if (remaining <= 0) {
-        clearPortalSession();
-        setUser(null);
-      }
-    }, 1000);
-
-    return () => window.clearInterval(intervalId);
-  }, []);
-
-  const sessionLabel =
-    sessionRemainingMs > 0
-      ? `${Math.floor(sessionRemainingMs / 60000)}m ${Math.floor(
-          (sessionRemainingMs % 60000) / 1000,
-        )}s`
-      : "Expired";
 
   return (
     <PortalSidebarLayout

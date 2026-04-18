@@ -3,34 +3,73 @@ import { apiRequest } from "../lib/apiClient";
 
 const AuthContext = createContext(null);
 
+export const ADMIN_TOKEN_KEY = "indocx_token";
+export const ADMIN_SESSION_EXPIRES_AT_KEY = "indocx_admin_session_expires_at";
+export const ADMIN_SESSION_DURATION_MS = 30 * 60 * 1000;
+
+export function setAdminSessionExpiry() {
+  localStorage.setItem(
+    ADMIN_SESSION_EXPIRES_AT_KEY,
+    String(Date.now() + ADMIN_SESSION_DURATION_MS),
+  );
+}
+
+export function clearAdminSessionStorage() {
+  localStorage.removeItem(ADMIN_TOKEN_KEY);
+  localStorage.removeItem(ADMIN_SESSION_EXPIRES_AT_KEY);
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("indocx_token");
+    const token = localStorage.getItem(ADMIN_TOKEN_KEY);
     if (!token) {
       setLoading(false);
       return;
     }
 
+    const expiresAtRaw = localStorage.getItem(ADMIN_SESSION_EXPIRES_AT_KEY);
+    const expiresAt = Number(expiresAtRaw || 0);
+
+    if (expiresAtRaw && (!Number.isFinite(expiresAt) || Date.now() >= expiresAt)) {
+      clearAdminSessionStorage();
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+
+    if (!expiresAtRaw) {
+      setAdminSessionExpiry();
+    }
+
     apiRequest("/auth/me")
       .then((result) => setUser(result.user))
       .catch(() => {
-        localStorage.removeItem("indocx_token");
+        clearAdminSessionStorage();
         setUser(null);
       })
       .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("indocx_token");
+    const token = localStorage.getItem(ADMIN_TOKEN_KEY);
     if (!token) return undefined;
 
     let disposed = false;
 
     const syncUser = async () => {
-      if (!localStorage.getItem("indocx_token")) return;
+      if (!localStorage.getItem(ADMIN_TOKEN_KEY)) return;
+
+      const expiresAt = Number(
+        localStorage.getItem(ADMIN_SESSION_EXPIRES_AT_KEY) || 0,
+      );
+      if (expiresAt && Date.now() >= expiresAt) {
+        clearAdminSessionStorage();
+        setUser(null);
+        return;
+      }
 
       try {
         const result = await apiRequest("/auth/me");
@@ -80,7 +119,8 @@ export function AuthProvider({ children }) {
           method: "POST",
           body: JSON.stringify({ email, password }),
         });
-        localStorage.setItem("indocx_token", result.token);
+        localStorage.setItem(ADMIN_TOKEN_KEY, result.token);
+        setAdminSessionExpiry();
         setUser(result.user);
         return result.user;
       },
@@ -98,12 +138,13 @@ export function AuthProvider({ children }) {
           throw new Error("Invalid Google login response from server");
         }
 
-        localStorage.setItem("indocx_token", result.token);
+        localStorage.setItem(ADMIN_TOKEN_KEY, result.token);
+        setAdminSessionExpiry();
         setUser(result.user);
         return result.user;
       },
       logout() {
-        localStorage.removeItem("indocx_token");
+        clearAdminSessionStorage();
         setUser(null);
       },
       setCurrentUser(nextUser) {

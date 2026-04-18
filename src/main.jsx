@@ -5,6 +5,7 @@ import './index.css'
 import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
+import SessionTimeoutManager from './components/SessionTimeoutManager'
 
 if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
   const isLocalhost = /^(localhost|127\.0\.0\.1)$/i.test(window.location.hostname)
@@ -23,6 +24,7 @@ createRoot(document.getElementById('root')).render(
       <AuthProvider>
         <BrowserRouter>
           <App />
+          <SessionTimeoutManager />
         </BrowserRouter>
       </AuthProvider>
     </ThemeProvider>

@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import PortalMenuToggle from "../components/PortalMenuToggle";
-import {
-  clearPortalSession,
-  PORTAL_SESSION_EXPIRES_AT_KEY,
-} from "./portalAuthShared";
 
 function getUserInitials(user) {
   const name = String(user?.name || user?.email || "").trim();
@@ -54,9 +50,7 @@ export default function PortalSidebarLayout({
 }) {
   const location = useLocation();
   const sidebarRef = useRef(null);
-  const hasHandledExpiryRef = useRef(false);
   const [menuFilter, setMenuFilter] = useState("");
-  const [sessionRemainingMs, setSessionRemainingMs] = useState(0);
   const [isMobileView, setIsMobileView] = useState(
     typeof window !== "undefined"
       ? window.matchMedia("(max-width: 760px)").matches
@@ -118,38 +112,6 @@ export default function PortalSidebarLayout({
       setIsMobileMenuOpen(false);
     }
   }, [location.pathname, isMobileView]);
-
-  useEffect(() => {
-    const tick = () => {
-      const expiresAt = Number(localStorage.getItem(PORTAL_SESSION_EXPIRES_AT_KEY) || 0);
-      const remaining = Math.max(0, expiresAt - Date.now());
-      setSessionRemainingMs(remaining);
-
-      if (!expiresAt) {
-        hasHandledExpiryRef.current = false;
-        return;
-      }
-
-      if (remaining <= 0 && !hasHandledExpiryRef.current) {
-        hasHandledExpiryRef.current = true;
-
-        if (typeof onLogout === "function") {
-          onLogout();
-        } else {
-          clearPortalSession();
-        }
-      }
-    };
-
-    tick();
-    const intervalId = window.setInterval(tick, 1000);
-    window.addEventListener("portal-session-updated", tick);
-
-    return () => {
-      window.clearInterval(intervalId);
-      window.removeEventListener("portal-session-updated", tick);
-    };
-  }, [onLogout]);
 
   useEffect(() => {
     if (!isMobileView && shouldKeepSidebarVisible && !isDesktopSidebarDismissed) {
@@ -313,15 +275,6 @@ export default function PortalSidebarLayout({
 
   const handleSidebarClose = closeSidebar;
 
-  const sessionLabel =
-    sessionRemainingMs > 0
-      ? `${Math.floor(sessionRemainingMs / 60000)}m ${Math.floor(
-          (sessionRemainingMs % 60000) / 1000,
-        )}s`
-      : "";
-
-  const shouldShowSession = Boolean(user && sessionRemainingMs > 0);
-
   const handleSidebarToggle = () => {
     if (isMobileView) {
       setIsMobileMenuOpen((previous) => !previous);
@@ -443,15 +396,6 @@ export default function PortalSidebarLayout({
       </aside>
 
       <div className="portal-user-main">
-        {!isMobileView && shouldShowSession ? (
-          <div
-            className="portal-session-timer-pill portal-session-timer-pill-fixed"
-            aria-label="Remaining session time"
-          >
-            Session: {sessionLabel}
-          </div>
-        ) : null}
-
         {isMobileView ? (
           <div className="portal-user-mobile-bar" aria-label="Portal quick bar">
             <PortalMenuToggle
@@ -459,11 +403,6 @@ export default function PortalSidebarLayout({
               className="portal-user-menu-toggle-inline"
               label={isSidebarOpen ? "Close" : "Menu"}
             />
-            {shouldShowSession ? (
-              <div className="portal-session-timer-pill" aria-label="Remaining session time">
-                Session: {sessionLabel}
-              </div>
-            ) : null}
           </div>
         ) : null}
 
