@@ -55,6 +55,7 @@ import AdminOrderDetailPage from "./admin/pages/AdminOrderDetailPage";
 import AdminPortalControlPage from "./admin/pages/AdminPortalControlPage";
 import RouteSEO from "./components/RouteSEO";
 import { ADMIN_BASE_PATH, adminPath } from "./admin/adminPath";
+import { getPortalUser } from "./pages/portalAuthShared";
 // import PwaInstallPrompt from "./components/PwaInstallPrompt";
 import "./App.css";
 import "./admin/Admin.css";
@@ -67,6 +68,32 @@ function ScrollToTopOnRouteChange() {
   }, [location]);
 
   return null;
+}
+
+function PortalSessionRoute({ children }) {
+  const portalUser = getPortalUser();
+  if (!portalUser) {
+    return <Navigate to="/portal" replace />;
+  }
+  return children;
+}
+
+function PortalAccessRoute({ children, access }) {
+  const portalUser = getPortalUser();
+
+  if (!portalUser) {
+    return <Navigate to="/portal" replace />;
+  }
+
+  if (access === "career" && !portalUser?.access?.career) {
+    return <Navigate to="/portal/home" replace />;
+  }
+
+  if (access === "project" && !portalUser?.access?.project) {
+    return <Navigate to="/portal/home" replace />;
+  }
+
+  return children;
 }
 
 function App() {
@@ -254,8 +281,22 @@ function App() {
         <Route element={<PageLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/portal" element={<PortalAccessPage />} />
-          <Route path="/portal/home" element={<PortalHomePage />} />
-          <Route path="/portal/profile" element={<PortalProfilePage />} />
+          <Route
+            path="/portal/home"
+            element={
+              <PortalSessionRoute>
+                <PortalHomePage />
+              </PortalSessionRoute>
+            }
+          />
+          <Route
+            path="/portal/profile"
+            element={
+              <PortalSessionRoute>
+                <PortalProfilePage />
+              </PortalSessionRoute>
+            }
+          />
           <Route path="/portal-forgot-password" element={<PortalForgotPasswordPage />} />
           <Route
             path="/portal/signin"
@@ -265,12 +306,54 @@ function App() {
             path="/portal/signup"
             element={<Navigate to="/portal" replace />}
           />
-          <Route path="/career/dashboard" element={<CareerDashboardPage />} />
-          <Route path="/career/applications" element={<CareerApplicationsPage />} />
-          <Route path="/career/documents" element={<CareerDocumentsPage />} />
-          <Route path="/career/openings" element={<CareerOpeningsPage />} />
-          <Route path="/project/dashboard" element={<ProjectDashboardPage />} />
-          <Route path="/portal/project/request" element={<PortalProjectRequestPage />} />
+          <Route
+            path="/career/dashboard"
+            element={
+              <PortalAccessRoute access="career">
+                <CareerDashboardPage />
+              </PortalAccessRoute>
+            }
+          />
+          <Route
+            path="/career/applications"
+            element={
+              <PortalAccessRoute access="career">
+                <CareerApplicationsPage />
+              </PortalAccessRoute>
+            }
+          />
+          <Route
+            path="/career/documents"
+            element={
+              <PortalAccessRoute access="career">
+                <CareerDocumentsPage />
+              </PortalAccessRoute>
+            }
+          />
+          <Route
+            path="/career/openings"
+            element={
+              <PortalAccessRoute access="career">
+                <CareerOpeningsPage />
+              </PortalAccessRoute>
+            }
+          />
+          <Route
+            path="/project/dashboard"
+            element={
+              <PortalAccessRoute access="project">
+                <ProjectDashboardPage />
+              </PortalAccessRoute>
+            }
+          />
+          <Route
+            path="/portal/project/request"
+            element={
+              <PortalAccessRoute access="project">
+                <PortalProjectRequestPage />
+              </PortalAccessRoute>
+            }
+          />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route

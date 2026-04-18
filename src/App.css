@@ -5142,6 +5142,102 @@ canvas {
   }
 }
 
+/* UI stability overrides for overlapping/wrapping issues */
+.project-highlight-grid,
+.card-grid,
+.clients-grid,
+.quote-form-grid,
+.career-form,
+.portal-dashboard-grid,
+.portal-metric-grid,
+.portal-priority-grid,
+.portal-quick-grid {
+  align-items: stretch;
+}
+
+.project-highlight-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+}
+
+.project-highlight-card {
+  grid-template-columns: minmax(84px, 110px) minmax(0, 1fr);
+  align-items: start;
+}
+
+.project-highlight-card > div,
+.project-highlight-card h3,
+.project-highlight-card p {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.quote-form-grid > label,
+.career-form > label {
+  min-width: 0;
+}
+
+.quote-form-grid input,
+.quote-form-grid select,
+.quote-form-grid textarea,
+.career-form input,
+.career-form select,
+.career-form textarea {
+  max-width: 100%;
+}
+
+.quote-actions {
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.portal-dashboard-topbar > div,
+.portal-dashboard-actions {
+  min-width: 0;
+}
+
+.portal-dashboard-actions .btn,
+.portal-priority-item .btn,
+.portal-quick-card {
+  white-space: normal;
+}
+
+@media (max-width: 900px) {
+  .project-highlight-card {
+    grid-template-columns: 1fr;
+    text-align: left;
+    justify-items: start;
+  }
+
+  .project-highlight-logo {
+    width: 72px;
+    height: 72px;
+  }
+
+  .project-highlight-card p,
+  .project-highlight-card h3 {
+    text-align: left;
+  }
+}
+
+@media (max-width: 640px) {
+  .content-section {
+    margin: 1.1rem auto 2.1rem;
+  }
+
+  .quote-form-grid,
+  .career-form {
+    gap: 0.6rem;
+  }
+
+  .portal-dashboard-actions {
+    width: 100%;
+  }
+
+  .portal-dashboard-actions .btn {
+    width: 100%;
+  }
+}
+
 /* Footer v2: full rebuild */
 .site-footer.footer-v2 {
   margin-top: 3rem;
