@@ -119,7 +119,10 @@ function CareerDocumentsPage() {
 
         <div className="portal-document-groups">
           <section className="portal-document-group">
-            <h3>Offer Letters</h3>
+            <header className="portal-document-head">
+              <h3>Offer Letters</h3>
+              <p>Download approved offer letters issued for your applications.</p>
+            </header>
             <div className="portal-dashboard-grid">
               {approvedOfferLetters.length ? (
                 approvedOfferLetters.map((item) => (
@@ -143,7 +146,10 @@ function CareerDocumentsPage() {
           </section>
 
           <section className="portal-document-group">
-            <h3>Certificates</h3>
+            <header className="portal-document-head">
+              <h3>Certificates</h3>
+              <p>Access approved completion and internship certificates.</p>
+            </header>
             <div className="portal-dashboard-grid">
               {approvedCertificates.length ? (
                 approvedCertificates.map((item) => (
