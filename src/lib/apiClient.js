@@ -25,6 +25,7 @@ function normalizeApiBaseUrl(rawBaseUrl) {
 }
 
 const API_BASE_URL = normalizeApiBaseUrl(import.meta.env.VITE_API_BASE_URL)
+const responseCache = new Map()
 
 function normalizePath(path = '') {
   if (!path) return ''
@@ -38,9 +39,22 @@ function buildRequestUrl(path) {
 export async function apiRequest(path, options = {}) {
   const token = localStorage.getItem('indocx_token')
   const isFormData = options?.body instanceof FormData
-  const { timeoutMs = 30000, headers = {}, credentials, ...restOptions } = options
+  const { timeoutMs = 30000, headers = {}, credentials, cacheMs = 0, ...restOptions } = options
   const normalizedPath = normalizePath(path)
   const requestUrl = buildRequestUrl(normalizedPath)
+  const method = String(restOptions.method || 'GET').toUpperCase()
+  const shouldReadCache = method === 'GET' && cacheMs > 0 && !restOptions.body
+  const cacheKey = shouldReadCache ? `${requestUrl}|${token || 'anon'}` : null
+
+  if (cacheKey) {
+    const cached = responseCache.get(cacheKey)
+    if (cached && cached.expiresAt > Date.now()) {
+      return cached.data
+    }
+    if (cached) {
+      responseCache.delete(cacheKey)
+    }
+  }
 
   const controller = new AbortController()
   const timeoutId = typeof window !== 'undefined' ? window.setTimeout(() => controller.abort(), timeoutMs) : null
@@ -64,6 +78,13 @@ export async function apiRequest(path, options = {}) {
       const error = new Error(data.message || `Request failed with status ${response.status}`)
       error.status = response.status
       throw error
+    }
+
+    if (cacheKey) {
+      responseCache.set(cacheKey, {
+        data,
+        expiresAt: Date.now() + cacheMs,
+      })
     }
 
     return data

@@ -27,19 +27,33 @@ function HomePage() {
   const [servicesOffered, setServicesOffered] = useState([])
   const [clientsServed, setClientsServed] = useState([])
   const [projectsDelivered, setProjectsDelivered] = useState([])
+  const [loadingPublicData, setLoadingPublicData] = useState(true)
 
   useEffect(() => {
-    apiRequest('/services/public')
-      .then((result) => setServicesOffered(result.items || []))
-      .catch(() => setServicesOffered([]))
+    let mounted = true
 
-    apiRequest('/clients/public')
-      .then((result) => setClientsServed(result.items || []))
-      .catch(() => setClientsServed([]))
+    Promise.allSettled([
+      apiRequest('/services/public', { cacheMs: 120000 }),
+      apiRequest('/clients/public', { cacheMs: 120000 }),
+      apiRequest('/projects/public', { cacheMs: 120000 }),
+    ]).then(([servicesResult, clientsResult, projectsResult]) => {
+      if (!mounted) return
 
-    apiRequest('/projects/public')
-      .then((result) => setProjectsDelivered(result.items || []))
-      .catch(() => setProjectsDelivered([]))
+      setServicesOffered(
+        servicesResult.status === 'fulfilled' ? servicesResult.value.items || [] : [],
+      )
+      setClientsServed(
+        clientsResult.status === 'fulfilled' ? clientsResult.value.items || [] : [],
+      )
+      setProjectsDelivered(
+        projectsResult.status === 'fulfilled' ? projectsResult.value.items || [] : [],
+      )
+      setLoadingPublicData(false)
+    })
+
+    return () => {
+      mounted = false
+    }
   }, [])
 
   const projectItems = projectsDelivered.map((project) => ({
@@ -125,7 +139,25 @@ function HomePage() {
         subtitle="Explore specialized technology services tailored for startups, enterprises, and growth-stage teams."
       />
 
-      {projectItems.length > 0 ? (
+      {loadingPublicData ? (
+        <section className="content-section container home-projects-section">
+          <p className="section-eyebrow">Proven Outcomes</p>
+          <h2>Projects Delivered by Indocreonix</h2>
+          <p className="section-subtitle">
+            Preparing recent project highlights for you.
+          </p>
+          <div className="card-grid">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <article className="info-card skeleton" key={`project-skeleton-${index}`}>
+                <div className="skeleton-box" style={{ height: 180, marginBottom: 14 }} />
+                <div className="skeleton-text" style={{ width: '64%', height: 20, marginBottom: 12 }} />
+                <div className="skeleton-text" style={{ width: '100%', height: 14, marginBottom: 8 }} />
+                <div className="skeleton-text" style={{ width: '78%', height: 14 }} />
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : projectItems.length > 0 ? (
         <SectionBlock
           title="Projects Delivered by Indocreonix"
           items={projectItems}
@@ -141,7 +173,16 @@ function HomePage() {
         <p className="home-clients-subtitle">
           Organizations that trust Indocreonix to design, build, and grow their digital products.
         </p>
-        {clientsServed.length > 0 ? (
+        {loadingPublicData ? (
+          <div className="clients-grid">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <article className="client-card client-card-minimal skeleton" key={`client-skeleton-${index}`}>
+                <div className="client-card-logo-wrap skeleton-box" />
+                <div className="skeleton-text" style={{ width: '60%', height: 18, margin: '12px auto' }} />
+              </article>
+            ))}
+          </div>
+        ) : clientsServed.length > 0 ? (
           <div className="clients-grid">
             {clientsServed.map((client) => (
               <article className="client-card client-card-minimal" key={client._id || client.name}>

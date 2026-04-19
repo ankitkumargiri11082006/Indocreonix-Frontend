@@ -1,64 +1,65 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import PageLayout from "./components/PageLayout";
-import HomePage from "./pages/HomePage";
-import AboutPage from "./pages/AboutPage";
-import ServicesPage from "./pages/ServicesPage";
-import SolutionsPage from "./pages/SolutionsPage";
-import ClientsPage from "./pages/ClientsPage";
-import ProjectRequestPage from "./pages/ProjectRequestPage";
-import ServiceDetailPage from "./pages/ServiceDetailPage";
-import CaseStudiesPage from "./pages/CaseStudiesPage";
-import CareersPage from "./pages/CareersPage";
-import CareerApplyPage from "./pages/CareerApplyPage";
-import InsightsPage from "./pages/InsightsPage";
-import FaqPage from "./pages/FaqPage";
-import ContactPage from "./pages/ContactPage";
-import NotFoundPage from "./pages/NotFoundPage";
-import LoginPage from "./pages/LoginPage";
-import AdminForgotPasswordPage from "./pages/AdminForgotPasswordPage";
-import PortalAccessPage from "./pages/PortalAccessPage";
-import PortalForgotPasswordPage from "./pages/PortalForgotPasswordPage";
-import PortalSignInPage from "./pages/PortalSignInPage";
-import PortalSignUpPage from "./pages/PortalSignUpPage";
-import PortalHomePage from "./pages/PortalHomePage";
-import PortalProfilePage from "./pages/PortalProfilePage";
-import CareerDashboardPage from "./pages/CareerDashboardPage";
-import CareerApplicationsPage from "./pages/CareerApplicationsPage";
-import CareerDocumentsPage from "./pages/CareerDocumentsPage";
-import CareerOpeningsPage from "./pages/CareerOpeningsPage";
-import ProjectDashboardPage from "./pages/ProjectDashboardPage";
-import PortalProjectRequestPage from "./pages/PortalProjectRequestPage";
-import TermsAndConditionsPage from "./pages/TermsAndConditionsPage";
-import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
-import CareerOnboardingDocsPage from "./pages/CareerOnboardingDocsPage";
+import RouteSkeleton from "./components/RouteSkeleton";
 import AdminLayout from "./admin/components/AdminLayout";
 import ProtectedRoute from "./admin/components/ProtectedRoute";
-import AdminDashboardPage from "./admin/pages/AdminDashboardPage";
-import AdminAnalyticsPage from "./admin/pages/AdminAnalyticsPage";
-import AdminUsersPage from "./admin/pages/AdminUsersPage";
-import AdminLeadsPage from "./admin/pages/AdminLeadsPage";
-import AdminContentPage from "./admin/pages/AdminContentPage";
-import AdminMediaPage from "./admin/pages/AdminMediaPage";
-import AdminIntegrationsPage from "./admin/pages/AdminIntegrationsPage";
-import AdminSettingsPage from "./admin/pages/AdminSettingsPage";
-import AdminProfilePage from "./admin/pages/AdminProfilePage";
-import AdminChangePasswordPage from "./admin/pages/AdminChangePasswordPage";
-import AdminProjectsPage from "./admin/pages/AdminProjectsPage";
-import AdminClientsPage from "./admin/pages/AdminClientsPage";
-import AdminServicesPage from "./admin/pages/AdminServicesPage";
-import AdminOpportunitiesPage from "./admin/pages/AdminOpportunitiesPage";
-import AdminCareerApplicationsPage from "./admin/pages/AdminCareerApplicationsPage";
-import AdminAuditLogsPage from "./admin/pages/AdminAuditLogsPage";
-import AdminOrdersPage from "./admin/pages/AdminOrdersPage";
-import AdminOrderDetailPage from "./admin/pages/AdminOrderDetailPage";
-import AdminPortalControlPage from "./admin/pages/AdminPortalControlPage";
 import RouteSEO from "./components/RouteSEO";
 import { ADMIN_BASE_PATH, adminPath } from "./admin/adminPath";
 import { getPortalUser } from "./pages/portalAuthShared";
 // import PwaInstallPrompt from "./components/PwaInstallPrompt";
 import "./App.css";
 import "./admin/Admin.css";
+
+const HomePage = lazy(() => import("./pages/HomePage"));
+const AboutPage = lazy(() => import("./pages/AboutPage"));
+const ServicesPage = lazy(() => import("./pages/ServicesPage"));
+const SolutionsPage = lazy(() => import("./pages/SolutionsPage"));
+const ClientsPage = lazy(() => import("./pages/ClientsPage"));
+const ProjectRequestPage = lazy(() => import("./pages/ProjectRequestPage"));
+const ServiceDetailPage = lazy(() => import("./pages/ServiceDetailPage"));
+const CaseStudiesPage = lazy(() => import("./pages/CaseStudiesPage"));
+const CareersPage = lazy(() => import("./pages/CareersPage"));
+const CareerApplyPage = lazy(() => import("./pages/CareerApplyPage"));
+const InsightsPage = lazy(() => import("./pages/InsightsPage"));
+const FaqPage = lazy(() => import("./pages/FaqPage"));
+const ContactPage = lazy(() => import("./pages/ContactPage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const AdminForgotPasswordPage = lazy(() => import("./pages/AdminForgotPasswordPage"));
+const PortalAccessPage = lazy(() => import("./pages/PortalAccessPage"));
+const PortalForgotPasswordPage = lazy(() => import("./pages/PortalForgotPasswordPage"));
+const PortalHomePage = lazy(() => import("./pages/PortalHomePage"));
+const PortalProfilePage = lazy(() => import("./pages/PortalProfilePage"));
+const CareerDashboardPage = lazy(() => import("./pages/CareerDashboardPage"));
+const CareerApplicationsPage = lazy(() => import("./pages/CareerApplicationsPage"));
+const CareerDocumentsPage = lazy(() => import("./pages/CareerDocumentsPage"));
+const CareerOpeningsPage = lazy(() => import("./pages/CareerOpeningsPage"));
+const ProjectDashboardPage = lazy(() => import("./pages/ProjectDashboardPage"));
+const PortalProjectRequestPage = lazy(() => import("./pages/PortalProjectRequestPage"));
+const TermsAndConditionsPage = lazy(() => import("./pages/TermsAndConditionsPage"));
+const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage"));
+const CareerOnboardingDocsPage = lazy(() => import("./pages/CareerOnboardingDocsPage"));
+
+const AdminDashboardPage = lazy(() => import("./admin/pages/AdminDashboardPage"));
+const AdminAnalyticsPage = lazy(() => import("./admin/pages/AdminAnalyticsPage"));
+const AdminUsersPage = lazy(() => import("./admin/pages/AdminUsersPage"));
+const AdminLeadsPage = lazy(() => import("./admin/pages/AdminLeadsPage"));
+const AdminContentPage = lazy(() => import("./admin/pages/AdminContentPage"));
+const AdminMediaPage = lazy(() => import("./admin/pages/AdminMediaPage"));
+const AdminIntegrationsPage = lazy(() => import("./admin/pages/AdminIntegrationsPage"));
+const AdminSettingsPage = lazy(() => import("./admin/pages/AdminSettingsPage"));
+const AdminProfilePage = lazy(() => import("./admin/pages/AdminProfilePage"));
+const AdminChangePasswordPage = lazy(() => import("./admin/pages/AdminChangePasswordPage"));
+const AdminProjectsPage = lazy(() => import("./admin/pages/AdminProjectsPage"));
+const AdminClientsPage = lazy(() => import("./admin/pages/AdminClientsPage"));
+const AdminServicesPage = lazy(() => import("./admin/pages/AdminServicesPage"));
+const AdminOpportunitiesPage = lazy(() => import("./admin/pages/AdminOpportunitiesPage"));
+const AdminCareerApplicationsPage = lazy(() => import("./admin/pages/AdminCareerApplicationsPage"));
+const AdminAuditLogsPage = lazy(() => import("./admin/pages/AdminAuditLogsPage"));
+const AdminOrdersPage = lazy(() => import("./admin/pages/AdminOrdersPage"));
+const AdminOrderDetailPage = lazy(() => import("./admin/pages/AdminOrderDetailPage"));
+const AdminPortalControlPage = lazy(() => import("./admin/pages/AdminPortalControlPage"));
 
 function ScrollToTopOnRouteChange() {
   const location = useLocation();
@@ -103,7 +104,8 @@ function App() {
       <RouteSEO />
       {/* <PwaInstallPrompt /> */}
 
-      <Routes>
+      <Suspense fallback={<RouteSkeleton />}>
+        <Routes>
         <Route path={adminPath("login")} element={<LoginPage />} />
         <Route path={adminPath("signup")} element={<Navigate to={adminPath("login")} replace />} />
         <Route path={adminPath("forgot-password")} element={<AdminForgotPasswordPage />} />
@@ -387,7 +389,8 @@ function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
-      </Routes>
+        </Routes>
+      </Suspense>
     </>
   );
 }

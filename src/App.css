@@ -4878,6 +4878,36 @@ canvas {
     100% { left: 100%; }
   }
 
+  .route-skeleton {
+    padding-top: clamp(6rem, 10vw, 7.5rem);
+    padding-bottom: 3rem;
+  }
+
+  .route-skeleton-hero {
+    height: clamp(180px, 32vw, 280px);
+    border-radius: 20px;
+    margin-bottom: 1.5rem;
+  }
+
+  .route-skeleton-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .route-skeleton-card {
+    min-height: 160px;
+    border-radius: 16px;
+    padding: 1rem;
+    display: grid;
+    gap: 0.65rem;
+    align-content: start;
+  }
+
+  .route-skeleton-line {
+    margin: 0;
+  }
+
   .career-track-btn,
   .career-track-grid .btn,
   .career-form .btn {
