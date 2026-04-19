@@ -15,6 +15,12 @@ if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
         registration.unregister()
       })
     })
+  } else {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {
+        // Ignore registration failures to avoid blocking app bootstrap.
+      })
+    })
   }
 }
 
