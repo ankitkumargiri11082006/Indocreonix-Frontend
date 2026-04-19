@@ -10,16 +10,54 @@ import { serviceCatalog } from '../data/serviceCatalog'
 
 const highlights = [
   {
-    title: 'Custom Software Delivery',
-    description: 'We build secure web and business applications tailored to your operations, users, and growth goals.',
+    title: 'Product Discovery & Technical Planning',
+    description: 'We align business objectives, user journeys, and architecture decisions before development begins, reducing delivery risk and rework.',
   },
   {
-    title: 'Cloud & DevOps Enablement',
-    description: 'Our team modernizes deployment pipelines, improves reliability, and helps teams ship faster with confidence.',
+    title: 'Custom Engineering Execution',
+    description: 'From web platforms and mobile apps to internal systems, we deliver maintainable solutions with strong coding and security practices.',
   },
   {
-    title: 'Data & AI Solutions',
-    description: 'From reporting dashboards to AI-assisted workflows, we design solutions that are practical and maintainable.',
+    title: 'Cloud, DevOps, and Reliability',
+    description: 'We strengthen release pipelines, uptime, and performance so your platform can scale consistently under real usage conditions.',
+  },
+  {
+    title: 'Data, Automation, and AI Adoption',
+    description: 'We implement practical data and AI workflows that improve decision speed, reduce repetitive work, and unlock measurable efficiency.',
+  },
+]
+
+const deliveryModel = [
+  {
+    title: '1. We Understand Your Goal',
+    description: 'We start by understanding your business objective, target users, and project priorities so the solution is built around your needs.',
+  },
+  {
+    title: '2. We Plan the Right Solution',
+    description: 'You get a clear project plan with scope, milestones, timeline, and recommended technology choices.',
+  },
+  {
+    title: '3. We Build and Test',
+    description: 'Our team develops your product in milestones, shares regular progress updates, and validates quality before launch.',
+  },
+  {
+    title: '4. We Launch and Support',
+    description: 'After go-live, we continue with support, improvements, and performance monitoring to keep your platform stable and growing.',
+  },
+]
+
+const trustHighlights = [
+  {
+    title: 'Clear Communication',
+    description: 'You always know project status, next milestones, and decisions needed from your side.',
+  },
+  {
+    title: 'On-Time Delivery Focus',
+    description: 'We plan in realistic phases so features are delivered in priority order without unnecessary delays.',
+  },
+  {
+    title: 'Long-Term Support',
+    description: 'We stay available after launch for fixes, upgrades, and ongoing technical guidance.',
   },
 ]
 
@@ -98,19 +136,19 @@ function HomePage() {
   return (
     <>
       <SEO 
-        title="Indocreonix | India's Leading IT Company | Web & App Solutions"
-        description="Indocreonix stands as the ultimate technology partner offering top tier web development, Android & iOS app development, enterprise software, and cloud solutions. Search for Indocreonix to find the best digital solutions."
-        keywords="indocreonix homepage, indocreonix.com, indocreonix reviews, indocreonix services, indo tech, indocreonix web development, top rated it agency, custom digital solutions, best android app development, reliable tech services, indocreonix infotech, indocreonix software company"
+        title="Indocreonix | Professional Software, Web, App, Cloud & AI Services"
+        description="Indocreonix is a professional technology services company delivering custom software, web engineering, mobile applications, cloud modernization, automation, and AI-driven solutions for growth-focused businesses."
+        keywords="indocreonix, software development company, web development services, mobile app development, cloud and devops services, ai solutions company, technology partner india, enterprise software services"
       />
       <PageHero
-        eyebrow="Future-Ready Technology"
-        title="Indocreonix Delivers Reliable Technology for Real Business Needs"
-        subtitle="We are a Delhi-based technology company helping startups and enterprises build modern web, Android, iOS, software, cloud, and AI-enabled products."
+        eyebrow="Professional Technology Services"
+        title="A Dependable Engineering Partner for Business-Critical Digital Products"
+        subtitle="Indocreonix helps you plan, build, and scale websites, mobile apps, business software, cloud platforms, and AI-enabled solutions with a clear process and reliable support."
         theme="theme-home"
         metrics={[
           { value: 'Delhi, India', label: 'Headquartered In' },
-          { value: 'B2B Technology', label: 'Primary Focus' },
-          { value: 'Jobs + Internships', label: 'Career Openings' },
+          { value: 'B2B Services', label: 'Primary Focus' },
+          { value: 'Discovery to Support', label: 'Delivery Coverage' },
         ]}
         actions={
           <>
@@ -127,8 +165,22 @@ function HomePage() {
         title="What We Deliver"
         items={highlights}
         sectionClassName="home-deliver-section"
-        eyebrow="Core Value"
-        subtitle="Focused capabilities designed to solve practical business challenges with speed and quality."
+        eyebrow="Core Capabilities"
+        subtitle="Service areas designed to solve practical business problems and support long-term growth."
+      />
+      <SectionBlock
+        title="How We Engage"
+        items={deliveryModel}
+        sectionClassName="home-deliver-section"
+        eyebrow="Execution Framework"
+        subtitle="A simple step-by-step delivery model that keeps your team informed from planning to launch."
+      />
+      <SectionBlock
+        title="Why Clients Choose Indocreonix"
+        items={trustHighlights}
+        sectionClassName="home-deliver-section"
+        eyebrow="Client Experience"
+        subtitle="A professional engagement style focused on transparency, speed, and dependable execution."
       />
       <SectionBlock
         title="Services We Offer"
@@ -136,7 +188,7 @@ function HomePage() {
         imageLayout="full"
         sectionClassName="home-services-section"
         eyebrow="End-to-End Services"
-        subtitle="Explore specialized technology services tailored for startups, enterprises, and growth-stage teams."
+        subtitle="Explore professional service tracks tailored for startups, SMEs, and enterprises with evolving digital priorities."
       />
 
       {loadingPublicData ? (
@@ -204,8 +256,8 @@ function HomePage() {
       </section>
 
       <CtaBanner
-        title="Need a dependable technology partner for your next build?"
-        description="Partner with Indocreonix to plan, build, and scale modern digital products with clear delivery ownership."
+        title="Need a professional team to execute your next digital initiative?"
+        description="Tell us what you want to build and our team will share a practical plan, timeline, and recommended next steps."
         primaryLabel="Submit Project Request"
         primaryTo="/request-quote"
       />

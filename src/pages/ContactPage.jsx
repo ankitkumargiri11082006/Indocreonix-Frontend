@@ -76,16 +76,16 @@ function ContactPage() {
       })
       setModalState({
         isOpen: true,
-        title: 'Thank You for Connecting!',
-        message: 'Your inquiry has been received successfully. We appreciate your interest in Indocreonix, and one of our dedicated technology consultants will reach out to you within the next 24 business hours.',
+        title: 'Thank You for Contacting Indocreonix',
+        message: 'Your inquiry has been received successfully. A technology consultant from our team will connect with you within the next 24 business hours with the appropriate next steps.',
         type: 'success'
       })
       setFormData({ name: '', email: '', phone: '', company: '', message: '' })
     } catch (error) {
       setModalState({
         isOpen: true,
-        title: 'Submission Encountered an Issue',
-        message: error.message || 'We apologize, but we were unable to process your request at this time. Please try again or contact us directly via email.',
+        title: 'Unable to Submit Request',
+        message: error.message || 'We were unable to process your request at this time. Please retry in a few minutes or reach us directly by email or phone.',
         type: 'error'
       })
     } finally {
@@ -96,26 +96,26 @@ function ContactPage() {
   return (
     <>
       <SEO 
-        title="Contact Indocreonix | India's Top Technology Partner"
-        description="Get in touch with Indocreonix, Delhi's highly-rated tech agency. Reach out to our experts for best-in-class custom software, web, and app development solutions."
-        keywords="contact indocreonix, indocreonix phone number, indocreonix office, hire web developers indocreonix, hire android developers, tech support delhi, indocreonix business inquiry, indo tech contact, reliable technology company address"
+        title="Contact Indocreonix | Start Your Software or Digital Transformation Project"
+        description="Contact Indocreonix for project consultation, technical planning, software development, modernization, and long-term technology support services."
+        keywords="contact indocreonix, software project consultation, technology services contact, web app development inquiry, enterprise software partner"
       />
       <PageHero
         eyebrow="Contact"
-        title="Connect with Indocreonix"
-        subtitle="Reach our team directly for project discussions, partnerships, and business inquiries."
+        title="Connect with Indocreonix for Professional Technology Services"
+        subtitle="Share your requirement with our team and we will guide you on the best next step for your project."
         theme="theme-contact"
         metrics={[
           { value: '<24h', label: 'Response Time' },
           { value: '2', label: 'Direct Contact Numbers' },
-          { value: 'Social + WhatsApp', label: 'Fast Communication' },
+          { value: 'Email, Phone, Social', label: 'Communication Channels' },
         ]}
       />
 
       <section className="content-section container contact-grid">
         <article className="info-card contact-social-bar-card contact-social-bar-full">
           <h3>Connect on Social Media</h3>
-          <p>Follow Indocreonix for updates and connect instantly on WhatsApp.</p>
+          <p>Follow us for updates and connect quickly on WhatsApp or social media.</p>
           <div className="contact-social-bar" role="navigation" aria-label="Indocreonix social links">
             {socialBarItems.map((item) => (
               <a key={item.key} href={item.href} target="_blank" rel="noreferrer" className="social-pill">
@@ -189,10 +189,12 @@ function ContactPage() {
       <section className="container content-section">
         <article className="info-card">
           <h3>Send a Message</h3>
+          <p>Fill out this form and our team will get back to you with the right guidance.</p>
           <form className="admin-form-grid" onSubmit={submitLead}>
             <label>
               Name
               <input
+                placeholder="Your full name"
                 value={formData.name}
                 onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
                 required
@@ -202,6 +204,7 @@ function ContactPage() {
               Email
               <input
                 type="email"
+                placeholder="you@company.com"
                 value={formData.email}
                 onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
                 required
@@ -210,6 +213,7 @@ function ContactPage() {
             <label>
               Phone
               <input
+                placeholder="Your phone number"
                 value={formData.phone}
                 onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
               />
@@ -217,6 +221,7 @@ function ContactPage() {
             <label>
               Company
               <input
+                placeholder="Your company name"
                 value={formData.company}
                 onChange={(e) => setFormData((prev) => ({ ...prev, company: e.target.value }))}
               />
@@ -225,6 +230,7 @@ function ContactPage() {
               Message
               <textarea
                 rows="5"
+                placeholder="Tell us what you want to build, improve, or automate"
                 value={formData.message}
                 onChange={(e) => setFormData((prev) => ({ ...prev, message: e.target.value }))}
                 required
@@ -246,8 +252,8 @@ function ContactPage() {
       />
 
       <CtaBanner
-        title="Ready to discuss your roadmap with our team?"
-        description="Send us your requirement and Indocreonix will share a practical execution plan."
+        title="Ready to discuss your roadmap with our consulting team?"
+        description="Share your requirements and Indocreonix will propose a practical implementation approach aligned with your business priorities."
         primaryLabel="Request Project Quote"
         primaryTo="/request-quote"
       />

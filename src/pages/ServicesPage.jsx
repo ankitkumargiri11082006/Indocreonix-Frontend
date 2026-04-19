@@ -8,25 +8,6 @@ function ServicesPage() {
   const [servicesOffered, setServicesOffered] = useState([])
   const [loading, setLoading] = useState(true)
 
-  const keywordCatalogMatch = (title = '') => {
-    const normalizedTitle = String(title).toLowerCase()
-
-    if (/web|website/.test(normalizedTitle)) {
-      return serviceCatalog.find((item) => item.slug === 'website-development')
-    }
-    if (/mobile|android|ios|app/.test(normalizedTitle)) {
-      return serviceCatalog.find((item) => item.slug === 'mobile-app-development')
-    }
-    if (/software|saas|crm|erp|system/.test(normalizedTitle)) {
-      return serviceCatalog.find((item) => item.slug === 'software-development')
-    }
-    if (/cloud|devops|data|ai/.test(normalizedTitle)) {
-      return serviceCatalog.find((item) => item.slug === 'cloud-devops-data')
-    }
-
-    return null
-  }
-
   useEffect(() => {
     apiRequest('/services/public', { cacheMs: 120000 })
       .then((result) => setServicesOffered(result.items || []))
@@ -52,16 +33,16 @@ function ServicesPage() {
   return (
     <>
       <SEO 
-        title="Our Services | Indocreonix Tech Solutions & App Development"
-        description="Explore the comprehensive suite of services by Indocreonix. From enterprise web applications to native Android app development, cloud infrastructure, and AI engineering, we are the #1 technology partner."
-        keywords="indocreonix services, indocreonix web development, indocreonix android development, top IT services delhi, top software agency, leading cloud migration experts, saas development company, robust UI UX design, indo digital services"
+        title="Services | Indocreonix Professional Technology Solutions"
+        description="Explore Indocreonix service capabilities across custom software engineering, web and mobile development, cloud modernization, DevOps, automation, and AI enablement."
+        keywords="indocreonix services, custom software development, web and app development company, cloud devops services, business automation solutions, ai integration services, technology consulting"
       />
       {loading ? (
         <section className="content-section container">
           <p className="section-eyebrow">Our Services</p>
-          <h2>Technology Services Designed for Practical Business Outcomes</h2>
+          <h2>Technology Services Designed for Strategic Business Outcomes</h2>
           <p className="section-subtitle">
-            Loading service capabilities and engagement options.
+            Loading service options and engagement details.
           </p>
           <div className="card-grid">
             {Array.from({ length: 6 }).map((_, index) => (
@@ -77,15 +58,15 @@ function ServicesPage() {
       ) : (
         <CompanyPage
           eyebrow="Our Services"
-          title="Technology Services Designed for Practical Business Outcomes"
-          subtitle="We provide flexible engagement models for new builds, modernization projects, and long-term product support."
+          title="Technology Services Designed for Strategic Business Outcomes"
+          subtitle="From first idea to final launch and support, we provide end-to-end technology services tailored to your business goals."
           sectionTitle="Service Capabilities"
           sectionItems={sectionItems}
           sectionImageLayout="full"
           theme="theme-services"
           cta={{
-            title: 'Need a tailored service execution plan?',
-            description: 'Share your scope and timeline to receive a professional delivery proposal and technical estimate.',
+            title: 'Need a tailored service engagement model?',
+            description: 'Share your project needs and timeline to receive a clear plan, budget direction, and delivery approach.',
             primaryLabel: 'Request Project Quote',
             primaryTo: '/request-quote?source=services-page',
           }}

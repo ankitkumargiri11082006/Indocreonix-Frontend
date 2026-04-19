@@ -3,9 +3,9 @@ export const serviceCatalog = [
     slug: 'website-development',
     title: 'Website Development',
     image: '/images/services/web_dev.png',
-    shortDescription: 'Business-ready websites engineered for performance, security, and conversion.',
+    shortDescription: 'Professional business websites engineered for speed, trust, and measurable conversion outcomes.',
     details:
-      'We design and build websites aligned with your branding, lead generation goals, and scalability requirements.',
+      'We design and build websites aligned with your brand identity, lead-generation goals, and long-term scalability requirements.',
     offerings: [
       {
         type: 'Static Websites',
@@ -13,7 +13,7 @@ export const serviceCatalog = [
       },
       {
         type: 'Dynamic Websites',
-        brief: 'Database-driven websites with dashboards, CMS modules, and secure role-based access.',
+        brief: 'Database-driven websites with dashboards, CMS modules, secure access control, and operational flexibility.',
       },
       {
         type: 'Landing Pages',
@@ -21,7 +21,7 @@ export const serviceCatalog = [
       },
       {
         type: 'E-commerce Websites',
-        brief: 'Online storefronts with product catalog, payment integrations, and order management workflows.',
+        brief: 'Scalable online storefronts with catalog, payment integrations, and streamlined order management workflows.',
       },
     ],
   },
@@ -29,9 +29,9 @@ export const serviceCatalog = [
     slug: 'mobile-app-development',
     title: 'Mobile App Development',
     image: '/images/services/app_dev.png',
-    shortDescription: 'Cross-platform and native mobile applications for Android and iOS ecosystems.',
+    shortDescription: 'Secure, scalable mobile applications for Android and iOS with high-quality user experience.',
     details:
-      'Our team develops robust mobile products with intuitive UX, API integrations, and release-ready architecture.',
+      'Our team delivers production-ready mobile products with intuitive UX, robust integrations, and maintainable architecture.',
     offerings: [
       {
         type: 'Android Applications',
@@ -43,7 +43,7 @@ export const serviceCatalog = [
       },
       {
         type: 'Cross-Platform Apps',
-        brief: 'Single codebase mobile apps for Android and iOS to accelerate launch timelines.',
+        brief: 'Single-codebase applications for Android and iOS that accelerate release timelines without sacrificing quality.',
       },
       {
         type: 'App Modernization',
@@ -55,9 +55,9 @@ export const serviceCatalog = [
     slug: 'software-development',
     title: 'Custom Software Development',
     image: '/images/services/software_dev.png',
-    shortDescription: 'Tailored business software for operations, automation, and enterprise workflows.',
+    shortDescription: 'Tailored business software to streamline operations, improve visibility, and scale core workflows.',
     details:
-      'We build bespoke software systems for internal teams, customer portals, and operational control centers.',
+      'We build bespoke software systems for internal teams, customer portals, and mission-critical operational environments.',
     offerings: [
       {
         type: 'ERP & Workflow Systems',
@@ -65,7 +65,7 @@ export const serviceCatalog = [
       },
       {
         type: 'SaaS Platforms',
-        brief: 'Scalable software products with subscription flows, user management, and analytics.',
+        brief: 'Scalable SaaS products with subscription workflows, user lifecycle management, and product analytics.',
       },
       {
         type: 'CRM Solutions',
@@ -81,9 +81,9 @@ export const serviceCatalog = [
     slug: 'cloud-devops-data',
     title: 'Cloud, DevOps & Data Services',
     image: '/images/services/cloud_devops.png',
-    shortDescription: 'Infrastructure and data engineering for secure, scalable digital platforms.',
+    shortDescription: 'Cloud and data engineering services for secure, scalable, and operationally resilient platforms.',
     details:
-      'We modernize deployment and data ecosystems to improve reliability, observability, and decision velocity.',
+      'We modernize deployment and data ecosystems to strengthen reliability, observability, governance, and decision velocity.',
     offerings: [
       {
         type: 'Cloud Migration',
@@ -91,7 +91,7 @@ export const serviceCatalog = [
       },
       {
         type: 'DevOps Enablement',
-        brief: 'CI/CD pipelines, release automation, and observability for predictable delivery.',
+        brief: 'CI/CD pipelines, release automation, and observability standards for predictable engineering delivery.',
       },
       {
         type: 'Data Dashboards',
@@ -107,8 +107,8 @@ export const serviceCatalog = [
     slug: 'ai-data-solutions',
     title: 'AI & Data Solutions',
     image: '/images/services/ai_data.png',
-    shortDescription: 'Advanced machine learning, predictive analytics, and data-driven business intelligence.',
-    details: 'Harness the power of Artificial Intelligence and Big Data to unlock actionable insights, automate decisions, and build intelligent products predicting market trends.',
+    shortDescription: 'Practical AI and analytics solutions that improve decision quality and operational efficiency.',
+    details: 'We apply machine learning and modern data engineering to deliver actionable insights, smart automation, and intelligent product capabilities.',
     offerings: [
       {
         type: 'Machine Learning Models',
@@ -116,7 +116,7 @@ export const serviceCatalog = [
       },
       {
         type: 'Generative AI Integration',
-        brief: 'LLM implementations to power intelligent chatbots and content generation.',
+        brief: 'LLM-based implementations for assistants, workflow copilots, and intelligent knowledge experiences.',
       },
       {
         type: 'Business Intelligence',
@@ -124,7 +124,7 @@ export const serviceCatalog = [
       },
       {
         type: 'Data Engineering',
-        brief: 'Scalable ETL pipelines and data warehouses.',
+        brief: 'Scalable ETL pipelines, curated datasets, and analytics-ready data warehouse architecture.',
       },
     ],
   },
@@ -132,8 +132,8 @@ export const serviceCatalog = [
     slug: 'business-automation',
     title: 'Business Automation',
     image: '/images/services/business_auto.png',
-    shortDescription: 'Streamline operations with intelligent workflow automation and API integrations.',
-    details: 'We connect your tools and automate repetitive tasks by building seamless API bridges, RPA bots, and robust background workers, saving thousands of manual hours.',
+    shortDescription: 'Operational automation services that connect systems, reduce manual effort, and improve execution speed.',
+    details: 'We connect your tools and automate repetitive tasks using secure integrations, workflow engines, and scalable background processing.',
     offerings: [
       {
         type: 'API Development & Integrations',
@@ -141,11 +141,11 @@ export const serviceCatalog = [
       },
       {
         type: 'Workflow Automation',
-        brief: 'Zapier, Make, and custom coded background agents matching your logic.',
+        brief: 'Automation workflows with Make, Zapier, and custom logic tailored to your operational processes.',
       },
       {
         type: 'Robotic Process Automation',
-        brief: 'Bots created to perform repetitive data entry and migration tasks.',
+        brief: 'RPA bots to execute repetitive data handling, migration, and back-office process tasks.',
       },
       {
         type: 'Document Processing Automation',
@@ -157,8 +157,8 @@ export const serviceCatalog = [
     slug: 'social-media-handling',
     title: 'Social Media Handling',
     image: 'https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?auto=format&fit=crop&w=1200&q=80',
-    shortDescription: 'Comprehensive digital marketing and social media handling services for platforms like YouTube, Instagram, and X.',
-    details: 'We handle your social media presence end-to-end as a dedicated service. From managing YouTube channels, designing Instagram grids, to engaging on X (Twitter), we drive growth, create eye-catching content, and optimize ad campaigns.',
+    shortDescription: 'Comprehensive social media operations for brand visibility, audience growth, and campaign performance.',
+    details: 'We manage your social media presence end-to-end, including channel strategy, content operations, platform engagement, and performance optimization.',
     offerings: [
       {
         type: 'YouTube Channel Management',
@@ -166,7 +166,7 @@ export const serviceCatalog = [
       },
       {
         type: 'Instagram & Facebook Handling',
-        brief: 'Consistent visual branding, reels, stories, and community engagement across Meta platforms.',
+        brief: 'Consistent visual branding, reels, stories, and active community engagement across Meta platforms.',
       },
       {
         type: 'X (Twitter) & LinkedIn',
@@ -174,7 +174,7 @@ export const serviceCatalog = [
       },
       {
         type: 'Paid Ad Campaigns',
-        brief: 'Targeted advertising on YouTube, Instagram, and Facebook optimizing reach and ROI.',
+        brief: 'Targeted advertising across YouTube, Instagram, and Facebook optimized for qualified reach and ROI.',
       },
     ],
   },
