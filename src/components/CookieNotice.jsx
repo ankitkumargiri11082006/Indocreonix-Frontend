@@ -1,14 +1,22 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-function hasConsentCookie() {
-  if (typeof document === "undefined") return true;
-  return document.cookie.split(";").some((part) => part.trim().startsWith("ic_cookie_consent=1"));
+function getConsentCookieValue() {
+  if (typeof document === "undefined") return null;
+  return document.cookie
+    .split(";")
+    .map((part) => part.trim())
+    .find((part) => part.startsWith("ic_cookie_consent="))
+    ?.split("=")[1] ?? null;
 }
 
-function setConsentCookie() {
+function hasConsentCookie() {
+  return getConsentCookieValue() !== null;
+}
+
+function setConsentCookie(value) {
   const secure = window.location?.protocol === "https:" ? "; Secure" : "";
-  document.cookie = `ic_cookie_consent=1; Max-Age=${180 * 24 * 60 * 60}; Path=/; SameSite=Lax${secure}`;
+  document.cookie = `ic_cookie_consent=${value}; Max-Age=${180 * 24 * 60 * 60}; Path=/; SameSite=Lax${secure}`;
 }
 
 function CookieNotice() {
@@ -24,19 +32,31 @@ function CookieNotice() {
     <div className="cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie notice">
       <div className="cookie-banner-inner">
         <p>
-          We use cookies that are strictly necessary for security and to improve your experience. By continuing, you agree
-          to our <Link to="/privacy-policy">Privacy Policy</Link>.
+          We use cookies that are strictly necessary for security and to improve your experience. You can accept or decline optional cookies.
+          Read our <Link to="/privacy-policy">Privacy Policy</Link> for details.
         </p>
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={() => {
-            setConsentCookie();
-            setVisible(false);
-          }}
-        >
-          Accept
-        </button>
+        <div className="cookie-banner-actions">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => {
+              setConsentCookie(0);
+              setVisible(false);
+            }}
+          >
+            Decline
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => {
+              setConsentCookie(1);
+              setVisible(false);
+            }}
+          >
+            Accept
+          </button>
+        </div>
       </div>
     </div>
   );
