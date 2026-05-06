@@ -1,4 +1,4 @@
-const CACHE_NAME = 'indocreonix-v1';
+const CACHE_NAME = 'indocreonix-v2';
 const OFFLINE_ASSETS = ['/', '/index.html', '/manifest.webmanifest', '/logo.png'];
 
 self.addEventListener('install', (event) => {
@@ -35,6 +35,8 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  const isNavigation = request.mode === 'navigate' || request.destination === 'document';
+
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
       if (cachedResponse) {
@@ -51,7 +53,7 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
           return networkResponse;
         })
-        .catch(() => caches.match('/index.html'));
+        .catch(() => (isNavigation ? caches.match('/index.html') : undefined));
     })
   );
 });
