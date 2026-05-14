@@ -79,40 +79,28 @@ A high-performance, immersive React application designed to represent the Indocr
 Copy `.env.example` to `.env` and configure:
 
 - `VITE_API_BASE_URL`: Pointer to the Indocreonix backend.
-- `VITE_GOOGLE_CLIENT_ID`: Google OAuth Web Client ID for admin SSO.
 - `VITE_CHAT_PROVIDER`: Choose between `openai` or `gemini`.
 - `VITE_OPENAI_API_KEY`: Required if using OpenAI as the AI provider.
 - `VITE_ADMIN_PATH`: Optional secret admin base route (default: `/admin`).
 - `VITE_SESSION_TIMEOUT_MINUTES`: Session timeout in minutes for both admin and portal users (default fallback: `30`).
 
-### **2. Google Sign-In (Admin Login)**
+### **2. Google Sign-In (Admin + Portal)**
 
-The admin login page supports both password login and Google SSO.
+Google sign-in uses **OAuth redirect** via the backend (no iframe button). This avoids browser console CSP/frame warnings and reduces third-party iframe/font noise.
 
 Frontend requirements:
-
-- Set `VITE_GOOGLE_CLIENT_ID` in `.env`.
-- Add your local and production frontend URLs in Google OAuth authorized JavaScript origins.
+- Set `VITE_API_BASE_URL` to your backend (example: `https://api.yourdomain.com/api`).
 
 Backend requirements:
+- Set `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET`.
+- Set `FRONTEND_REDIRECT_URI` to your frontend origin (example: `https://indocreonix.com`).
+- Add Google Console authorized redirect URIs (admin + portal):
+  - `https://<BACKEND_HOST>/api/auth/google/callback`
+  - `https://<BACKEND_HOST>/api/portal/auth/google/callback`
 
-- Implement `POST /api/auth/google` to accept `{ credential }` (Google ID token), verify it, map/create admin user, and return:
-
-```json
-{
-  "token": "your_app_jwt",
-  "user": {
-    "id": "...",
-    "name": "...",
-    "email": "...",
-    "role": "admin"
-  }
-}
-```
-
-- Ensure backend CORS allows your frontend origin.
-
-If `VITE_GOOGLE_CLIENT_ID` is missing, the login page automatically shows a guided fallback message and keeps email/password login available.
+Optional compatibility: the backend also supports legacy callback paths:
+- `https://<BACKEND_HOST>/api/auth/oauth/google/callback`
+- `https://<BACKEND_HOST>/api/portal/auth/oauth/google/callback`
 
 ### **3. Development Commands**
 
