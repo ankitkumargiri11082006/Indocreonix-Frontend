@@ -1,4 +1,4 @@
-const CACHE_NAME = 'indocreonix-v2';
+const CACHE_NAME = 'indocreonix-v3';
 const OFFLINE_ASSETS = ['/', '/index.html', '/manifest.webmanifest', '/logo.png'];
 
 self.addEventListener('install', (event) => {
@@ -38,22 +38,38 @@ self.addEventListener('fetch', (event) => {
   const isNavigation = request.mode === 'navigate' || request.destination === 'document';
 
   event.respondWith(
-    caches.match(request).then((cachedResponse) => {
+    (async () => {
+      const cachedResponse = await caches.match(request);
       if (cachedResponse) {
         return cachedResponse;
       }
 
-      return fetch(request)
-        .then((networkResponse) => {
-          if (!networkResponse || networkResponse.status !== 200) {
-            return networkResponse;
-          }
+      try {
+        const networkResponse = await fetch(request);
 
+        if (networkResponse && networkResponse.status === 200) {
           const responseClone = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
-          return networkResponse;
-        })
-        .catch(() => (isNavigation ? caches.match('/index.html') : undefined));
-    })
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone)).catch(() => {
+            // Best-effort cache write.
+          });
+        }
+
+        return networkResponse;
+      } catch {
+        if (isNavigation) {
+          const appShell = await caches.match('/index.html');
+          if (appShell) {
+            return appShell;
+          }
+        }
+
+        // Return a valid Response to avoid "Failed to convert value to 'Response'".
+        return new Response('Offline', {
+          status: 503,
+          statusText: 'Service Unavailable',
+          headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+        });
+      }
+    })()
   );
 });
