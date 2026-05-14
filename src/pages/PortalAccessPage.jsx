@@ -10,7 +10,7 @@ import {
   updatePortalUser,
 } from "./portalAuthShared";
 import { prepareAvatarDataUrl } from "../lib/avatarImage";
-import { initializeGoogleIdentity } from "../lib/googleIdentity";
+import { apiBaseUrl } from "../lib/apiClient";
 import "./PortalPages.css";
 
 const INITIAL_SIGNIN = { email: "", password: "" };
@@ -30,7 +30,6 @@ function PortalAccessPage({
 }) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const googleButtonRef = useRef(null);
 
   const [mode, setMode] = useState("signin");
   const [currentUser, setCurrentUser] = useState(() => getPortalUser());
@@ -54,13 +53,34 @@ function PortalAccessPage({
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const [googleReady, setGoogleReady] = useState(false);
 
-  const googleClientId = useMemo(
-    () => (import.meta.env.VITE_GOOGLE_CLIENT_ID || "").trim(),
-    [],
-  );
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const hash = String(window.location.hash || "");
+    if (!hash.startsWith("#")) return;
+
+    const params = new URLSearchParams(hash.slice(1));
+    const token = params.get("portalToken") || "";
+    const userEncoded = params.get("portalUser") || "";
+    const oauthError = params.get("portalError") || "";
+
+    if (oauthError) {
+      setError(decodeURIComponent(oauthError));
+    }
+
+    if (token && userEncoded) {
+      try {
+        const json = atob(userEncoded.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(userEncoded.length / 4) * 4, "="));
+        const user = JSON.parse(json);
+        setPortalSession({ token, user });
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
+        goToPostAuthDestination(user);
+      } catch {
+        setError("Google authentication completed but could not be processed. Please try again.");
+      }
+    }
+  }, []);
 
   const portalIntent = useMemo(() => {
     const inferFromPath = (rawPath) => {
@@ -199,74 +219,18 @@ function PortalAccessPage({
     return <Navigate to={getPostAuthDestination(currentUser)} replace />;
   }
 
-  useEffect(() => {
-    if (!googleClientId) return;
-
-    let mounted = true;
-
-    initializeGoogleIdentity(googleClientId, async (response) => {
-      if (!response?.credential) {
-        setError("Google authentication failed. Please try again.");
-        return;
-      }
-
-      setError("");
-      setMessage("");
-      setGoogleLoading(true);
-
-      try {
-        const googlePayload = {
-          credential: response.credential,
-          flow: mode,
-        };
-
-        if (mode === "signup") {
-          googlePayload.track = signupForm.track;
-        }
-
-        const result = await portalRequest("/portal/auth/google", {
-          method: "POST",
-          body: JSON.stringify(googlePayload),
-        });
-        setPortalSession({ token: result.token, user: result.user });
-        goToPostAuthDestination(result.user);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setGoogleLoading(false);
-      }
-    })
-      .then(() => {
-        if (!mounted || !googleButtonRef.current) return;
-
-        googleButtonRef.current.innerHTML = "";
-        const containerWidth = Math.floor(
-          googleButtonRef.current.getBoundingClientRect().width ||
-            googleButtonRef.current.clientWidth ||
-            360,
-        );
-        const width = Math.max(220, containerWidth - 2);
-        window.google.accounts.id.renderButton(googleButtonRef.current, {
-          type: "standard",
-          theme: "filled_blue",
-          size: "large",
-          text: mode === "signup" ? "signup_with" : "signin_with",
-          shape: "pill",
-          width,
-          logo_alignment: "left",
-        });
-
-        setGoogleReady(true);
-      })
-      .catch((err) => {
-        if (!mounted) return;
-        setError(err.message);
-      });
-
-    return () => {
-      mounted = false;
-    };
-  }, [googleClientId, mode, signupForm.track]);
+  function startGoogleAuth() {
+    setError("");
+    setMessage("");
+    const base = apiBaseUrl();
+    const returnTo = `${window.location.pathname}${window.location.search}`;
+    const query = new URLSearchParams({
+      flow: mode,
+      track: mode === "signup" ? signupForm.track : "both",
+      returnTo,
+    });
+    window.location.assign(`${base}/portal/auth/google/start?${query.toString()}`);
+  }
 
   async function handleSignInSubmit(event) {
     event.preventDefault();
@@ -614,29 +578,14 @@ function PortalAccessPage({
                 </p>
 
                 <div className="portal-google-wrap">
-                  {googleClientId ? (
-                    <>
-                      <div
-                        className="portal-google-slot"
-                        ref={googleButtonRef}
-                      />
-                      {!googleReady ? (
-                        <p className="portal-inline-note">
-                          Loading Google access...
-                        </p>
-                      ) : null}
-                      {googleLoading ? (
-                        <p className="portal-inline-note">
-                          Processing Google account...
-                        </p>
-                      ) : null}
-                    </>
-                  ) : (
-                    <p className="portal-inline-note portal-inline-warning">
-                      Google access is disabled. Add VITE_GOOGLE_CLIENT_ID in
-                      frontend env.
-                    </p>
-                  )}
+                  <button
+                    type="button"
+                    className="btn btn-primary portal-submit"
+                    onClick={startGoogleAuth}
+                    disabled={loading}
+                  >
+                    Continue with Google
+                  </button>
                 </div>
 
                 <div className="portal-auth-divider">
@@ -682,7 +631,7 @@ function PortalAccessPage({
                     <button
                       type="submit"
                       className="btn btn-primary portal-submit"
-                      disabled={loading || googleLoading}
+                      disabled={loading}
                     >
                       {loading ? "Signing in..." : "Sign In"}
                     </button>
@@ -745,7 +694,7 @@ function PortalAccessPage({
                     <button
                       type="submit"
                       className="btn btn-primary portal-submit"
-                      disabled={loading || googleLoading}
+                      disabled={loading}
                     >
                       {loading ? "Sending OTP..." : "Send OTP"}
                     </button>

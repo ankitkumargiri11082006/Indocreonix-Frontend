@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SEO from "../components/SEO";
 import { getPortalDashboardPath, portalRequest, setPortalSession } from "./portalAuthShared";
-import { initializeGoogleIdentity } from "../lib/googleIdentity";
+import { apiBaseUrl } from "../lib/apiClient";
 import "./PortalPages.css";
 
 const INITIAL_FORM = {
@@ -16,83 +16,48 @@ const INITIAL_FORM = {
 
 function PortalSignUpPage() {
   const navigate = useNavigate();
-  const googleButtonRef = useRef(null);
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const [googleReady, setGoogleReady] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const googleClientId = useMemo(
-    () => (import.meta.env.VITE_GOOGLE_CLIENT_ID || "").trim(),
-    [],
-  );
-
   useEffect(() => {
-    if (!googleClientId) return;
+    if (typeof window === "undefined") return;
 
-    let mounted = true;
+    const hash = String(window.location.hash || "");
+    if (!hash.startsWith("#")) return;
 
-    initializeGoogleIdentity(googleClientId, async (response) => {
-      if (!response?.credential) {
-        setError("Google sign-up failed. Please try again.");
-        return;
-      }
+    const params = new URLSearchParams(hash.slice(1));
+    const token = params.get("portalToken") || "";
+    const userEncoded = params.get("portalUser") || "";
+    const oauthError = params.get("portalError") || "";
 
-      setError("");
-      setMessage("");
-      setGoogleLoading(true);
+    if (oauthError) {
+      setError(decodeURIComponent(oauthError));
+    }
 
+    if (token && userEncoded) {
       try {
-        const result = await portalRequest("/portal/auth/google", {
-          method: "POST",
-          body: JSON.stringify({
-            credential: response.credential,
-            flow: "signup",
-            track: formData.track,
-          }),
-        });
-        setPortalSession({ token: result.token, user: result.user });
-        navigate(getPortalDashboardPath(result.user));
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setGoogleLoading(false);
+        const json = atob(userEncoded.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(userEncoded.length / 4) * 4, "="));
+        const user = JSON.parse(json);
+        setPortalSession({ token, user });
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
+        navigate(getPortalDashboardPath(user));
+      } catch {
+        setError("Google sign-up completed but could not be processed. Please try again.");
       }
-    })
-      .then(() => {
-        if (!mounted || !googleButtonRef.current) return;
+    }
+  }, [navigate]);
 
-        googleButtonRef.current.innerHTML = "";
-        const containerWidth = Math.floor(
-          googleButtonRef.current.getBoundingClientRect().width ||
-            googleButtonRef.current.clientWidth ||
-            360,
-        );
-        const width = Math.max(220, containerWidth - 2);
-        window.google.accounts.id.renderButton(googleButtonRef.current, {
-          type: "standard",
-          theme: "filled_blue",
-          size: "large",
-          text: "signup_with",
-          shape: "pill",
-          width,
-          logo_alignment: "left",
-        });
-
-        setGoogleReady(true);
-      })
-      .catch((err) => {
-        if (!mounted) return;
-        setError(err.message);
-      });
-
-    return () => {
-      mounted = false;
-    };
-  }, [formData.track, googleClientId, navigate]);
+  function startGoogleSignUp() {
+    setError("");
+    setMessage("");
+    const base = apiBaseUrl();
+    const returnTo = `${window.location.pathname}${window.location.search}`;
+    const url = `${base}/portal/auth/google/start?flow=signup&track=${encodeURIComponent(formData.track)}&returnTo=${encodeURIComponent(returnTo)}`;
+    window.location.assign(url);
+  }
 
   async function sendOtp(event) {
     event.preventDefault();
@@ -192,26 +157,14 @@ function PortalSignUpPage() {
             </p>
 
             <div className="portal-google-wrap">
-              {googleClientId ? (
-                <>
-                  <div className="portal-google-slot" ref={googleButtonRef} />
-                  {!googleReady ? (
-                    <p className="portal-inline-note">
-                      Loading Google sign-up...
-                    </p>
-                  ) : null}
-                  {googleLoading ? (
-                    <p className="portal-inline-note">
-                      Provisioning your account...
-                    </p>
-                  ) : null}
-                </>
-              ) : (
-                <p className="portal-inline-note portal-inline-warning">
-                  Google sign-up is disabled. Add VITE_GOOGLE_CLIENT_ID in
-                  frontend env.
-                </p>
-              )}
+              <button
+                type="button"
+                className="btn btn-primary portal-submit"
+                onClick={startGoogleSignUp}
+                disabled={loading}
+              >
+                Continue with Google
+              </button>
             </div>
 
             <div className="portal-auth-divider">
@@ -275,7 +228,7 @@ function PortalSignUpPage() {
                 <button
                   type="submit"
                   className="btn btn-primary portal-submit"
-                  disabled={loading || googleLoading}
+                  disabled={loading}
                 >
                   {loading ? "Sending OTP..." : "Send OTP"}
                 </button>
@@ -347,7 +300,7 @@ function PortalSignUpPage() {
                   </button>
                   <button
                     type="submit"
-                    className="btn btn-primary portal-submit"
+                    disabled={loading}
                     disabled={loading}
                   >
                     {loading ? "Verifying..." : "Verify OTP & Create Account"}

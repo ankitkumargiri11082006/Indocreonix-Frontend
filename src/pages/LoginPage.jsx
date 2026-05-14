@@ -1,105 +1,72 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import SEO from "../components/SEO";
-import { initializeGoogleIdentity } from "../lib/googleIdentity";
+import { apiBaseUrl } from "../lib/apiClient";
+import { ADMIN_TOKEN_KEY, setAdminSessionExpiry } from "../context/AuthContext";
 import { ADMIN_BASE_PATH } from "../admin/adminPath";
 import { adminPath } from "../admin/adminPath";
 
 function LoginPage() {
-  const { login, loginWithGoogle } = useAuth();
+  const { login, setCurrentUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const googleButtonRef = useRef(null);
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [googleReady, setGoogleReady] = useState(false);
-
-  const googleClientId = useMemo(
-    () => (import.meta.env.VITE_GOOGLE_CLIENT_ID || "").trim(),
-    [],
-  );
 
   useEffect(() => {
-    if (!googleClientId) return;
+    if (typeof window === "undefined") return;
 
-    let mounted = true;
-    let resizeObserver = null;
+    const hash = String(window.location.hash || "");
+    if (!hash.startsWith("#")) return;
 
-    const renderGoogleButton = () => {
-      if (!googleButtonRef.current || !window.google?.accounts?.id) return;
+    const params = new URLSearchParams(hash.slice(1));
+    const token = params.get("adminToken") || "";
+    const userEncoded = params.get("adminUser") || "";
+    const oauthError = params.get("adminError") || "";
 
-      const containerWidth = googleButtonRef.current.clientWidth || 320;
-      const responsiveWidth = Math.max(
-        220,
-        Math.min(380, Math.floor(containerWidth)),
-      );
+    if (oauthError) {
+      setError(decodeURIComponent(oauthError));
+    }
 
-      googleButtonRef.current.innerHTML = "";
-      window.google.accounts.id.renderButton(googleButtonRef.current, {
-        type: "standard",
-        theme: "outline",
-        size: "large",
-        text: "signin_with",
-        shape: "pill",
-        width: responsiveWidth,
-        logo_alignment: "left",
-      });
-    };
-
-    initializeGoogleIdentity(googleClientId, async (response) => {
-      if (!response?.credential) {
-        setError("Google sign-in failed. Please try again.");
-        return;
-      }
-
-      setError("");
-      setGoogleLoading(true);
-
+    if (token && userEncoded) {
       try {
-        await loginWithGoogle(response.credential);
+        const json = atob(
+          userEncoded
+            .replace(/-/g, "+")
+            .replace(/_/g, "/")
+            .padEnd(Math.ceil(userEncoded.length / 4) * 4, "="),
+        );
+        const user = JSON.parse(json);
+        localStorage.setItem(ADMIN_TOKEN_KEY, token);
+        setAdminSessionExpiry();
+        setCurrentUser(user);
+        window.history.replaceState(
+          null,
+          "",
+          window.location.pathname + window.location.search,
+        );
         navigate(ADMIN_BASE_PATH);
-      } catch (err) {
-        if (err?.status === 404) {
-          setError(
-            "Google login endpoint is not configured on backend yet. Please use email/password login for now.",
-          );
-        } else {
-          setError(err.message);
-        }
-      } finally {
-        setGoogleLoading(false);
+      } catch {
+        setError(
+          "Google sign-in completed but could not be processed. Please try again.",
+        );
       }
-    })
-      .then(() => {
-        if (!mounted || !googleButtonRef.current) return;
+    }
+  }, [navigate, setCurrentUser]);
 
-        renderGoogleButton();
-
-        if (typeof window.ResizeObserver === "function") {
-          resizeObserver = new window.ResizeObserver(() => {
-            renderGoogleButton();
-          });
-          resizeObserver.observe(googleButtonRef.current);
-        }
-
-        setGoogleReady(true);
-      })
-      .catch((err) => {
-        if (!mounted) return;
-        setError(err.message);
-      });
-
-    return () => {
-      mounted = false;
-      if (resizeObserver) {
-        resizeObserver.disconnect();
-      }
-    };
-  }, [googleClientId, loginWithGoogle, navigate]);
+  function startAdminGoogleSignIn() {
+    setError("");
+    setGoogleLoading(true);
+    const base = apiBaseUrl();
+    const returnTo = `${window.location.pathname}${window.location.search}`;
+    window.location.assign(
+      `${base}/auth/google/start?returnTo=${encodeURIComponent(returnTo)}`,
+    );
+  }
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -209,26 +176,17 @@ function LoginPage() {
 
             <div className="auth-sso-panel">
               <p className="auth-sso-title">Quick Sign-In</p>
-              {googleClientId ? (
-                <>
-                  <div className="auth-google-slot" ref={googleButtonRef} />
-                  {!googleReady ? (
-                    <p className="auth-inline-note">
-                      Loading Google Sign-In...
-                    </p>
-                  ) : null}
-                  {googleLoading ? (
-                    <p className="auth-inline-note">
-                      Verifying Google account...
-                    </p>
-                  ) : null}
-                </>
-              ) : (
-                <p className="auth-inline-note auth-inline-note-warning">
-                  Google Sign-In is disabled. Add VITE_GOOGLE_CLIENT_ID in
-                  frontend .env to enable SSO.
-                </p>
-              )}
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={startAdminGoogleSignIn}
+                disabled={googleLoading || loading}
+              >
+                Continue with Google
+              </button>
+              {googleLoading ? (
+                <p className="auth-inline-note">Redirecting to Google...</p>
+              ) : null}
             </div>
 
             <div
