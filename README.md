@@ -98,6 +98,11 @@ Backend requirements:
   - `https://<BACKEND_HOST>/api/auth/google/callback`
   - `https://<BACKEND_HOST>/api/portal/auth/google/callback`
 
+Troubleshooting (`Error 400: redirect_uri_mismatch`):
+- The callback URL must match **exactly** (including `http` vs `https` and `/api` vs non-`/api`).
+- This backend serves both `/api/auth/...` and `/auth/...` (and similarly for `/portal`). Pick one style and register that exact callback in Google Cloud.
+- If your backend is behind a proxy (Render/Vercel/Nginx), ensure it forwards `X-Forwarded-Proto: https` so the backend builds `https://...` callback URLs.
+
 Optional compatibility: the backend also supports legacy callback paths:
 - `https://<BACKEND_HOST>/api/auth/oauth/google/callback`
 - `https://<BACKEND_HOST>/api/portal/auth/oauth/google/callback`
