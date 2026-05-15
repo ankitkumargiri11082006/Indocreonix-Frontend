@@ -1,9 +1,13 @@
-const CACHE_NAME = 'indocreonix-v3';
-const OFFLINE_ASSETS = ['/', '/index.html', '/manifest.webmanifest', '/logo.png'];
+const CACHE_NAME = 'indocreonix-v4';
+const OFFLINE_ASSETS = ['/index.html', '/manifest.webmanifest', '/logo.png'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(OFFLINE_ASSETS))
+    caches.open(CACHE_NAME).then((cache) =>
+      cache.addAll(
+        OFFLINE_ASSETS.map((url) => new Request(url, { cache: 'reload' }))
+      )
+    )
   );
   self.skipWaiting();
 });
@@ -39,6 +43,41 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(
     (async () => {
+      // Navigation (HTML) should be network-first to avoid serving stale index.html
+      // that references missing hashed chunks after a deployment.
+      if (isNavigation) {
+        try {
+          const networkResponse = await fetch(request);
+          const contentType = networkResponse?.headers?.get('content-type') || '';
+
+          if (networkResponse && networkResponse.ok && contentType.includes('text/html')) {
+            const responseClone = networkResponse.clone();
+            caches
+              .open(CACHE_NAME)
+              .then((cache) => cache.put('/index.html', responseClone))
+              .catch(() => {
+                // Best-effort cache write.
+              });
+            return networkResponse;
+          }
+
+          // If the host returns a non-HTML response or an error, fall back to app shell.
+          const appShell = await caches.match('/index.html');
+          return appShell || networkResponse;
+        } catch {
+          const appShell = await caches.match('/index.html');
+          if (appShell) {
+            return appShell;
+          }
+          return new Response('Offline', {
+            status: 503,
+            statusText: 'Service Unavailable',
+            headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+          });
+        }
+      }
+
+      // Other assets: cache-first.
       const cachedResponse = await caches.match(request);
       if (cachedResponse) {
         return cachedResponse;
@@ -49,21 +88,16 @@ self.addEventListener('fetch', (event) => {
 
         if (networkResponse && networkResponse.status === 200) {
           const responseClone = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone)).catch(() => {
-            // Best-effort cache write.
-          });
+          caches
+            .open(CACHE_NAME)
+            .then((cache) => cache.put(request, responseClone))
+            .catch(() => {
+              // Best-effort cache write.
+            });
         }
 
         return networkResponse;
       } catch {
-        if (isNavigation) {
-          const appShell = await caches.match('/index.html');
-          if (appShell) {
-            return appShell;
-          }
-        }
-
-        // Return a valid Response to avoid "Failed to convert value to 'Response'".
         return new Response('Offline', {
           status: 503,
           statusText: 'Service Unavailable',
@@ -72,4 +106,10 @@ self.addEventListener('fetch', (event) => {
       }
     })()
   );
+});
+
+self.addEventListener('message', (event) => {
+  if (event?.data?.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });

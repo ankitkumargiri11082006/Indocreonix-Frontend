@@ -17,9 +17,46 @@ if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
     })
   } else {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch(() => {
-        // Ignore registration failures to avoid blocking app bootstrap.
-      })
+      navigator.serviceWorker
+        .register('/sw.js')
+        .then((registration) => {
+          // Proactively check for updates on each load.
+          registration.update().catch(() => {
+            // Ignore update failures.
+          })
+
+          const hasReloadedKey = 'indocx_sw_reloaded'
+          const hasReloaded = sessionStorage.getItem(hasReloadedKey) === '1'
+
+          const reloadOnce = () => {
+            if (sessionStorage.getItem(hasReloadedKey) === '1') return
+            sessionStorage.setItem(hasReloadedKey, '1')
+            window.location.reload()
+          }
+
+          if (registration.waiting && navigator.serviceWorker.controller && !hasReloaded) {
+            registration.waiting.postMessage({ type: 'SKIP_WAITING' })
+            reloadOnce()
+          }
+
+          registration.addEventListener('updatefound', () => {
+            const installing = registration.installing
+            if (!installing) return
+
+            installing.addEventListener('statechange', () => {
+              if (
+                installing.state === 'installed' &&
+                navigator.serviceWorker.controller &&
+                sessionStorage.getItem(hasReloadedKey) !== '1'
+              ) {
+                reloadOnce()
+              }
+            })
+          })
+        })
+        .catch(() => {
+          // Ignore registration failures to avoid blocking app bootstrap.
+        })
     })
   }
 }
