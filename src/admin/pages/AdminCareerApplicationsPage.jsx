@@ -45,11 +45,54 @@ function AdminCareerApplicationsPage() {
     loadItems()
   }, [filterType])
 
-  async function updateStatus(id, status) {
+  async function updateStatus(id, status, extraNote = '') {
     try {
+      const body = { status };
+      if (extraNote) {
+        // If there's an extra note, we append it to the existing note on the backend, or just send it and let backend handle.
+        // Actually, let's just fetch the item to get its current notes and append, but we don't have the item here easily.
+        // I will pass the full item to this function.
+      }
       await apiRequest(`/careers/applications/${id}`, {
         method: 'PATCH',
-        body: JSON.stringify({ status }),
+        body: JSON.stringify(body),
+      })
+      loadItems()
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
+  async function promptStatusChange(item, newStatus) {
+    if (item.status === newStatus) return;
+
+    const result = await customForm({
+      title: `Update Status`,
+      message: `Change application status to ${newStatus.toUpperCase()} for ${item.fullName}?`,
+      submitText: 'Confirm Update',
+      fields: [
+        { name: 'note', label: 'Add Admin Note (Optional)', type: 'textarea', placeholder: 'Reason for rejection, interview feedback, etc.' }
+      ]
+    });
+
+    if (!result) {
+      // Re-render to reset select value
+      setItems((prev) => [...prev]);
+      return; 
+    }
+
+    try {
+      const body = { status: newStatus };
+      if (result.note && result.note.trim()) {
+        const existingNote = draftNotes[item._id] ?? item.adminNotes ?? '';
+        const appendedNote = existingNote ? `${existingNote}\n[${newStatus.toUpperCase()}] ${result.note.trim()}` : `[${newStatus.toUpperCase()}] ${result.note.trim()}`;
+        body.adminNotes = appendedNote;
+        setDraftNotes(prev => ({ ...prev, [item._id]: appendedNote }));
+      }
+
+      await apiRequest(`/careers/applications/${item._id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(body),
       })
       loadItems()
     } catch (err) {
@@ -374,7 +417,7 @@ function AdminCareerApplicationsPage() {
                       <select
                         className="admin-select"
                         value={item.status}
-                        onChange={(e) => updateStatus(item._id, e.target.value)}
+                        onChange={(e) => promptStatusChange(item, e.target.value)}
                       >
                         <option value="new">new</option>
                         <option value="reviewing">reviewing</option>
