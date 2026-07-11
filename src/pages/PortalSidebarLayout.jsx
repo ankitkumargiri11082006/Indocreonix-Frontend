@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import PortalMenuToggle from "../components/PortalMenuToggle";
+import "./PortalPages.css";
 
 function getUserInitials(user) {
   const name = String(user?.name || user?.email || "").trim();

@@ -1,8 +1,10 @@
 import { Fragment, useEffect, useState } from 'react'
 import { apiBaseUrl, apiRequest } from '../../lib/apiClient'
 import AdminDocumentCenter from '../components/AdminDocumentCenter'
+import { useDialog } from '../../components/DialogProvider'
 
 function AdminCareerApplicationsPage() {
+  const { alert, confirm, customForm } = useDialog()
   const activeApiBase = apiBaseUrl()
   const [items, setItems] = useState([])
   const [filterType, setFilterType] = useState('all')
@@ -74,7 +76,7 @@ function AdminCareerApplicationsPage() {
       await apiRequest(`/careers/applications/${id}/request-onboarding-docs`, {
         method: 'POST',
       })
-      window.alert('Onboarding documents request email sent to the candidate.')
+      await alert('Onboarding documents request email sent to the candidate.', 'Success')
       loadItems()
     } catch (err) {
       setError(err.message)
@@ -84,7 +86,7 @@ function AdminCareerApplicationsPage() {
   }
 
   async function removeApplication(id) {
-    const confirmed = window.confirm('Delete this application permanently? CV will also be deleted from Cloudinary.')
+    const confirmed = await confirm('Delete this application permanently? CV will also be deleted from Cloudinary.', 'Delete Application')
     if (!confirmed) return
 
     try {
@@ -98,7 +100,7 @@ function AdminCareerApplicationsPage() {
   }
 
   async function removeOnboardingDocs(id) {
-    const confirmed = window.confirm('Delete the onboarding PDF for this applicant? They will need to re-upload it.')
+    const confirmed = await confirm('Delete the onboarding PDF for this applicant? They will need to re-upload it.', 'Delete Document')
     if (!confirmed) return
 
     try {
@@ -129,49 +131,38 @@ function AdminCareerApplicationsPage() {
     }
   }
 
-  function askOfferLetterPayload(item) {
+  async function askOfferLetterPayload(item) {
     const existing = item.offerLetter || {}
-    const candidateName = window.prompt('Candidate name', existing.candidateName || item.fullName || '')
-    if (candidateName === null) return null
-    const candidateAddress = window.prompt('Candidate address', existing.candidateAddress || item.city || '')
-    if (candidateAddress === null) return null
-    const role = window.prompt('Role', existing.role || item.opportunity?.title || item.roleType || '')
-    if (role === null) return null
-    const startDate = window.prompt('Start date (example: May 1, 2026)', existing.startDate || '')
-    if (startDate === null) return null
-    const duration = window.prompt('Duration (example: 3 Months)', existing.duration || '')
-    if (duration === null) return null
-    const stipend = window.prompt('Stipend (example: $1500 / month)', existing.stipend || '')
-    if (stipend === null) return null
-
-    return {
-      candidateName,
-      candidateAddress,
-      role,
-      startDate,
-      duration,
-      stipend,
-    }
+    return await customForm({
+      title: 'Generate Offer Letter',
+      submitText: 'Generate',
+      fields: [
+        { name: 'offerType', label: 'Offer Type', type: 'select', options: [{label: 'Internship', value: 'internship'}, {label: 'Job', value: 'job'}], defaultValue: 'internship', required: true },
+        { name: 'candidateName', label: 'Candidate Name', defaultValue: existing.candidateName || item.fullName || '', required: true },
+        { name: 'candidateAddress', label: 'Candidate Address', defaultValue: existing.candidateAddress || item.city || '', required: true },
+        { name: 'role', label: 'Role', defaultValue: existing.role || item.opportunity?.title || item.roleType || '', required: true },
+        { name: 'startDate', label: 'Start Date (e.g. May 1, 2026)', defaultValue: existing.startDate || '', required: true },
+        { name: 'duration', label: 'Duration (optional)', defaultValue: existing.duration || '', condition: (data) => data.offerType === 'internship' },
+        { name: 'stipend', label: 'Stipend / Salary (e.g. $1500 / month)', defaultValue: existing.stipend || '', required: true }
+      ]
+    });
   }
 
-  function askCertificatePayload(item) {
+  async function askCertificatePayload(item) {
     const existing = item.certificate || {}
-    const fullName = window.prompt('Candidate full name', existing.fullName || item.fullName || '')
-    if (fullName === null) return null
-    const courseTitle = window.prompt('Course title', existing.courseTitle || item.opportunity?.title || '')
-    if (courseTitle === null) return null
-    const completionDate = window.prompt('Completion date (example: April 4, 2026)', existing.completionDate || '')
-    if (completionDate === null) return null
-
-    return {
-      fullName,
-      courseTitle,
-      completionDate,
-    }
+    return await customForm({
+      title: 'Generate Certificate',
+      submitText: 'Generate',
+      fields: [
+        { name: 'fullName', label: 'Candidate Full Name', defaultValue: existing.fullName || item.fullName || '', required: true },
+        { name: 'courseTitle', label: 'Course/Role Title', defaultValue: existing.courseTitle || item.opportunity?.title || '', required: true },
+        { name: 'completionDate', label: 'Completion Date (e.g. April 4, 2026)', defaultValue: existing.completionDate || '', required: true }
+      ]
+    });
   }
 
   async function sendOfferLetter(item) {
-    const payload = askOfferLetterPayload(item)
+    const payload = await askOfferLetterPayload(item)
     if (!payload) return
 
     try {
@@ -181,7 +172,7 @@ function AdminCareerApplicationsPage() {
         method: 'POST',
         body: JSON.stringify(payload),
       })
-      window.alert('Offer letter generated and marked as awaiting admin approval.')
+      await alert('Offer letter generated and marked as awaiting admin approval.', 'Success')
       loadItems()
     } catch (err) {
       if (Number(err?.status) === 404) {
@@ -195,7 +186,7 @@ function AdminCareerApplicationsPage() {
   }
 
   async function sendCertificate(item) {
-    const payload = askCertificatePayload(item)
+    const payload = await askCertificatePayload(item)
     if (!payload) return
 
     try {
@@ -205,7 +196,7 @@ function AdminCareerApplicationsPage() {
         method: 'POST',
         body: JSON.stringify(payload),
       })
-      window.alert('Certificate generated and marked as awaiting admin approval.')
+      await alert('Certificate generated and marked as awaiting admin approval.', 'Success')
       loadItems()
     } catch (err) {
       if (Number(err?.status) === 404) {
@@ -251,7 +242,7 @@ function AdminCareerApplicationsPage() {
   }
 
   async function deleteOfferLetter(item) {
-    const confirmed = window.confirm('Delete generated offer letter for this applicant?')
+    const confirmed = await confirm('Delete generated offer letter for this applicant?', 'Delete Offer Letter')
     if (!confirmed) return
 
     try {
@@ -269,7 +260,7 @@ function AdminCareerApplicationsPage() {
   }
 
   async function deleteCertificate(item) {
-    const confirmed = window.confirm('Delete generated certificate for this applicant?')
+    const confirmed = await confirm('Delete generated certificate for this applicant?', 'Delete Certificate')
     if (!confirmed) return
 
     try {

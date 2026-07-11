@@ -60,15 +60,18 @@ if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
     })
   }
 }
+import DialogProvider from './components/DialogProvider'
 
 createRoot(document.getElementById('root')).render(
   <HelmetProvider>
     <ThemeProvider>
       <AuthProvider>
-        <BrowserRouter>
-          <App />
-          <SessionTimeoutManager />
-        </BrowserRouter>
+        <DialogProvider>
+          <BrowserRouter>
+            <App />
+            <SessionTimeoutManager />
+          </BrowserRouter>
+        </DialogProvider>
       </AuthProvider>
     </ThemeProvider>
   </HelmetProvider>,
